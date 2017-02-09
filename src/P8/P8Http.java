@@ -1,6 +1,6 @@
 package P8;
 
-
+import org.python.util.PythonInterpreter;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,6 +14,8 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
@@ -39,6 +41,7 @@ import org.apache.http.util.EntityUtils;
 
 
 import org.json.*;
+
 
 import java.util.Vector;
 
@@ -118,6 +121,36 @@ public class P8Http {
 
 	
 	public static String lineuri = "http://www.p88agent.com/partner/zh-cn/login";
+	
+	public static String testpy(){
+
+		//System.out.println("用户的当前工作目录:/n"+System.getProperty("user.dir"));
+		
+		String res = "";  
+		
+        try{  
+            System.out.println("start");  
+            Process pr = Runtime.getRuntime().exec("python test.py");  
+              
+            BufferedReader in = new BufferedReader(new  
+                    InputStreamReader(pr.getInputStream()));  
+            String line;
+            while ((line = in.readLine()) != null) {  
+            	res = line;
+                System.out.println(res);  
+            }  
+            in.close();  
+            pr.waitFor();              
+            System.out.println("end");  
+            return res;
+        } catch (Exception e){  
+                e.printStackTrace();  
+            }  
+        
+        return res;
+    }  
+
+	
 	
 	
 	
@@ -569,16 +602,16 @@ public class P8Http {
         			String currentTimeArray[] = currentTime.split(" ");
         			String eventTimeArray[] = df.format(time).split(" ");
         			
-        			String timeStr = "";
+/*        			String timeStr = "";
         			
         			if(currentTimeArray[0].contains(eventTimeArray[0])){
         				timeStr = eventTimeArray[1];
         			}else{
         				timeStr = df.format(time);
-        			}
+        			}*/
         			
         			
-        			row[TYPEINDEX.TIME.ordinal()] = timeStr;
+        			row[TYPEINDEX.TIME.ordinal()] = Long.toString(time);
         			
         			
         			if(inPlay== true){
@@ -731,26 +764,65 @@ public class P8Http {
     	
     }
     
-    public static void sortEventDetails(Vector<String[]> events){
+    public static void sortEventDetails(){
     	
     	try{
+    		
+    		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");// 设置日期格式
+    		
+    		String currentTime = df.format(System.currentTimeMillis());
+    		
         	if(eventDetailsVec.size() != 0){
+        		
+        		Vector<String[]> highShowVec = new Vector<String[]>();
         		
         		for(int i = 0; i < eventDetailsVec.size(); i++){
         			String leagueName = eventDetailsVec.elementAt(i)[TYPEINDEX.LEAGUENAME.ordinal()];
         			
-        			if(isInShowLeagueName(leagueName)){
-        				Vector<String[]> highShowVec = new Vector<String[]>();
+        			if(isInShowLeagueName(leagueName)){        				
+        				highShowVec.add(eventDetailsVec.elementAt(i));        				
+        				eventDetailsVec.remove(i);
         			}
         				
         			
         			
-        		}
+        		}        		        		
+            	Comparator ct = new MyCompare();            	
+            	Collections.sort(eventDetailsVec, ct);
         		
+            	if(highShowVec.size() != 0){
+            		Collections.sort(highShowVec, ct);
+            		
+            		for(int k = 0; k < highShowVec.size(); k++){
+            			//eventDetailsVec.add( highShowVec.elementAt(k));
+            			eventDetailsVec.insertElementAt(highShowVec.elementAt(k), k);
+            			highShowVec.remove(k);
+            		}
+            	}
+            	
+            	for(int i = 0; i < eventDetailsVec.size(); i++){
+        			String currentTimeArray[] = currentTime.split(" ");
+        			
+        			long time = Long.parseLong(eventDetailsVec.elementAt(i)[TYPEINDEX.TIME.ordinal()]);
+        			
+        			String eventTimeArray[] = df.format(time).split(" ");
+        			
+        			String timeStr = "";
+        			
+        			if(currentTimeArray[0].contains(eventTimeArray[0])){
+        				timeStr = eventTimeArray[1];
+        			}else{
+        				timeStr = df.format(time);
+        			}
+        			
+        			
+        			eventDetailsVec.elementAt(i)[TYPEINDEX.TIME.ordinal()] = timeStr;
+            	}
+            	
 
         	}
     	}catch(Exception e){
-    		
+    		e.printStackTrace();
     	}
     	
 
@@ -1152,7 +1224,7 @@ public class P8Http {
                 // 打印响应状态    
                 //System.out.println(response.getStatusLine()); 
                 System.out.println("------------------------------------");
-                File storeFile = new File(Integer.toString(pngnumber)+ ".png");   //图片保存到当前位置
+                File storeFile = new File("101.png");   //图片保存到当前位置
                 pngnumber= pngnumber + 1;
                 FileOutputStream output = new FileOutputStream(storeFile);  
                 //得到网络资源的字节数组,并写入文件  
@@ -1188,9 +1260,9 @@ public class P8Http {
                 
                 System.out.println("请输入验证码:");
                 
-        		Scanner sc = new Scanner(System.in);
+        		//Scanner sc = new Scanner(System.in);
         		
-        		String rmNum = sc.nextLine();
+        		String rmNum = testpy();
         		
         		//System.out.println(rmNum);
                 

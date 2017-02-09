@@ -42,6 +42,8 @@ public class StoneAge {
 		accountWnd.setAccountMgr(accMgr);
 		
 		accMgr.init();
+		
+		//P8Http.testpy();
 
 		new StoneAge().launchFrame();
 
@@ -80,7 +82,7 @@ public class StoneAge {
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				if(bLogin == false){
+				if(false == false){
 					accountWnd.dispose();
 					
 					btnAccount.setEnabled(false);
@@ -157,7 +159,7 @@ public class StoneAge {
 						}
 				}
 				
-				
+				P8Http.sortEventDetails();
 
 				
 				P8Http.updateEventsDetailsData();

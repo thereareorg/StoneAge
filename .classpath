@@ -13,5 +13,6 @@
 	<classpathentry kind="lib" path="D:/meWorkspace/StoneAge/lib/jna-4.1.0.jar"/>
 	<classpathentry kind="lib" path="D:/meWorkspace/StoneAge/lib/jna-platform-4.1.0.jar"/>
 	<classpathentry kind="lib" path="D:/meWorkspace/StoneAge/lib/json-20160212.jar"/>
+	<classpathentry kind="lib" path="lib/jython-standalone-2.7.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
