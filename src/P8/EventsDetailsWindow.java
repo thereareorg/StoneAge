@@ -156,6 +156,8 @@ public class EventsDetailsWindow extends JFrame
 		try{
 			detailsData = eventDetailsVec;
 			
+			tableMode.updateTable();
+			
 		}catch(Exception e){
 			e.printStackTrace();
 		}

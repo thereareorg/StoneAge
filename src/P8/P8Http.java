@@ -177,10 +177,10 @@ public class P8Http {
 	
 	public static void initShowLeagueName(){
 		showLeagueName.add("德国 - 德甲");
-		showLeagueName.add("欧足联 - 冠军联赛");
+		//showLeagueName.add("欧足联 - 冠军联赛");
 		showLeagueName.add("西班牙 - 西甲");
 		showLeagueName.add("意大利 - 甲级联赛");
-		showLeagueName.add("法国 - 甲级联赛");
+		//showLeagueName.add("法国 - 甲级联赛");
 		showLeagueName.add("英格兰 - 超级联赛");
 	}
 	
@@ -768,6 +768,18 @@ public class P8Http {
     	
     	try{
     		
+/*    		System.out.println("before sort");
+    		
+    		for(int k = 0; k<eventDetailsVec.size(); k++ ){
+    			
+    			String[] outRow = eventDetailsVec.elementAt(k);
+    			
+    			System.out.println(outRow[0] + "," +outRow[1] + "," + outRow[2] + "," +outRow[3] + "," +outRow[4] + "," +outRow[5] + "," +
+    					outRow[6] + "," + outRow[7]);
+    		}
+*/
+    		
+    		
     		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");// 设置日期格式
     		
     		String currentTime = df.format(System.currentTimeMillis());
@@ -781,24 +793,89 @@ public class P8Http {
         			
         			if(isInShowLeagueName(leagueName)){        				
         				highShowVec.add(eventDetailsVec.elementAt(i));        				
-        				eventDetailsVec.remove(i);
+        				
         			}
         				
         			
         			
-        		}        		        		
+        		}        
+        		
+        		for(int i = 0; i < eventDetailsVec.size(); ){
+        			String leagueName = eventDetailsVec.elementAt(i)[TYPEINDEX.LEAGUENAME.ordinal()];
+        			
+        			if(isInShowLeagueName(leagueName)){        				
+        				
+        				eventDetailsVec.remove(i);        			
+        			}
+        			else{
+        				i++;
+        			}
+        				
+        			
+        			
+        		}   
+        		
+        		
+/*        		System.out.println("after remove event details:");
+        		
+        		for(int k = 0; k<eventDetailsVec.size(); k++ ){
+        			
+        			String[] outRow = eventDetailsVec.elementAt(k);
+        			
+        			System.out.println(outRow[0] + "," +outRow[1] + "," + outRow[2] + "," +outRow[3] + "," +outRow[4] + "," +outRow[5] + "," +
+        					outRow[6] + "," + outRow[7]);
+        		}
+        		
+        		
+        		System.out.println("after remove highshow details:");
+        		
+        		for(int k = 0; k<highShowVec.size(); k++ ){
+        			
+        			String[] outRow = highShowVec.elementAt(k);
+        			
+        			System.out.println(outRow[0] + "," +outRow[1] + "," + outRow[2] + "," +outRow[3] + "," +outRow[4] + "," +outRow[5] + "," +
+        					outRow[6] + "," + outRow[7]);
+        		}*/
+        		
+        		
+        		
+        		
             	Comparator ct = new MyCompare();            	
             	Collections.sort(eventDetailsVec, ct);
         		
             	if(highShowVec.size() != 0){
             		Collections.sort(highShowVec, ct);
             		
+/*            		System.out.println("after sort event details:");
+            		
+            		for(int k = 0; k<eventDetailsVec.size(); k++ ){
+            			
+            			String[] outRow = eventDetailsVec.elementAt(k);
+            			
+            			System.out.println(outRow[0] + "," +outRow[1] + "," + outRow[2] + "," +outRow[3] + "," +outRow[4] + "," +outRow[5] + "," +
+            					outRow[6] + "," + outRow[7]);
+            		}
+            		
+            		
+            		System.out.println("after sort highshow details:");
+            		
+            		for(int k = 0; k<highShowVec.size(); k++ ){
+            			
+            			String[] outRow = highShowVec.elementAt(k);
+            			
+            			System.out.println(outRow[0] + "," +outRow[1] + "," + outRow[2] + "," +outRow[3] + "," +outRow[4] + "," +outRow[5] + "," +
+            					outRow[6] + "," + outRow[7]);
+            		}*/
+            		
             		for(int k = 0; k < highShowVec.size(); k++){
             			//eventDetailsVec.add( highShowVec.elementAt(k));
             			eventDetailsVec.insertElementAt(highShowVec.elementAt(k), k);
-            			highShowVec.remove(k);
+            			//highShowVec.remove(k);
             		}
             	}
+            	
+
+            	
             	
             	for(int i = 0; i < eventDetailsVec.size(); i++){
         			String currentTimeArray[] = currentTime.split(" ");
@@ -1224,7 +1301,7 @@ public class P8Http {
                 // 打印响应状态    
                 //System.out.println(response.getStatusLine()); 
                 System.out.println("------------------------------------");
-                File storeFile = new File("101.png");   //图片保存到当前位置
+                File storeFile = new File("hyyzm.png");   //图片保存到当前位置
                 pngnumber= pngnumber + 1;
                 FileOutputStream output = new FileOutputStream(storeFile);  
                 //得到网络资源的字节数组,并写入文件  
@@ -1260,9 +1337,9 @@ public class P8Http {
                 
                 System.out.println("请输入验证码:");
                 
-        		//Scanner sc = new Scanner(System.in);
+        		Scanner sc = new Scanner(System.in);
         		
-        		String rmNum = testpy();
+        		String rmNum = sc.next();
         		
         		//System.out.println(rmNum);
                 

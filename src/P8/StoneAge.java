@@ -43,6 +43,8 @@ public class StoneAge {
 		
 		accMgr.init();
 		
+		P8Http.initShowLeagueName();
+		
 		//P8Http.testpy();
 
 		new StoneAge().launchFrame();
@@ -87,7 +89,7 @@ public class StoneAge {
 					
 					btnAccount.setEnabled(false);
 					
-					P8Http.initShowLeagueName();
+					
 					
 					P8Http.clearEventsDetails();
 					
