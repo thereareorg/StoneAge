@@ -131,7 +131,7 @@ public class EventsDetailsWindow extends JFrame
     MyTableModel tableMode = new MyTableModel();
     
     
-    
+    JTable table = null;
 
     
     
@@ -154,9 +154,34 @@ public class EventsDetailsWindow extends JFrame
 	public void updateEventsDetails(Vector<String[]> eventDetailsVec){
 		
 		try{
+			
+			Double higlightBigNum = 100000.0;
+			
 			detailsData = eventDetailsVec;
 			
 			tableMode.updateTable();
+			
+			for(int i = 0; i< detailsData.size(); i++){
+				String leagueName = detailsData.elementAt(i)[TYPEINDEX.LEAGUENAME.ordinal()];
+				
+				if(P8Http.isInShowLeagueName(leagueName) || true){
+					double betAmt1 = Double.parseDouble(detailsData.elementAt(i)[TYPEINDEX.PERIOD0HOME.ordinal()]);
+					double betAmt2 = Double.parseDouble(detailsData.elementAt(i)[TYPEINDEX.PERIOD0OVER.ordinal()]);
+					double betAmt3 = Double.parseDouble(detailsData.elementAt(i)[TYPEINDEX.PERIOD1HOME.ordinal()]);
+					double betAmt4 = Double.parseDouble(detailsData.elementAt(i)[TYPEINDEX.PERIOD1HOME.ordinal()]);
+					
+					if(Math.abs(betAmt1) > higlightBigNum || Math.abs(betAmt2) > higlightBigNum|| 
+							Math.abs(betAmt3) > higlightBigNum || Math.abs(betAmt4) > higlightBigNum){
+						setOneRowBackgroundColor(table, i, new Color(255, 100, 100));
+					}
+					
+					
+				}
+			}
+			
+			
+			
+			
 			
 		}catch(Exception e){
 			e.printStackTrace();
@@ -217,7 +242,7 @@ public class EventsDetailsWindow extends JFrame
 
 	    
 		
-	    final JTable table = new JTable(tableMode);
+	    table = new JTable(tableMode);
 
         JScrollPane scroll = new JScrollPane(table);  
         
@@ -227,6 +252,8 @@ public class EventsDetailsWindow extends JFrame
 	    table.setRowHeight(30);
 	    
 	    table.setFont(new java.awt.Font("黑体", Font.PLAIN, 15));
+	    
+	    
 	    
 	    //table.setColumnModel(columnModel);
 	    
@@ -252,6 +279,45 @@ public class EventsDetailsWindow extends JFrame
         
         setBounds(100, 100, 1600, 800); 
 
+    }  
+    
+    
+    
+    public void setOneRowBackgroundColor(JTable table, int rowIndex1,  
+            Color color1) {
+    	
+    	final int rowIndex = rowIndex1;
+    	
+    	final Color color = color1;
+    	
+        try {  
+            DefaultTableCellRenderer tcr = new DefaultTableCellRenderer() {  
+  
+                public Component getTableCellRendererComponent(JTable table,  
+                        Object value, boolean isSelected, boolean hasFocus,  
+                        int row, int column) {  
+                    if (row == rowIndex) {  
+                        setBackground(color);  
+                        setForeground(Color.BLACK);  
+                    }else if(row > rowIndex){  
+                        setBackground(Color.WHITE);  
+                        setForeground(Color.BLACK);  
+                    }else{  
+                        setBackground(Color.WHITE);  
+                        setForeground(Color.BLACK);  
+                    }  
+  
+                    return super.getTableCellRendererComponent(table, value,  
+                            isSelected, hasFocus, row, column);  
+                }  
+            };  
+            int columnCount = table.getColumnCount();  
+            for (int i = 0; i < columnCount; i++) {  
+                table.getColumn(table.getColumnName(i)).setCellRenderer(tcr);  
+            }  
+        } catch (Exception ex) {  
+            ex.printStackTrace();  
+        }  
     }  
     
     

@@ -42,7 +42,6 @@ import org.apache.http.util.EntityUtils;
 
 import org.json.*;
 
-
 import java.util.Vector;
 
 
@@ -1335,11 +1334,21 @@ public class P8Http {
                 
                 
                 
+                Thread.currentThread().sleep(1000);
+                
                 System.out.println("请输入验证码:");
                 
-        		Scanner sc = new Scanner(System.in);
+                File file = new File("result.txt");
+                
+                BufferedReader reader = new BufferedReader(new FileReader(file));
+                // 一次读入一行，直到读入null为文件结束
+               String rmNum;
+               rmNum = reader.readLine();
+               reader.close();
+                
+/*        		Scanner sc = new Scanner(System.in);
         		
-        		String rmNum = sc.next();
+        		String rmNum = sc.next();*/
         		
         		//System.out.println(rmNum);
                 
