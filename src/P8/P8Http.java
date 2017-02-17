@@ -1,5 +1,8 @@
 package P8;
 
+
+
+
 import org.python.util.PythonInterpreter;
 
 import java.io.BufferedReader;
@@ -71,7 +74,7 @@ public class P8Http {
        // requestConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.IGNORE_COOKIES).build();
         requestConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.IGNORE_COOKIES).build();
 
-    	requestConfig = RequestConfig.copy(requestConfig).setRedirectsEnabled(true).build();//��ֹ�ض��� �� �Ա��ȡcookieb18
+    	requestConfig = RequestConfig.copy(requestConfig).setRedirectsEnabled(false).build();//��ֹ�ض��� �� �Ա��ȡcookieb18
         //requestConfig = RequestConfig.copy(requestConfig).setConnectTimeout(autoBet.timeOut).setConnectionRequestTimeout(autoBet.timeOut).setSocketTimeout(autoBet.timeOut).build();//���ó�ʱ
         
 /*    	httpclient = HttpClients.custom()
@@ -81,12 +84,12 @@ public class P8Http {
     	
     	httpclient = HttpClients.custom().setDefaultRequestConfig(requestConfig).build();
     	
-    	//System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http.client.protocol.ResponseProcessCookies", "fatal");
    }
 	
 	
 	
-	//static String strCookies = "_dc_gtm_UA-55804949-1=1; _gat_UA-55804949-1=1; _ga=GA1.2.1858545557.1484786779; __uzma=ma82879704-5520-4e2d-8f4c-08eddb58cb334563; __uzmb=1484732173; __uzmc=128021031359; __uzmd=1484732173; vidi=DC2|a1987|20170119004548|525bed4a86e044d2b075f2eb812d313e; sidi=DC2|a1987|20170119020201|a5a93719992b499aa95e9af38cbda7bb; com.silverpop.iMAWebCookie=6a3a6b50-126a-e8c8-1727-5799e5ee036d; com.silverpop.iMA.page_visit=1598863966:-147204818:; com.silverpop.iMA.session=24b55350-57a7-3490-245a-e8e656777512; language=zh_CN";
+    static Vector<String> failedCatchAccount = new Vector<String>();
+    
 
 	static String strCookies = "";
 	
@@ -150,7 +153,9 @@ public class P8Http {
     }  
 
 	
-	
+	public static boolean isfailedAccountEmpty(){
+		return failedCatchAccount.size() == 0;
+	}
 	
 	
     public static void setIscalcRequestTime(boolean flag){
@@ -273,7 +278,11 @@ public class P8Http {
 			
 			String linePage = doGet(linePageUri, "", "");
 	    	
-	    	if(linePage == null){
+	    	if(linePage == null || linePage.contains(linePageUri)){
+	    		linePage = doGet(linePageUri, "", "");
+	    	}
+	    	
+	    	if(linePage == null || linePage.contains(linePageUri)){
 	    		linePage = doGet(linePageUri, "", "");
 	    	}
 	    	
@@ -439,7 +448,17 @@ public class P8Http {
         	
         	
         	if(res != null){
-        		//System.out.println("total bet:" + res);
+        		
+        		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");// 设置日期格式
+        		
+        		
+        		long currentTimeL = System.currentTimeMillis();
+            	
+        		String currentTime = df.format(currentTimeL);
+        		
+        		System.out.println(currentTime);
+        		
+        		System.out.println("total bet:" + res);
         		
         		
         		
@@ -447,8 +466,8 @@ public class P8Http {
         		if(res.contains("eventsDetails")){
 
 
-        			parseBets(res);
-        			return true;
+        			
+        			return parseBets(res);
         		}else{
         			System.out.println(res);
         		}
@@ -485,14 +504,24 @@ public class P8Http {
         	
         	
         	if(res != null){
-        		//System.out.println("total bet:" + res);
+        		
+        		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");// 设置日期格式
+        		
+        		
+        		long currentTimeL = System.currentTimeMillis();
+            	
+        		String currentTime = df.format(currentTimeL);
+        		
+        		System.out.println(currentTime);
+        		
+        		System.out.println("total bet:" + res);
         		
         		
         		
         		
         		if(res.contains("eventsDetails")){
-        			parseBets(res);
-        			return true;
+        			
+        			return parseBets(res);
         		}else{
         			System.out.println(res);
         		}
@@ -521,8 +550,10 @@ public class P8Http {
     	
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");// 设置日期格式
 		
+		
+		long currentTimeL = System.currentTimeMillis();
     	
-		String currentTime = df.format(System.currentTimeMillis());
+		String currentTime = df.format(currentTimeL);
 		
     	List<String> parsedEvent = new ArrayList<String>();
     	
@@ -547,6 +578,17 @@ public class P8Http {
     				continue;*/
     			
     			long time = event.getLong("eventDate");
+    			//over events
+    			long twoHours = 2*60*60*1000 + 2*60*1000;
+    			
+    			long twelveHours = 24*60*60*1000;
+    			
+    			if(currentTimeL - time > twoHours || time - currentTimeL > twelveHours){
+    				continue;
+    			}
+    			
+    			
+    			
     			String eventName = event.getString("eventName");    			
     			String period = event.getString("period");    			
     			String description = event.getString("description");
@@ -755,11 +797,12 @@ public class P8Http {
     		
     	}catch(Exception e){
     		e.printStackTrace();
+    		return false;
     	}
     	
 
     	
-    	return res;
+    	return true;
     	
     }
     
@@ -775,8 +818,10 @@ public class P8Http {
     			
     			System.out.println(outRow[0] + "," +outRow[1] + "," + outRow[2] + "," +outRow[3] + "," +outRow[4] + "," +outRow[5] + "," +
     					outRow[6] + "," + outRow[7]);
-    		}
-*/
+    		}*/
+    		
+    		System.setProperty("java.util.Arrays.useLegacyMergeSort", "true"); 
+
     		
     		
     		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");// 设置日期格式
@@ -834,13 +879,17 @@ public class P8Http {
         			
         			System.out.println(outRow[0] + "," +outRow[1] + "," + outRow[2] + "," +outRow[3] + "," +outRow[4] + "," +outRow[5] + "," +
         					outRow[6] + "," + outRow[7]);
-        		}*/
+        		}
+        		
+        		System.out.println("------------------------");*/
         		
         		
-        		
-        		
-            	Comparator ct = new MyCompare();            	
-            	Collections.sort(eventDetailsVec, ct);
+            	Comparator ct = new MyCompare();        
+            	
+            	if(eventDetailsVec.size() != 0){
+            		Collections.sort(eventDetailsVec, ct);
+            	}
+            	
         		
             	if(highShowVec.size() != 0){
             		Collections.sort(highShowVec, ct);
@@ -1299,7 +1348,7 @@ public class P8Http {
        		    setCookie(response);
                 // 打印响应状态    
                 //System.out.println(response.getStatusLine()); 
-                System.out.println("------------------------------------");
+                //System.out.println("------------------------------------");
                 File storeFile = new File("hyyzm.png");   //图片保存到当前位置
                 pngnumber= pngnumber + 1;
                 FileOutputStream output = new FileOutputStream(storeFile);  
@@ -1332,11 +1381,11 @@ public class P8Http {
                 rmNum = reader.readLine();
                 reader.close();*/
                 
-                
+                //自动输入验证码
                 
                 Thread.currentThread().sleep(1000);
                 
-                System.out.println("请输入验证码:");
+                //System.out.println("请输入验证码:");
                 
                 File file = new File("result.txt");
                 
@@ -1345,8 +1394,16 @@ public class P8Http {
                String rmNum;
                rmNum = reader.readLine();
                reader.close();
+            // 自动输入验证码   
+               
+               
+               
+               //手动输入验证码
+               
                 
-/*        		Scanner sc = new Scanner(System.in);
+/*                System.out.println("请输入验证码:");
+                
+        		Scanner sc = new Scanner(System.in);
         		
         		String rmNum = sc.next();*/
         		
@@ -1386,6 +1443,42 @@ public class P8Http {
 		if(eventDetailsVec.size() != 0){
 			eventDetailsVec.clear();
 		}
+	}
+	
+	
+	public static void clearfailedCatchAccount(){
+		if(failedCatchAccount.size() != 0){
+			failedCatchAccount.clear();
+		}
+	}
+	
+	public static void addFailedCatchAccount(String acc){
+		failedCatchAccount.add(acc);
+	}
+	
+	public static void setGrabStext(){
+
+		
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");// 设置日期格式
+		
+		String timeStr = df.format(System.currentTimeMillis());
+		
+		String res = "";
+		
+		if(failedCatchAccount.size() != 0){
+			
+			res = "失败:";
+			
+			for(int i = 0; i < failedCatchAccount.size(); i++){
+				res = res + "  " + failedCatchAccount.elementAt(i);
+			}
+		}else{
+			res = "成功";
+		}
+		
+
+		
+		eventsDetailsDataWindow.setStateText(timeStr + "   " + res);
 	}
     
     

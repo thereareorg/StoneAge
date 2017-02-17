@@ -83,83 +83,85 @@ imgname = "hyyzm.png"
 imgprevious = []
 
 while True:
-	if is_open(imgname):
-		print "file is open"
-		continue
-	img = cv2.imread(imgname, cv2.IMREAD_GRAYSCALE)
-	
+	try:
+		if is_open(imgname):
+			print "file is open"
+			continue
+		img = cv2.imread(imgname, cv2.IMREAD_GRAYSCALE)
+		
 
-	
-	#print imgname
-	if imgname.find("test") == -1:
-		retval,t = cv2.threshold(img, 127, 1, cv2.THRESH_BINARY_INV)
-	else:
-		retval, t = cv2.threshold(img, 127, 1, cv2.THRESH_BINARY_INV)
-	#for k in t:
-	#	print k
+		
+		#print imgname
+		if imgname.find("test") == -1:
+			retval,t = cv2.threshold(img, 127, 1, cv2.THRESH_BINARY_INV)
+		else:
+			retval, t = cv2.threshold(img, 127, 1, cv2.THRESH_BINARY_INV)
+		#for k in t:
+		#	print k
 
-	s = t.sum(axis=0)
-	# print t
-	#print s
+		s = t.sum(axis=0)
+		# print t
+		#print s
 
-	#print "s is:%d" %(t)
-	y1, y2 = (s > np.median(s) + 5).nonzero()[0][0], (s > np.median(s) + 5).nonzero()[0][-1]
-	x1, x2 = 0, 36
+		#print "s is:%d" %(t)
+		y1, y2 = (s > np.median(s) + 5).nonzero()[0][0], (s > np.median(s) + 5).nonzero()[0][-1]
+		x1, x2 = 0, 36
 
-	#print "y1:%d, y2:%d ,x1:%d, x2:%d" %(y1, y2, x1, x2)
+		#print "y1:%d, y2:%d ,x1:%d, x2:%d" %(y1, y2, x1, x2)
 
-	if imgname.find("test") == -1:
-		im = img[x1:x2, y1+20:y2-10]	
-	else:
-		im = img[x1:x2, y1-2:y2+3]	
-	retval, im = cv2.threshold(im, 127, 255, cv2.THRESH_BINARY_INV)
-	if imgname.find("test") == -1:
+		if imgname.find("test") == -1:
+			im = img[x1:x2, y1+20:y2-10]	
+		else:
+			im = img[x1:x2, y1-2:y2+3]	
 		retval, im = cv2.threshold(im, 127, 255, cv2.THRESH_BINARY_INV)
-	#print im.shape
+		if imgname.find("test") == -1:
+			retval, im = cv2.threshold(im, 127, 255, cv2.THRESH_BINARY_INV)
+		#print im.shape
 
-	im0 = im[x1:x2, 1:-1]
-	if im.shape[1] < 100:
-		im = np.concatenate((im, np.zeros((36, 100 - im.shape[1]), dtype='uint8')), axis=1)
-	else:
-		im = cv2.resize(im, (100, 36))
-	I = im > 127
-	I = I.astype(np.float32).reshape((1, 1, 36, 100))
-	#print type(I)
+		im0 = im[x1:x2, 1:-1]
+		if im.shape[1] < 100:
+			im = np.concatenate((im, np.zeros((36, 100 - im.shape[1]), dtype='uint8')), axis=1)
+		else:
+			im = cv2.resize(im, (100, 36))
+		I = im > 127
+		I = I.astype(np.float32).reshape((1, 1, 36, 100))
+		#print type(I)
 
-	#n = nb_model.predict_classes(I, verbose=0) + 4
-	n = 4
-	im1 = np.zeros((36, 150), dtype=np.uint8)
-	im1[:, 10:im0.shape[1] + 10] = im0
-	#cv2.imwrite(imgname,im)
-	#cv2.imshow('test', im)	
-	#cv2.waitKey(0)
+		#n = nb_model.predict_classes(I, verbose=0) + 4
+		n = 4
+		im1 = np.zeros((36, 150), dtype=np.uint8)
+		im1[:, 10:im0.shape[1] + 10] = im0
+		#cv2.imwrite(imgname,im)
+		#cv2.imshow('test', im)	
+		#cv2.waitKey(0)
 
-	step = im0.shape[1] / float(n)
-	center = [i + step / 2 for i in np.arange(0, im0.shape[1], step).tolist()]
-	#for k in center:
-	#	print k  
+		step = im0.shape[1] / float(n)
+		center = [i + step / 2 for i in np.arange(0, im0.shape[1], step).tolist()]
+		#for k in center:
+		#	print k  
 
 
-	imgs = np.zeros((n, 1, 36, 20), dtype=np.float32)
+		imgs = np.zeros((n, 1, 36, 20), dtype=np.float32)
 
-	for i, c in enumerate(center):
-		imgs[i, 0, :, :] = im1[:, c:c + 20]
-	classes = chars_model.predict_classes(imgs.astype('float32') / 255.0, verbose=0)
-	result = []
-	for c in classes:
-		result.append(letters[c])
-	
-	
-	res = ''.join(result)
-	if res == lastRes:
-		continue
-	
-	f=open("result.txt","w+")
-	
-	
-	f.writelines(res)
-	f.close()
-	lastRes = res
-	
-	print(''.join(result))
-
+		for i, c in enumerate(center):
+			imgs[i, 0, :, :] = im1[:, c:c + 20]
+		classes = chars_model.predict_classes(imgs.astype('float32') / 255.0, verbose=0)
+		result = []
+		for c in classes:
+			result.append(letters[c])
+		
+		
+		res = ''.join(result)
+		if res == lastRes:
+			continue
+		
+		f=open("result.txt","w+")
+		
+		
+		f.writelines(res)
+		f.close()
+		lastRes = res
+		
+		print(''.join(result))
+	except Exception,e:
+		print Exception,":",e

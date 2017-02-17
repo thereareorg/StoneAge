@@ -11,6 +11,10 @@ import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;  
 import java.awt.event.ActionListener;  
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Vector;  
@@ -29,6 +33,13 @@ import java.awt.Color;
 
 
 
+
+
+
+
+
+
+import javax.swing.JComboBox;
 import javax.swing.JFrame;  
 import javax.swing.JLabel;  
 import javax.swing.JPanel;  
@@ -100,7 +111,7 @@ this.setBackground(c);
 
 
 
-return this;   
+return this;
 
 }
 
@@ -116,9 +127,24 @@ public class EventsDetailsWindow extends JFrame
 	
 	private  Vector<String[]> detailsData = null;
 	
+	private Vector<Integer> hightlightRows = new Vector<Integer>();
 	
 	
+    private JLabel labelHighlightNum = new JLabel("金额:");
+    private JTextField textFieldHighlightNum = new JTextField(15);  
+    
+    private JLabel labelInterval = new JLabel("间隔时间:");
+    
+    String str1[] = {"1", "2","3","4","5"};
+    
+    private JComboBox jcb = new JComboBox(str1); 
+    
+    
+    private JLabel labelGrabStat= new JLabel("状态:");
+    private JTextField textFieldGrabStat = new JTextField(15);  
+    
 	
+    Double higlightBigNum = 1000000.0;
 
     
     
@@ -147,6 +173,39 @@ public class EventsDetailsWindow extends JFrame
     }  
 	
 	
+	public void setStateText(String txt){
+		textFieldGrabStat.setText(txt);
+	}
+	
+	public void hightlightBigNumrows(){
+		
+		if(hightlightRows.size() != 0){
+			hightlightRows.clear();
+		}
+		
+		for(int i = 0; i< detailsData.size(); i++){
+			String leagueName = detailsData.elementAt(i)[TYPEINDEX.LEAGUENAME.ordinal()];
+			
+			if(P8Http.isInShowLeagueName(leagueName) || true){
+				double betAmt1 = Double.parseDouble(detailsData.elementAt(i)[TYPEINDEX.PERIOD0HOME.ordinal()]);
+				double betAmt2 = Double.parseDouble(detailsData.elementAt(i)[TYPEINDEX.PERIOD0OVER.ordinal()]);
+				double betAmt3 = Double.parseDouble(detailsData.elementAt(i)[TYPEINDEX.PERIOD1HOME.ordinal()]);
+				double betAmt4 = Double.parseDouble(detailsData.elementAt(i)[TYPEINDEX.PERIOD1HOME.ordinal()]);
+				
+				if(Math.abs(betAmt1) > higlightBigNum || Math.abs(betAmt2) > higlightBigNum|| 
+						Math.abs(betAmt3) > higlightBigNum || Math.abs(betAmt4) > higlightBigNum){
+					//
+					
+					hightlightRows.add(i);
+					
+				}
+				
+				
+			}
+			
+			setOneRowBackgroundColor(table, 0, new Color(255, 100, 100));
+		}
+	}
 
 	
 	
@@ -155,31 +214,17 @@ public class EventsDetailsWindow extends JFrame
 		
 		try{
 			
-			Double higlightBigNum = 100000.0;
 			
-			detailsData = eventDetailsVec;
+			
+
+			
+			detailsData = (Vector<String[]>)eventDetailsVec.clone();
+			
+			
+			
+			hightlightBigNumrows();
 			
 			tableMode.updateTable();
-			
-			for(int i = 0; i< detailsData.size(); i++){
-				String leagueName = detailsData.elementAt(i)[TYPEINDEX.LEAGUENAME.ordinal()];
-				
-				if(P8Http.isInShowLeagueName(leagueName) || true){
-					double betAmt1 = Double.parseDouble(detailsData.elementAt(i)[TYPEINDEX.PERIOD0HOME.ordinal()]);
-					double betAmt2 = Double.parseDouble(detailsData.elementAt(i)[TYPEINDEX.PERIOD0OVER.ordinal()]);
-					double betAmt3 = Double.parseDouble(detailsData.elementAt(i)[TYPEINDEX.PERIOD1HOME.ordinal()]);
-					double betAmt4 = Double.parseDouble(detailsData.elementAt(i)[TYPEINDEX.PERIOD1HOME.ordinal()]);
-					
-					if(Math.abs(betAmt1) > higlightBigNum || Math.abs(betAmt2) > higlightBigNum|| 
-							Math.abs(betAmt3) > higlightBigNum || Math.abs(betAmt4) > higlightBigNum){
-						setOneRowBackgroundColor(table, i, new Color(255, 100, 100));
-					}
-					
-					
-				}
-			}
-			
-			
 			
 			
 			
@@ -231,8 +276,56 @@ public class EventsDetailsWindow extends JFrame
 
         container.add(panelNorth, BorderLayout.NORTH);  
         
-        
+        jcb.addItemListener(new ItemListener() {
 
+
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				// TODO Auto-generated method stub
+               // int index = jcb.getSelectedIndex();
+                String content = jcb.getSelectedItem().toString();
+                
+                StoneAge.setSleepTime(Integer.parseInt(content));
+			}
+        });
+        
+        
+        textFieldHighlightNum.addKeyListener(new KeyListener(){
+            public void keyPressed(KeyEvent e) {  
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {  
+                    String value = textFieldHighlightNum.getText();  
+                    
+                    if(!Common.isNum(value)){
+                    	return;
+                    }else{
+                    	higlightBigNum = Double.parseDouble(value);
+                    	hightlightBigNumrows();
+                    	
+                    	tableMode.updateTable();
+                    }
+                    
+                }  
+                // System.out.println("Text " + value);  
+            }  
+            public void keyReleased(KeyEvent e) {  
+            }  
+            public void keyTyped(KeyEvent e) {  
+            }  
+
+        });
+        
+        textFieldGrabStat.setEditable(false);
+        
+        
+        panelNorth.add(labelInterval);
+        panelNorth.add(jcb);
+
+        
+        panelNorth.add(labelHighlightNum);
+        panelNorth.add(textFieldHighlightNum);
+        
+        panelNorth.add(labelGrabStat);
+        panelNorth.add(textFieldGrabStat);
         
         
 /*        panelNorth.add(labeltime);
@@ -279,7 +372,18 @@ public class EventsDetailsWindow extends JFrame
         
         setBounds(100, 100, 1600, 800); 
 
-    }  
+    }
+    
+    public boolean isInhighlightrows(int row){
+    	
+    	for(int i = 0; i < hightlightRows.size(); i ++){
+    		if(hightlightRows.elementAt(i) == row){
+    			return true;
+    		}
+    	}
+    	
+    	return false;
+    }
     
     
     
@@ -296,11 +400,8 @@ public class EventsDetailsWindow extends JFrame
                 public Component getTableCellRendererComponent(JTable table,  
                         Object value, boolean isSelected, boolean hasFocus,  
                         int row, int column) {  
-                    if (row == rowIndex) {  
+                    if (isInhighlightrows(row)) {  
                         setBackground(color);  
-                        setForeground(Color.BLACK);  
-                    }else if(row > rowIndex){  
-                        setBackground(Color.WHITE);  
                         setForeground(Color.BLACK);  
                     }else{  
                         setBackground(Color.WHITE);  

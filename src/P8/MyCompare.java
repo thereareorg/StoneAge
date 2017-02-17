@@ -5,6 +5,9 @@ import java.util.Comparator;
 class MyCompare implements Comparator //ʵ��Comparator�������Լ��ıȽϷ���
 {
 public int compare(Object o1, Object o2) {
+	
+	System.setProperty("java.util.Arrays.useLegacyMergeSort", "true"); 
+	
 Object[] e1=(Object[])o1;
 Object[] e2=(Object[])o2;
 

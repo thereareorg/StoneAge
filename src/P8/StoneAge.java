@@ -1,21 +1,32 @@
 ﻿package P8;
 
 
+
+
 import java.awt.Container; 
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JLabel; 
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Scanner;
 
 import javax.swing.JOptionPane;
 
 import java.util.Vector;
+
 import javax.swing.ImageIcon;
+
 
 
 public class StoneAge {
@@ -26,16 +37,29 @@ public class StoneAge {
 	
 	public static boolean bLogin = false;
 	
+	public static GrabEventsThread grabThead;
+	
+	public static StoneAge sa;
+	
 	
 	static AccountsDetailsWindow accountWnd = new AccountsDetailsWindow();
 	
 	public static AccountManager accMgr = null;
 	
 	
+	
+	
+	public PrintStream psFile = null;
+	public PrintStream psConsole = null;
+	
+	
+	
 	public static void main(String[] args) throws Exception {
 		
-		//P8Http.setLoginParams("http://www.ps38ag.com", "MM260SUB02", "qqqq1111");
+		System.setProperty("java.util.Arrays.useLegacyMergeSort", "true"); 
+		
 
+		
 		
 		accMgr = new AccountManager(accountWnd);
 		
@@ -44,24 +68,68 @@ public class StoneAge {
 		accMgr.init();
 		
 		P8Http.initShowLeagueName();
+
+		sa = new StoneAge();
 		
-		//P8Http.testpy();
-
-		new StoneAge().launchFrame();
-
+		sa.launchFrame();
 	}
 	
 	
+	public static void setSleepTime(int min){
+		grabThead.setSleepTime(min);
+	}
+	
+	public void setFileout(){
+		
+		try{
+			System.setOut(psFile);
+			System.setErr(psFile);
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+
+	}
+	
+	public void setConsoleout(){
+		try{
+			System.setOut(psConsole);
+			System.setErr(psConsole);
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
 	public void launchFrame() {
+		
+		
+		try {
+			// 生成路径
+			File dir = new File("log");
+			if (dir.exists()) {
+			} else {
+				dir.mkdirs();
+			}
+
+			// 把输出重定向到文件
+			
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");// 设置日期格式
+			
+			psFile = new PrintStream("log/" + df.format(new Date())
+						+ ".txt");
+			
+			
+			psConsole = System.out;
+
+			System.setOut(psFile);
+			System.setErr(psFile);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 
 		JFrame mainFrame = new JFrame("实况足球");
 
-/*		JPanel panel = new JPanel();
-
-		panel.setSize(500, 500);
-
-		panel.setLocation(0, 0);
-		panel.setLayout(null);*/
 		mainFrame.setLayout(null);
 
 		//mainFrame.add(panel);
@@ -83,94 +151,15 @@ public class StoneAge {
 		btnLogin = new JButton("显示注单");
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				if(false == false){
 					accountWnd.dispose();
 					
 					btnAccount.setEnabled(false);
 					
+					btnLogin.setEnabled(false);
 					
+					grabThead = new GrabEventsThread(sa);
 					
-					P8Http.clearEventsDetails();
-					
-					Vector<String[]> accountDetails = accMgr.getAccountDetails();
-					
-					for(int i = 0; i < accountDetails.size(); i++){
-						String[] account = accountDetails.elementAt(i);
-						P8Http.setLoginParams(account[0], account[1], account[2], account[3]);
-						int loginRes = 0;
-						loginRes = P8Http.login();
-						
-						for(int j = 0; j < 2 && loginRes == 0; j++){
-							
-							try{
-								Thread.currentThread().sleep(5*1000);
-								
-							}catch(Exception exception){
-								
-								
-								
-							}
-							
-							
-							loginRes = P8Http.login();			
-						}
-						
-						if(loginRes == 1){
-							
-							bLogin = true;
-							
-							System.out.println("会员  " + account[1] + " 抓取成功");
-							
-							if(account[0].contains("p88agent")){
-								P8Http.getTotalP8Bet();
-							}else{
-								P8Http.getTotalPS38Bet();
-							}
-							
-							
-						}
-						else{
-							System.out.println("会员  " + account[1] + " 抓取失败");
-						}
-						
-					}
-				}else{//test
-					P8Http.clearEventsDetails();
-					
-					System.out.println(P8Http.strCookies);
-					
-					Vector<String[]> accountDetails = accMgr.getAccountDetails();
-					
-					for(int i = 0; i < accountDetails.size(); i++){
-						String[] account = accountDetails.elementAt(i);
-						if(account[0].contains("p88agent")){
-							if(P8Http.getTotalP8Bet()){
-								System.out.println("会员  " + account[1] + " 抓取成功");
-							}else{
-								System.out.println("会员  " + account[1] + " 抓取失败");
-							}
-						}else{
-							if(P8Http.getTotalPS38Bet()){
-								System.out.println("会员  " + account[1] + " 抓取成功");
-							}else{
-								System.out.println("会员  " + account[1] + " 抓取失败");
-							}
-							
-						}
-						}
-				}
-				
-				P8Http.sortEventDetails();
-
-				
-				P8Http.updateEventsDetailsData();
-				
-				P8Http.showEventsDeatilsTable();
-				
-				
-
-
+					grabThead.start();
 			}
 		});
 		
