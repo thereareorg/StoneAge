@@ -104,11 +104,13 @@ public class AccountMgrWindow extends JFrame{
                 	}                		
                 }
                 
+                P8Http p8tmp = new P8Http();
                 
-                P8Http.setLoginParams(address, account, password, secrityCode);
+                
+                p8tmp.setLoginParams(address, account, password, secrityCode);
                 
 				int loginRes = 0;
-				loginRes = P8Http.login();
+				loginRes = p8tmp.login();
 				
 				
 				
@@ -122,7 +124,7 @@ public class AccountMgrWindow extends JFrame{
 					}
 					
 					
-					loginRes = P8Http.login();			
+					loginRes = p8tmp.login();			
 				}      
 				
 				if(loginRes == 1 || loginRes == 0){

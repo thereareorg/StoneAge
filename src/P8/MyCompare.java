@@ -15,9 +15,11 @@ if(Long.parseLong((String)e1[2]) > Long.parseLong((String)e2[2]))//ï¿½ï¿½ï¿½ï¿½È
 {
    return 1;
 }
-else
+else if(Long.parseLong((String)e1[2]) == Long.parseLong((String)e2[2]))
 {
-   return -1;
+   return 0;
+}else{
+	return -1;
 }
 }
 }

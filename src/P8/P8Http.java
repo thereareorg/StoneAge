@@ -17,6 +17,7 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -55,22 +56,24 @@ public class P8Http {
 	
 	
 	
-    static CloseableHttpClient httpclient = null;
-    static RequestConfig requestConfig = null;
-    static HttpClientContext clientContext = null;
+     CloseableHttpClient httpclient = null;
+     RequestConfig requestConfig = null;
+     HttpClientContext clientContext = null;
     
     
-    static Vector<String> showLeagueName = new Vector<String>();
+     static Vector<String> showLeagueName = new Vector<String>();
     
-    public static int pngnumber = 101;
+    public  int pngnumber = 101;
+    
+    boolean bLogin = false;
     
     
-    static EventsDetailsWindow eventsDetailsDataWindow = new EventsDetailsWindow();
+     static EventsDetailsWindow eventsDetailsDataWindow = new EventsDetailsWindow();
     
 
-    public static  Vector<String[]> eventDetailsVec = new Vector<String[]>();
+    public static   Vector<String[]> eventDetailsVec = new Vector<String[]>();
     
-    static {
+     {
        // requestConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.IGNORE_COOKIES).build();
         requestConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.IGNORE_COOKIES).build();
 
@@ -88,43 +91,43 @@ public class P8Http {
 	
 	
 	
-    static Vector<String> failedCatchAccount = new Vector<String>();
+     public static Vector<String> failedCatchAccount = new Vector<String>();
     
 
-	static String strCookies = "";
+	 String strCookies = "";
 	
-    static Vector<Long> lastTenRequestTime = new Vector<Long>();
-    static long avgRequestTime = 0;    
-    static boolean bcalcRequestTime = true;
-    static boolean bneedChangeLine = false;
+     Vector<Long> lastTenRequestTime = new Vector<Long>();
+     long avgRequestTime = 0;    
+     boolean bcalcRequestTime = true;
+     boolean bneedChangeLine = false;
     
     
-    static long lastChangeLineTime = 0;
+     long lastChangeLineTime = 0;
     
     
     
-    static int requestFailTimes = 0;
-    static long lastFailtime = 0;
+     int requestFailTimes = 0;
+     long lastFailtime = 0;
     
-    static boolean isNeedRelogin = false;
+     boolean isNeedRelogin = false;
     
-    static public boolean isInRelogin = false;
+     public boolean isInRelogin = false;
     
 	
 	
-	static String ADDRESS = "";
-	static String ACCOUNT = "";
-	static String PWD = "";
-	static String SECURITYCODE = "";
+	 String ADDRESS = "";
+	 String ACCOUNT = "";
+	 String PWD = "";
+	 String SECURITYCODE = "";
 	
-	static int defaultTimeout = 20*1000;
+	 int defaultTimeout = 20*1000;
 	
-	static String line = "";
+	 String line = "";
 
 	
-	public static String lineuri = "http://www.p88agent.com/partner/zh-cn/login";
+	public  String lineuri = "http://www.p88agent.com/partner/zh-cn/login";
 	
-	public static String testpy(){
+	public  String testpy(){
 
 		//System.out.println("用户的当前工作目录:/n"+System.getProperty("user.dir"));
 		
@@ -151,6 +154,14 @@ public class P8Http {
         
         return res;
     }  
+	
+	public boolean islogin(){
+		return bLogin;
+	}
+	
+	public void setIslogin(boolean b){
+		bLogin = b;
+	}
 
 	
 	public static boolean isfailedAccountEmpty(){
@@ -158,19 +169,19 @@ public class P8Http {
 	}
 	
 	
-    public static void setIscalcRequestTime(boolean flag){
+    public  void setIscalcRequestTime(boolean flag){
     	bcalcRequestTime = flag;
     }
     
-    public static void setisNeedChangeLine(boolean flag){
+    public  void setisNeedChangeLine(boolean flag){
     	bneedChangeLine = flag;
     }
     
-    public static boolean getIsisNeedChangeLine(){
+    public  boolean getIsisNeedChangeLine(){
     	return bneedChangeLine;
     }
     
-    public static void clearAvgRequest(){
+    public  void clearAvgRequest(){
     	
     	if(lastTenRequestTime.size() >0){
     		lastTenRequestTime.clear();
@@ -200,7 +211,7 @@ public class P8Http {
 	
 	
 	
-	public static boolean isInShowLeagueName(String str){
+	public  static boolean isInShowLeagueName(String str){
 		boolean in = false;
 		
 		for(int i = 0; i < showLeagueName.size(); i++){
@@ -213,7 +224,7 @@ public class P8Http {
 		return in;
 	}
 	
-	public static void setLoginParams(String address, String account, String pwd, String secerityCode){
+	public  void setLoginParams(String address, String account, String pwd, String secerityCode){
 		ADDRESS = address;
 		ACCOUNT = account;
 		PWD = pwd;
@@ -221,8 +232,16 @@ public class P8Http {
 
 	}
 	
+	public String getAddress(){
+		return ADDRESS;
+	}
 	
-	public static boolean reLogin(){
+	public String getAccount(){
+		return ACCOUNT;
+	}
+	
+	
+	public  boolean reLogin(){
 		
 		setIscalcRequestTime(false);
 		
@@ -234,7 +253,7 @@ public class P8Http {
 	}
 	
 	
-	public static boolean connFailLogin(){
+	public  boolean connFailLogin(){
 		
 		setIscalcRequestTime(false);
 		
@@ -258,7 +277,7 @@ public class P8Http {
 	}
 
 	//0代表网址连接不上，1代表成功，2代表Invalid的用户
-	public static int login(){
+	public  int login(){
 		
 		int res = 0;
 		
@@ -298,6 +317,7 @@ public class P8Http {
 	    		boolean sucess = loginToP8();
 	    		
 	    		if(sucess == true){
+	    			bLogin = true;
 	    			res = 1;
 	    		}
 	    		else{
@@ -319,7 +339,7 @@ public class P8Http {
 	}
 	
 	
-    public static boolean loginToP8(){
+    public  boolean loginToP8(){
     	
     	try{
     		
@@ -427,7 +447,7 @@ public class P8Http {
     
     
     
-    public static boolean getTotalP8Bet(){
+    public  boolean getTotalP8Bet(){
     	
     	try{
         	
@@ -484,7 +504,7 @@ public class P8Http {
     }
     
     
-    public static boolean getTotalPS38Bet(){
+    public  boolean getTotalPS38Bet(){
     	
     	try{
         	
@@ -542,7 +562,7 @@ public class P8Http {
     
     
     
-    public static boolean parseBets(String jsonRes){
+    public  boolean parseBets(String jsonRes){
     	
     	boolean res = false;
     	
@@ -554,6 +574,25 @@ public class P8Http {
 		long currentTimeL = System.currentTimeMillis();
     	
 		String currentTime = df.format(currentTimeL);
+		
+		
+		Calendar calCurrent = Calendar.getInstance();  
+		
+		Calendar calDeadline = Calendar.getInstance();  
+		
+		calDeadline.set(Calendar.HOUR_OF_DAY, 13);
+		
+		int hour = calCurrent.get(Calendar.HOUR_OF_DAY);  
+		
+		if(hour >= 13){
+			calDeadline.add(Calendar.DAY_OF_MONTH, 1);
+		}
+		
+		long deadlineTime = calDeadline.getTimeInMillis();
+
+		
+		
+		
 		
     	List<String> parsedEvent = new ArrayList<String>();
     	
@@ -583,7 +622,11 @@ public class P8Http {
     			
     			long twelveHours = 24*60*60*1000;
     			
-    			if(currentTimeL - time > twoHours || time - currentTimeL > twelveHours){
+    			if(currentTimeL - time > twoHours){
+    				continue;
+    			}
+    			
+    			if(time >= deadlineTime){
     				continue;
     			}
     			
@@ -806,7 +849,7 @@ public class P8Http {
     	
     }
     
-    public static void sortEventDetails(){
+    public static  void sortEventDetails(){
     	
     	try{
     		
@@ -957,7 +1000,7 @@ public class P8Http {
     
     
     
-    public static String doGet(String url, String cookies, String referUrl) {
+    public  String doGet(String url, String cookies, String referUrl) {
     	
         try {  
             // ����httpget.    
@@ -1050,7 +1093,7 @@ public class P8Http {
         return null;
     }
     
-    public static CloseableHttpResponse  execute(HttpUriRequest request) throws IOException, ClientProtocolException{
+    public  CloseableHttpResponse  execute(HttpUriRequest request) throws IOException, ClientProtocolException{
     	
     	long time1 = System.currentTimeMillis();
     	long time2 = System.currentTimeMillis();
@@ -1080,12 +1123,12 @@ public class P8Http {
 
     
     
-    public static String doPost(String url,String json, String cookies, String refer) {
+    public  String doPost(String url,String json, String cookies, String refer) {
         return doPost(url, json,"UTF-8", cookies, refer);
     }
     
     
-    public static String doPost(String url,String json,String charset, String cookies, String refer) {
+    public  String doPost(String url,String json,String charset, String cookies, String refer) {
 
 
         // ����httppost   
@@ -1195,7 +1238,7 @@ public class P8Http {
     
     
     
-	public static String setCookie(CloseableHttpResponse httpResponse)
+	public  String setCookie(CloseableHttpResponse httpResponse)
 	{
 		
 		//System.out.println("----setCookieStore");
@@ -1235,7 +1278,7 @@ public class P8Http {
 	}
     
 	//todo
-	public static boolean isInFreetime(){
+	public  boolean isInFreetime(){
 		return false;
 	}
 	
@@ -1246,7 +1289,7 @@ public class P8Http {
 
     
     
-    public synchronized static void addFailsTimes(){
+    public synchronized  void addFailsTimes(){
     	long currentTime = System.currentTimeMillis();
     	
     	if(((currentTime - lastFailtime) < 40*1000) || (lastFailtime == 0)){
@@ -1267,17 +1310,17 @@ public class P8Http {
     }
     
     
-    public synchronized static void setIsNeedRelogin(boolean flag){
+    public synchronized  void setIsNeedRelogin(boolean flag){
     	isNeedRelogin = flag;
     }
     
-    public synchronized static boolean getIsNeedRelogin(){
+    public synchronized  boolean getIsNeedRelogin(){
     	return isNeedRelogin;
     }
     
     
     
-    public synchronized static void calcRequestAveTime(long requestTime){
+    public synchronized  void calcRequestAveTime(long requestTime){
         
     	if(bcalcRequestTime == true){
     		
@@ -1322,7 +1365,7 @@ public class P8Http {
     
     
     
-    public static String getPicNum(String picUri) {
+    public  String getPicNum(String picUri) {
     	try {
 	   	    HttpGet httpget = new HttpGet(picUri);
 	   	    
@@ -1430,7 +1473,7 @@ public class P8Http {
    }
     
     
-	public static boolean isNum(String str){
+	public  boolean isNum(String str){
         try {
             new BigDecimal(str);
             return true;
@@ -1439,21 +1482,36 @@ public class P8Http {
         }
 	}
 	
-	public static void clearEventsDetails(){
+	public static  void clearEventsDetails(){
 		if(eventDetailsVec.size() != 0){
 			eventDetailsVec.clear();
 		}
 	}
 	
 	
-	public static void clearfailedCatchAccount(){
+	public  static void clearfailedCatchAccount(){
 		if(failedCatchAccount.size() != 0){
 			failedCatchAccount.clear();
 		}
 	}
 	
 	public static void addFailedCatchAccount(String acc){
+		
+		for(int i = 0; i <failedCatchAccount.size(); i++ ){
+			if(failedCatchAccount.elementAt(i).contains(acc)){
+				return;
+			}
+		}
 		failedCatchAccount.add(acc);
+	}
+	
+	public static void removeFailedAccount(String acc){
+		for(int i = 0; i <failedCatchAccount.size(); i++ ){
+			if(failedCatchAccount.elementAt(i).contains(acc)){
+				failedCatchAccount.remove(i);
+				return;
+			}
+		}
 	}
 	
 	public static void setGrabStext(){
