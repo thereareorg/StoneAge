@@ -14,8 +14,8 @@ public class GrabEventsThread  extends Thread{
 		sa = sat;
 	}
 
-	public void setSleepTime(int min){
-		sleepTime = min*60*1000;
+	public void setSleepTime(int sec){
+		sleepTime = sec*1000;
 	}
 	
 	
@@ -108,6 +108,11 @@ public class GrabEventsThread  extends Thread{
 					}
 					
 				}
+				
+				if(P8Http.isfailedAccountEmpty()){
+					P8Http.saveEvents();
+				}
+				
 				
 				P8Http.sortEventDetails();
 

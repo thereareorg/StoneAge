@@ -62,7 +62,7 @@ public class EditAccountWindow extends JFrame{
     
 	public EditAccountWindow()  
     {  
-		//setTitle("投注北京赛车详情");  
+		setTitle("删除账户");  
 		
 		//accMgr = acc;
 		

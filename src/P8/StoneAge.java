@@ -31,6 +31,8 @@ import javax.swing.ImageIcon;
 
 public class StoneAge {
 	
+	public static JButton btnpData;
+	
 	public static JButton btnLogin;
 	
 	public static JButton btnAccount;
@@ -75,8 +77,8 @@ public class StoneAge {
 	}
 	
 	
-	public static void setSleepTime(int min){
-		grabThead.setSleepTime(min);
+	public static void setSleepTime(int sec){
+		grabThead.setSleepTime(sec);
 	}
 	
 	public void setFileout(){
@@ -146,9 +148,26 @@ public class StoneAge {
         
         Container contain = mainFrame.getContentPane();  
         ((JPanel) contain).setOpaque(false);   
+        
+        
+        
+		btnpData = new JButton("历史注单");
+		btnpData.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				P8Http.updatepDataDetails();
+				P8Http.showpDataWnd();
+			}
+		});
 		
 		
-		btnLogin = new JButton("显示注单");
+		btnpData.setSize(100, 25);
+		btnpData.setLocation(300, 160);
+		
+		
+		contain.add(btnpData);
+		
+		
+		btnLogin = new JButton("即时注单");
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 					accountWnd.dispose();

@@ -68,6 +68,12 @@ public class P8Http {
     boolean bLogin = false;
     
     
+    static PreviousDataWindow pDataWindow = new PreviousDataWindow();
+    
+    static PreviousDataManager pDataManager = new PreviousDataManager(pDataWindow);
+    
+    
+    
      static EventsDetailsWindow eventsDetailsDataWindow = new EventsDetailsWindow();
     
 
@@ -192,11 +198,14 @@ public class P8Http {
 	
 	public static void initShowLeagueName(){
 		showLeagueName.add("德国 - 德甲");
-		//showLeagueName.add("欧足联 - 冠军联赛");
+		showLeagueName.add("欧足联 - 冠军联赛");
 		showLeagueName.add("西班牙 - 西甲");
 		showLeagueName.add("意大利 - 甲级联赛");
-		//showLeagueName.add("法国 - 甲级联赛");
+		showLeagueName.add("法国 - 甲级联赛");
 		showLeagueName.add("英格兰 - 超级联赛");
+		showLeagueName.add("欧足联 - 欧罗巴联赛");
+		
+		pDataManager.init();
 	}
 	
 	
@@ -1538,6 +1547,70 @@ public class P8Http {
 		
 		eventsDetailsDataWindow.setStateText(timeStr + "   " + res);
 	}
+	
+	
+	public static void saveEvents(){
+		
+		try{
+			
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+			
+			for(int i = 0; i < eventDetailsVec.size(); i++){
+				long eventTime = Long.parseLong(eventDetailsVec.elementAt(i)[TYPEINDEX.TIME.ordinal()]);
+				
+				String eventName = eventDetailsVec.elementAt(i)[TYPEINDEX.EVENTNAMNE.ordinal()];
+				
+
+				
+				long currentTime = System.currentTimeMillis();
+				
+				long passMinutes = 108*60*1000;
+				
+				if(eventName.contains("滚动盘")){
+					if(currentTime - eventTime > passMinutes){
+						
+						String eventTimestr = df.format(eventTime);
+						
+						String[] saveItem = (String[])eventDetailsVec.elementAt(i).clone();
+						
+						saveItem[TYPEINDEX.TIME.ordinal()] = eventTimestr;
+						
+						pDataManager.saveTofile(saveItem);
+					}
+				}else if(eventName.contains("角球")){
+					return;
+				}else{
+					if(currentTime - eventTime > 0){
+						
+						String eventTimestr = df.format(eventTime);
+						
+						String[] saveItem = (String[])eventDetailsVec.elementAt(i).clone();
+						
+						saveItem[TYPEINDEX.TIME.ordinal()] = eventTimestr;
+						
+						pDataManager.saveTofile(saveItem);
+					}
+				}			
+				
+
+				
+			}
+			
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+
+	}
+	
+	public static void showpDataWnd(){
+		pDataWindow.setVisible(true);
+	}
     
+	
+	public static void updatepDataDetails(){
+		pDataManager.updatepEventsDetails();
+	}
     
 }

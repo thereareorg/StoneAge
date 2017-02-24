@@ -39,6 +39,8 @@ import java.awt.Color;
 
 
 
+
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;  
 import javax.swing.JLabel;  
@@ -125,26 +127,41 @@ public class EventsDetailsWindow extends JFrame
    
 	private static final long serialVersionUID = 508685938515369544L;
 	
+	private  Vector<String[]> originalDetailsData = null;
+	
 	private  Vector<String[]> detailsData = null;
 	
 	private Vector<Integer> hightlightRows = new Vector<Integer>();
 	
 	
-    private JLabel labelHighlightNum = new JLabel("金额:");
+    private JLabel labelHighlightNum = new JLabel("高亮金额:");
     private JTextField textFieldHighlightNum = new JTextField(15);  
     
-    private JLabel labelInterval = new JLabel("间隔时间:");
+    private JLabel labelInterval = new JLabel("刷新时间:");
     
-    String str1[] = {"1", "2","3","4","5"};
+    String str1[] = {"30", "60","90","120","180"};
     
     private JComboBox jcb = new JComboBox(str1); 
     
+    
+    private JLabel labelHideNum = new JLabel("隐藏金额:");
+    private JTextField textFieldHideNum = new JTextField(15); 
+    
+    private JCheckBox onlyShow5Big = new JCheckBox("只看五大联赛,欧冠");
+    private JCheckBox onlyShowInplay = new JCheckBox("只看滚动盘");
+    private JCheckBox onlyShowNotInplay = new JCheckBox("只看单式盘");
+    
+    private boolean bonlyShow5Big = false;
+    private boolean bonlyShowInplay = false;
+    private boolean bonlyShowNotInplay = false;
     
     private JLabel labelGrabStat= new JLabel("状态:");
     private JTextField textFieldGrabStat = new JTextField(15);  
     
 	
     Double higlightBigNum = 1000000.0;
+    
+    Double hideNum = 0.0;
 
     
     
@@ -166,7 +183,7 @@ public class EventsDetailsWindow extends JFrame
 
 	public EventsDetailsWindow()  
     {  
-		//setTitle("投注北京赛车详情");  
+		setTitle("即时注单");  
 		
         intiComponent();  
         
@@ -218,13 +235,11 @@ public class EventsDetailsWindow extends JFrame
 			
 
 			
-			detailsData = (Vector<String[]>)eventDetailsVec.clone();
+			originalDetailsData = (Vector<String[]>)eventDetailsVec.clone();
 			
 			
 			
-			hightlightBigNumrows();
-			
-			tableMode.updateTable();
+			updateShowItem();
 			
 			
 			
@@ -254,6 +269,85 @@ public class EventsDetailsWindow extends JFrame
 	}
 	
 	
+	public void updateShowItem(){
+		
+		Vector<String[]> DetailsDatatmp = new Vector<String[]>();
+		
+		//只显示走地盘
+		if(bonlyShowInplay == true){
+			for(int i = 0; i < originalDetailsData.size(); i++){
+				if(originalDetailsData.elementAt(i)[TYPEINDEX.EVENTNAMNE.ordinal()].contains("滚动盘")){
+					DetailsDatatmp.add(originalDetailsData.elementAt(i));
+				}
+			}
+		}
+		
+		//只显示单式盘
+		if(bonlyShowNotInplay == true){
+			for(int i = 0; i < originalDetailsData.size(); i++){
+				if(!originalDetailsData.elementAt(i)[TYPEINDEX.EVENTNAMNE.ordinal()].contains("滚动盘")){
+					DetailsDatatmp.add(originalDetailsData.elementAt(i));
+				}
+			}
+		}
+		
+		Vector<String[]> DetailsDatatmp1 = new Vector<String[]>();
+		
+		
+		if(DetailsDatatmp.size() == 0){
+			DetailsDatatmp = (Vector<String[]>)originalDetailsData.clone();
+		}
+		
+		
+		//只看五大联赛
+		if(bonlyShow5Big == true){
+			for(int i = 0; i < DetailsDatatmp.size(); i++){
+				if(P8Http.isInShowLeagueName(DetailsDatatmp.elementAt(i)[TYPEINDEX.LEAGUENAME.ordinal()])){
+					DetailsDatatmp1.add(DetailsDatatmp.elementAt(i));
+				}
+			}
+		}
+		
+		Vector<String[]> DetailsDatatmp2 = new Vector<String[]>();
+		
+		if(DetailsDatatmp1.size() == 0){
+
+			DetailsDatatmp1 = (Vector<String[]>)DetailsDatatmp.clone();
+			
+		}
+		
+		//隐藏数额
+		for(int i = 0; i< DetailsDatatmp1.size(); i++){
+			String leagueName = DetailsDatatmp1.elementAt(i)[TYPEINDEX.LEAGUENAME.ordinal()];
+			
+			if(P8Http.isInShowLeagueName(leagueName) || true){
+				double betAmt1 = Double.parseDouble(DetailsDatatmp1.elementAt(i)[TYPEINDEX.PERIOD0HOME.ordinal()]);
+				double betAmt2 = Double.parseDouble(DetailsDatatmp1.elementAt(i)[TYPEINDEX.PERIOD0OVER.ordinal()]);
+				double betAmt3 = Double.parseDouble(DetailsDatatmp1.elementAt(i)[TYPEINDEX.PERIOD1HOME.ordinal()]);
+				double betAmt4 = Double.parseDouble(DetailsDatatmp1.elementAt(i)[TYPEINDEX.PERIOD1HOME.ordinal()]);
+				
+				if(Math.abs(betAmt1) > hideNum || Math.abs(betAmt2) > hideNum|| 
+						Math.abs(betAmt3) > hideNum || Math.abs(betAmt4) > hideNum){
+					//
+					
+					DetailsDatatmp2.add(DetailsDatatmp1.elementAt(i));
+					
+				}
+				
+				
+			}
+			
+			
+		}
+		
+		detailsData = (Vector<String[]>)DetailsDatatmp2.clone();
+		
+		
+		hightlightBigNumrows();
+		
+		tableMode.updateTable();
+		
+	}
 
 	
 	
@@ -272,9 +366,11 @@ public class EventsDetailsWindow extends JFrame
 		
 		container.setLayout(new BorderLayout());
 		
-		JPanel panelNorth = new JPanel(new GridLayout(5, 4));
+		JPanel panelNorth = new JPanel(new GridLayout(3, 4));
 
         container.add(panelNorth, BorderLayout.NORTH);  
+        
+        jcb.setSelectedIndex(1);
         
         jcb.addItemListener(new ItemListener() {
 
@@ -299,9 +395,7 @@ public class EventsDetailsWindow extends JFrame
                     	return;
                     }else{
                     	higlightBigNum = Double.parseDouble(value);
-                    	hightlightBigNumrows();
-                    	
-                    	tableMode.updateTable();
+                    	updateShowItem();
                     }
                     
                 }  
@@ -314,7 +408,95 @@ public class EventsDetailsWindow extends JFrame
 
         });
         
+        
+        textFieldHideNum.addKeyListener(new KeyListener(){
+            public void keyPressed(KeyEvent e) {  
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {  
+                    String value = textFieldHideNum.getText();  
+                    
+                    if(!Common.isNum(value)){
+                    	return;
+                    }else{
+                    	hideNum = Double.parseDouble(value);
+                    	updateShowItem();
+                    	
+                    	//tableMode.updateTable();
+                    }
+                    
+                }  
+                // System.out.println("Text " + value);  
+            }  
+            public void keyReleased(KeyEvent e) {  
+            }  
+            public void keyTyped(KeyEvent e) {  
+            }  
+
+        });
+        
+        
         textFieldGrabStat.setEditable(false);
+        
+        onlyShow5Big.setSelected(false);
+        
+        onlyShow5Big.addItemListener(new ItemListener() {
+
+
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				// TODO Auto-generated method stub
+               // int index = jcb.getSelectedIndex();
+				if(e.getStateChange() == ItemEvent.DESELECTED){
+					bonlyShow5Big = false;
+				}else{
+					bonlyShow5Big = true;
+				}
+				
+				updateShowItem();
+			}
+        });
+        
+        onlyShowInplay.setSelected(false);
+        
+        onlyShowInplay.addItemListener(new ItemListener() {
+
+
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				// TODO Auto-generated method stub
+               // int index = jcb.getSelectedIndex();
+				if(e.getStateChange() == ItemEvent.DESELECTED){
+					bonlyShowInplay = false;
+
+				}else{
+					bonlyShowInplay = true;
+					bonlyShowNotInplay = false;
+					onlyShowNotInplay.setSelected(false);
+				}
+				
+				updateShowItem();
+			}
+        });
+        
+        onlyShowNotInplay.setSelected(false);
+        
+        onlyShowNotInplay.addItemListener(new ItemListener() {
+
+
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				// TODO Auto-generated method stub
+               // int index = jcb.getSelectedIndex();
+				if(e.getStateChange() == ItemEvent.DESELECTED){
+					bonlyShowNotInplay = false;
+				}else{
+					bonlyShowNotInplay = true;
+					bonlyShowInplay = false;
+					onlyShowInplay.setSelected(false);
+				}
+				
+				updateShowItem();
+			}
+        });
         
         
         panelNorth.add(labelInterval);
@@ -324,8 +506,18 @@ public class EventsDetailsWindow extends JFrame
         panelNorth.add(labelHighlightNum);
         panelNorth.add(textFieldHighlightNum);
         
+        panelNorth.add(labelHideNum);
+        panelNorth.add(textFieldHideNum);
+        panelNorth.add(onlyShow5Big);
+        panelNorth.add(onlyShowInplay);
+        panelNorth.add(onlyShowNotInplay);
+
+        
+        
         panelNorth.add(labelGrabStat);
         panelNorth.add(textFieldGrabStat);
+        
+        
         
         
 /*        panelNorth.add(labeltime);

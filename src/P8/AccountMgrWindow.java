@@ -57,7 +57,7 @@ public class AccountMgrWindow extends JFrame{
     
 	public AccountMgrWindow()  
     {  
-		//setTitle("投注北京赛车详情");  
+		setTitle("增加账户");  
 		
 		//accMgr = acc;
 		

@@ -83,17 +83,21 @@ public class PreviousDataWindow extends JFrame
 	
 	private  Vector<String[]> detailsData = null;
 	
+	private Vector<String[]> originalDetailsData = null;
+	
 	private Vector<Integer> hightlightRows = new Vector<Integer>();
 	
 	
     private JLabel labelHighlightNum = new JLabel("金额:");
     private JTextField textFieldHighlightNum = new JTextField(15);  
     
-    private JLabel labelInterval = new JLabel("间隔时间:");
+    private JLabel labelInterval = new JLabel("日期选择:");
     
     String str1[] = {"1", "2","3","4","5"};
     
     private JComboBox jcb = new JComboBox(str1); 
+    
+    DateChooser mp = new DateChooser("yyyy-MM-dd", this);
     
     
     private JLabel labelGrabStat= new JLabel("状态:");
@@ -123,6 +127,8 @@ public class PreviousDataWindow extends JFrame
 	public PreviousDataWindow()  
     {  
 		//setTitle("投注北京赛车详情");  
+		
+		setTitle("历史注单");
 		
         intiComponent();  
         
@@ -164,6 +170,27 @@ public class PreviousDataWindow extends JFrame
 	}
 
 	
+	public void updateShowItem(){
+		String date = mp.getChooseDate();
+		
+		Vector<String[]> Vectmp = new Vector<String[]>();
+		
+		for(int i = 0; i < originalDetailsData.size(); i++){
+			if(originalDetailsData.elementAt(i)[TYPEINDEX.TIME.ordinal()].contains(date)){
+				Vectmp.add(originalDetailsData.elementAt(i));
+			}
+						
+		}
+		
+		detailsData = (Vector<String[]>)Vectmp.clone();
+		
+		hightlightBigNumrows();
+		
+		tableMode.updateTable();
+		
+		
+	}
+	
 	
 	
 	public void updateEventsDetails(Vector<String[]> eventDetailsVec){
@@ -174,13 +201,15 @@ public class PreviousDataWindow extends JFrame
 			
 
 			
-			detailsData = (Vector<String[]>)eventDetailsVec.clone();
+			originalDetailsData = (Vector<String[]>)eventDetailsVec.clone();
 			
 			
+			updateShowItem();
 			
-			hightlightBigNumrows();
 			
-			tableMode.updateTable();
+/*			hightlightBigNumrows();
+			
+			tableMode.updateTable();*/
 			
 			
 			
@@ -246,6 +275,11 @@ public class PreviousDataWindow extends JFrame
         });
         
         
+        
+        //container.add(mp, BorderLayout.SOUTH);
+        
+        
+        
         textFieldHighlightNum.addKeyListener(new KeyListener(){
             public void keyPressed(KeyEvent e) {  
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {  
@@ -274,7 +308,7 @@ public class PreviousDataWindow extends JFrame
         
         
         panelNorth.add(labelInterval);
-        panelNorth.add(jcb);
+        panelNorth.add(mp);
 
         
         panelNorth.add(labelHighlightNum);
