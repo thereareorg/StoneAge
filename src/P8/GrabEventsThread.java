@@ -117,6 +117,7 @@ public class GrabEventsThread  extends Thread{
 				P8Http.sortEventDetails();
 
 				if(P8Http.isfailedAccountEmpty()){
+					P8Http.copyTofinalEventsDetails();
 					P8Http.updateEventsDetailsData();
 				}
 				

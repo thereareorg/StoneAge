@@ -1,0 +1,87 @@
+package team.gl.nio.svr;
+
+
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.handler.timeout.IdleStateEvent;
+import io.netty.util.ReferenceCountUtil;
+
+import java.util.Vector;
+
+import P8.P8Http;
+import team.gl.nio.cmn.Bag;
+
+public class NettyServerHandler extends ChannelInboundHandlerAdapter {
+
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg)
+            throws Exception {
+        System.out.println("server channelRead..");
+        Bag us = (Bag) msg;
+        if(us.getReq().equals("request")) {
+	        Vector<String[]> datas = P8Http.getFinalEventsDetails();
+	        String successTime = P8Http.getSuccessTime();
+/*	        String [] strs1 = {"你好", "111","111","111","111","111","111", "111"};
+	    	String [] strs2 = {"222", "222","222","222","222","222","222", "222"};
+	    	
+	    	datas.add(strs2);
+	    	datas.add(strs1);*/
+	    	Bag bag = new Bag("response");
+	    	bag.setDatas(datas);
+	    	bag.setSuccessTime(successTime);
+	    	ctx.channel().writeAndFlush(bag);
+        }
+    }
+
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("server channelReadComplete..");
+        ctx.flush();//ˢ�º�Ž���ݷ�����SocketChannel
+    }
+    
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
+            throws Exception {
+        System.out.println("server exceptionCaught.." + cause.getMessage());
+        ctx.close();
+    }
+    
+    
+    
+    
+    // 心跳丢失计数器
+    private int counter;
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("--- Client is active ---");
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("--- Client is inactive ---");
+    }
+
+
+
+    @Override
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        if (evt instanceof IdleStateEvent) {
+            // 空闲6s之后触发 (心跳包丢失)
+            if (counter >= 3) {
+                // 连续丢失3个心跳包 (断开连接)
+                ctx.channel().close().sync();
+                System.out.println("已与Client断开连接");
+            } else {
+                counter++;
+                System.out.println("丢失了第 " + counter + " 个心跳包");
+            }
+        }
+    }
+
+
+
+
+
+}

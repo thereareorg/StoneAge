@@ -47,6 +47,8 @@ import org.apache.http.util.EntityUtils;
 import org.json.*;
 
 import java.util.Vector;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 
 
@@ -78,6 +80,15 @@ public class P8Http {
     
 
     public static   Vector<String[]> eventDetailsVec = new Vector<String[]>();
+    
+    
+    private static ReadWriteLock lockeFinalEventsDetails = new ReentrantReadWriteLock();
+    
+    private static ReadWriteLock lockeSuccessTime = new ReentrantReadWriteLock();
+    
+    public static Vector<String[]> finalEventDetailsVec = new Vector<String[]>();
+    
+    public static String successTime = "";
     
      {
        // requestConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.IGNORE_COOKIES).build();
@@ -216,6 +227,42 @@ public class P8Http {
     
     public static void updateEventsDetailsData(){
     	eventsDetailsDataWindow.updateEventsDetails(eventDetailsVec);
+    }
+    
+    public static void copyTofinalEventsDetails(){
+    	
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");// 设置日期格式
+		
+		
+		long currentTimeL = System.currentTimeMillis();
+    	
+		String currentTime = df.format(currentTimeL);
+    	
+    	lockeFinalEventsDetails.writeLock().lock();
+    	finalEventDetailsVec = (Vector<String[]>)eventDetailsVec.clone();
+    	
+    	lockeFinalEventsDetails.writeLock().unlock();
+    	
+    	lockeSuccessTime.writeLock().lock();
+    	successTime = currentTime + " 成功";
+    	lockeSuccessTime.writeLock().unlock();
+    }
+    
+    public static Vector<String[]> getFinalEventsDetails(){
+    	Vector<String[]> vec = null;
+    	lockeFinalEventsDetails.readLock().lock();
+    	vec = (Vector<String[]>)finalEventDetailsVec.clone();
+    	lockeFinalEventsDetails.readLock().unlock();
+    	return vec;
+    }
+    
+    
+    public static String getSuccessTime(){
+    	String successTimetmp = "";
+    	lockeSuccessTime.readLock().lock();
+    	successTimetmp = successTime;
+    	lockeSuccessTime.readLock().unlock();
+    	return successTimetmp;
     }
 	
 	

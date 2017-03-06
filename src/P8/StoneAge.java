@@ -27,7 +27,7 @@ import java.util.Vector;
 
 import javax.swing.ImageIcon;
 
-
+import team.gl.nio.svr.NettyServer;
 
 public class StoneAge {
 	
@@ -48,7 +48,7 @@ public class StoneAge {
 	
 	public static AccountManager accMgr = null;
 	
-	
+	static SeverThread serverThread = null;
 	
 	
 	public PrintStream psFile = null;
@@ -72,6 +72,10 @@ public class StoneAge {
 		P8Http.initShowLeagueName();
 
 		sa = new StoneAge();
+		
+		serverThread = new SeverThread();
+		
+		serverThread.start();
 		
 		sa.launchFrame();
 	}
