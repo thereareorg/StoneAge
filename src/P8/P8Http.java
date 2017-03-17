@@ -17,6 +17,7 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -55,6 +56,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 
 public class P8Http {
+	
+	//debug
+	public boolean printEvents = false;
 	
 	
 	
@@ -228,6 +232,11 @@ public class P8Http {
     public static void updateEventsDetailsData(){
     	eventsDetailsDataWindow.updateEventsDetails(eventDetailsVec);
     }
+    
+    
+
+    
+    
     
     public static void copyTofinalEventsDetails(){
     	
@@ -534,7 +543,7 @@ public class P8Http {
         		
         		System.out.println(currentTime);
         		
-        		System.out.println("total bet:" + res);
+        		//System.out.println("total bet:" + res);
         		
         		
         		
@@ -545,14 +554,14 @@ public class P8Http {
         			
         			return parseBets(res);
         		}else{
-        			System.out.println(res);
+        			//System.out.println(res);
         		}
         			
         		
         	}
     		
     	}catch(Exception e){
-    		
+    		e.printStackTrace();
     	}
     	
     	return false;
@@ -590,7 +599,7 @@ public class P8Http {
         		
         		System.out.println(currentTime);
         		
-        		System.out.println("total bet:" + res);
+        		//System.out.println("total bet:" + res);
         		
         		
         		
@@ -599,14 +608,14 @@ public class P8Http {
         			
         			return parseBets(res);
         		}else{
-        			System.out.println(res);
+        			//System.out.println(res);
         		}
         			
         		
         	}
     		
     	}catch(Exception e){
-    		
+    		e.printStackTrace();
     	}
     	
     	return false;
@@ -647,7 +656,7 @@ public class P8Http {
 		long deadlineTime = calDeadline.getTimeInMillis();
 
 		
-		
+		System.out.println("parsed:  " + ACCOUNT);
 		
 		
     	List<String> parsedEvent = new ArrayList<String>();
@@ -662,6 +671,15 @@ public class P8Http {
 
     		
     		Double playerStake = 0.0;
+    		
+    		
+
+    		
+    		if(eventsDetailsJarry.length() == 0){
+    			System.out.println(jsonRes);
+    		}
+    		
+    		
     		
     		for(int i = 0; i < eventsDetailsJarry.length(); i++){  		
 
@@ -685,6 +703,8 @@ public class P8Http {
     			if(time >= deadlineTime){
     				continue;
     			}
+    			
+    			
     			
     			
     			
@@ -713,6 +733,12 @@ public class P8Http {
     			if(parsedEvent.contains(parsedeventstr))
     				continue;
     			
+    			if(printEvents == true){
+    				System.out.println(event.toString());
+    			}
+    			
+    			
+    			
     			parsedEvent.add(parsedeventstr);
     			
     			int index = 0;
@@ -735,6 +761,10 @@ public class P8Http {
 
         			
         			row[TYPEINDEX.EVENTID.ordinal()] = Long.toString(eventId);
+        			
+/*        			if(Long.toString(eventId).contains("700761071")){
+        				System.out.println("in");
+        			}*/
 
         			
         			row[TYPEINDEX.LEAGUENAME.ordinal()] = leagueName;
@@ -785,8 +815,8 @@ public class P8Http {
     					
     					String leagueName1 = event1.getString("leagueName");
     					
-    	    			if(!isInShowLeagueName(leagueName1))
-    	    				continue;
+/*    	    			if(!isInShowLeagueName(leagueName1))
+    	    				continue;*/
     					
     	    			String period1 = event1.getString("period");    			
     	    			String description1 = event1.getString("description");
@@ -802,6 +832,11 @@ public class P8Http {
     	    					playerStake = playerStake - playerStake1;
     	    				}
     	    				find = true;
+    	    				if(printEvents == true){
+    	    					System.out.println(event1.toString());
+    	    				}
+    	    				
+    	    				
     	    				break;
     	    			}
     				}
@@ -837,8 +872,8 @@ public class P8Http {
     					
     					String leagueName1 = event1.getString("leagueName");
     					
-    	    			if(!isInShowLeagueName(leagueName1))
-    	    				continue;
+/*    	    			if(!isInShowLeagueName(leagueName1))
+    	    				continue;*/
     	    			
     	    			String period1 = event1.getString("period");    			
     	    			String description1 = event1.getString("description");
@@ -854,6 +889,13 @@ public class P8Http {
     	    					playerStake = playerStake - playerStake1;
     	    				}
     	    				find = true;
+    	    				
+    	    				if(printEvents == true){
+    	    					System.out.println(event1.toString());
+    	    				}
+    	    				
+    	    				
+    	    				
     	    				break;
     	    			}
     				}
@@ -886,13 +928,13 @@ public class P8Http {
     			
     		}
     		
-    		for(int k = 0; k<eventDetailsVec.size(); k++ ){
+    		/*for(int k = 0; k<eventDetailsVec.size(); k++ ){
     			
     			String[] outRow = eventDetailsVec.elementAt(k);
     			
-/*    			System.out.println(outRow[0] + "," +outRow[1] + outRow[2] + "," +outRow[3] + "," +outRow[4] + "," +outRow[5] + "," +
-    					outRow[6] + "," + outRow[7]);*/
-    		}
+    			System.out.println(outRow[0] + "," +outRow[1] + outRow[2] + "," +outRow[3] + "," +outRow[4] + "," +outRow[5] + "," +
+    					outRow[6] + "," + outRow[7]);
+    		}*/
     		
     	}catch(Exception e){
     		e.printStackTrace();
@@ -1622,7 +1664,11 @@ public class P8Http {
 						
 						saveItem[TYPEINDEX.TIME.ordinal()] = eventTimestr;
 						
-						pDataManager.saveTofile(saveItem);
+						boolean saveRes = pDataManager.saveTofile(saveItem);
+						
+						if(saveRes == true){
+							System.out.println("p8 save success:" + Arrays.toString(saveItem));
+						}
 					}
 				}else if(eventName.contains("角球")){
 					return;
@@ -1635,7 +1681,11 @@ public class P8Http {
 						
 						saveItem[TYPEINDEX.TIME.ordinal()] = eventTimestr;
 						
-						pDataManager.saveTofile(saveItem);
+						boolean saveRes = pDataManager.saveTofile(saveItem);
+						
+						if(saveRes == true){
+							System.out.println("p8 save success:" + Arrays.toString(saveItem));
+						}
 					}
 				}			
 				

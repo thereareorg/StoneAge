@@ -7,6 +7,7 @@ public class Bag implements Serializable{
 
 	String req;
     private Vector<String[]> datas;
+    private Vector<String[]> mergeDatas;
     private String successTime = "";
 
 
@@ -18,6 +19,11 @@ public class Bag implements Serializable{
         return datas;
     }
     
+    public Vector<String[]> getMergeDatas() {
+        return mergeDatas;
+    }
+    
+    
     public String getSuccessTime(){
     	return successTime;
     }
@@ -28,6 +34,10 @@ public class Bag implements Serializable{
 
     public void setDatas(Vector<String[]> datas) {
         this.datas = datas;
+    }
+    
+    public void setMergeDatas(Vector<String[]> datas) {
+        this.mergeDatas = datas;
     }
     
     public String getReq() {
@@ -45,6 +55,16 @@ public class Bag implements Serializable{
     		strData += "\n";
     	}
     	
-        return strData + successTime;
+    	String mergeStrData = "";
+    	for(int i = 0; i < mergeDatas.size(); i++) {
+    		String []strs = mergeDatas.elementAt(i);
+    		for(int j = 0; j < 8; j++) {
+    			mergeStrData += strs[j] + ",";
+    		}
+    		mergeStrData += "\n";
+    	}
+    	
+    	
+        return strData + mergeStrData + successTime;
     }
 }

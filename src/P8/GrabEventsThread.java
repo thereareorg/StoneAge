@@ -1,5 +1,6 @@
 package P8;
 
+import java.text.SimpleDateFormat;
 import java.util.Vector;
 
 
@@ -47,6 +48,21 @@ public class GrabEventsThread  extends Thread{
 		
 		while(true){
 			try{
+				
+				
+				
+        		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");// 设置日期格式
+        		
+        		
+        		long currentTimeL = System.currentTimeMillis();
+            	
+        		String currentTime = df.format(currentTimeL);
+        		
+        		System.out.println("开始抓取时间:" + currentTime + "  ----------------------------------------------------------------");
+				
+				
+				
+				
 				P8Http.clearEventsDetails();				
 				P8Http.clearfailedCatchAccount();
 				
@@ -109,6 +125,16 @@ public class GrabEventsThread  extends Thread{
 					
 				}
 				
+				
+				
+        		currentTimeL = System.currentTimeMillis();
+            	
+        		currentTime = df.format(currentTimeL);
+        		
+        		System.out.println("抓取结束时间:" + currentTime + "  ----------------------------------------------------------------");
+				
+				
+				
 				if(P8Http.isfailedAccountEmpty()){
 					P8Http.saveEvents();
 				}
@@ -129,6 +155,9 @@ public class GrabEventsThread  extends Thread{
 				P8Http.setGrabStext();
 				
 				if(P8Http.isfailedAccountEmpty()){
+					
+					StoneAge.bLogin = true;
+					
 					Thread.currentThread().sleep(sleepTime);
 				}else{
 					sa.setConsoleout();
@@ -136,11 +165,16 @@ public class GrabEventsThread  extends Thread{
 						System.out.println("会员  " + P8Http.failedCatchAccount.elementAt(j) + " 抓取失败");
 					}
 					sa.setFileout();
+					
+					for(int j = 0;  j < P8Http.failedCatchAccount.size(); j++){
+						System.out.println("会员  " + P8Http.failedCatchAccount.elementAt(j) + " 抓取失败");
+					}
+					
 					Thread.currentThread().sleep(10*1000);
 				}
 				
 			}catch(Exception e){
-				
+				e.printStackTrace();
 			}
 		}
 		

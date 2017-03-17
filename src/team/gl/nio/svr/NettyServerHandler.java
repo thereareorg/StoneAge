@@ -8,6 +8,7 @@ import io.netty.util.ReferenceCountUtil;
 
 import java.util.Vector;
 
+import P8.MergeManager;
 import P8.P8Http;
 import team.gl.nio.cmn.Bag;
 
@@ -16,10 +17,11 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg)
             throws Exception {
-        System.out.println("server channelRead..");
+        //System.out.println("server channelRead..");
         Bag us = (Bag) msg;
         if(us.getReq().equals("request")) {
 	        Vector<String[]> datas = P8Http.getFinalEventsDetails();
+	        Vector<String[]> mergeDatas = MergeManager.getFinalEventsDetails();
 	        String successTime = P8Http.getSuccessTime();
 /*	        String [] strs1 = {"你好", "111","111","111","111","111","111", "111"};
 	    	String [] strs2 = {"222", "222","222","222","222","222","222", "222"};
@@ -28,6 +30,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 	    	datas.add(strs1);*/
 	    	Bag bag = new Bag("response");
 	    	bag.setDatas(datas);
+	    	bag.setMergeDatas(mergeDatas);
 	    	bag.setSuccessTime(successTime);
 	    	ctx.channel().writeAndFlush(bag);
         }
@@ -35,7 +38,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("server channelReadComplete..");
+        //System.out.println("server channelReadComplete..");
         ctx.flush();//ˢ�º�Ž���ݷ�����SocketChannel
     }
     
@@ -43,7 +46,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
             throws Exception {
-        System.out.println("server exceptionCaught.." + cause.getMessage());
+        //System.out.println("server exceptionCaught.." + cause.getMessage());
         ctx.close();
     }
     
@@ -55,12 +58,12 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("--- Client is active ---");
+        //System.out.println("--- Client is active ---");
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("--- Client is inactive ---");
+       // System.out.println("--- Client is inactive ---");
     }
 
 

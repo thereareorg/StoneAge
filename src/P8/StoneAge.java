@@ -9,6 +9,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JLabel; 
+import javax.swing.JTextField;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,9 +28,15 @@ import java.util.Vector;
 
 import javax.swing.ImageIcon;
 
+import team.gl.nio.cln.ZhiboClient;
 import team.gl.nio.svr.NettyServer;
 
 public class StoneAge {
+	
+	
+	public static JButton btnMergepData;
+	
+	public static JButton btnZhibopData;
 	
 	public static JButton btnpData;
 	
@@ -42,6 +49,28 @@ public class StoneAge {
 	public static GrabEventsThread grabThead;
 	
 	public static StoneAge sa;
+		
+	public static JButton btnZhiboConnect;
+	
+	public static JButton btnMergeWnd;
+	
+	
+	public static boolean zhiboConnected = false;
+	
+	static ZhiboThread zhiboThread = null;
+	
+	
+	
+	public static boolean showMergeWnd = false;
+	public static boolean showP8 = false;
+	public static boolean showZhibo = false;
+
+	
+	public JTextField textFieldZhiboProxyAddress;
+	
+	public JTextField textFieldZhiboProxyAccount;
+	
+	
 	
 	
 	static AccountsDetailsWindow accountWnd = new AccountsDetailsWindow();
@@ -61,6 +90,7 @@ public class StoneAge {
 		System.setProperty("java.util.Arrays.useLegacyMergeSort", "true"); 
 		
 
+		System.out.println("start");
 		
 		
 		accMgr = new AccountManager(accountWnd);
@@ -69,7 +99,11 @@ public class StoneAge {
 		
 		accMgr.init();
 		
+		MergeManager.init();
+		
 		P8Http.initShowLeagueName();
+		
+		ZhiboManager.initShowLeagueName();
 
 		sa = new StoneAge();
 		
@@ -155,6 +189,42 @@ public class StoneAge {
         
         
         
+        int Xposition = 100;
+        int Yposition = 140;
+        
+        
+		btnMergepData = new JButton("合并历史注单");
+		btnMergepData.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				MergeManager.updatepDataDetails();
+				MergeManager.showpDataWnd();
+			}
+		});
+		
+		
+		btnMergepData.setSize(100, 25);
+		btnMergepData.setLocation(Xposition, Yposition - 80);
+		
+		
+		contain.add(btnMergepData);
+        
+		btnZhibopData = new JButton("LL历史注单");
+		btnZhibopData.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ZhiboManager.updatepDataDetails();
+				ZhiboManager.showpDataWnd();
+			}
+		});
+		
+		
+		btnZhibopData.setSize(100, 25);
+		btnZhibopData.setLocation(Xposition, Yposition - 40);
+		
+		
+		contain.add(btnZhibopData);
+        
+        
+        
 		btnpData = new JButton("历史注单");
 		btnpData.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -165,7 +235,7 @@ public class StoneAge {
 		
 		
 		btnpData.setSize(100, 25);
-		btnpData.setLocation(300, 160);
+		btnpData.setLocation(Xposition, Yposition);
 		
 		
 		contain.add(btnpData);
@@ -188,7 +258,7 @@ public class StoneAge {
 		
 		
 		btnLogin.setSize(100, 25);
-		btnLogin.setLocation(300, 200);
+		btnLogin.setLocation(Xposition, Yposition + 40);
 		
 		
 		contain.add(btnLogin);
@@ -206,10 +276,135 @@ public class StoneAge {
 		
 		
 		btnAccount.setSize(100, 25);
-		btnAccount.setLocation(300, 240);
-		
+		btnAccount.setLocation(Xposition, Yposition + 80);
+
 		
 		contain.add(btnAccount);
+		
+		
+		
+		
+		
+		
+		
+		JLabel labelZhiboProxyAddress = new JLabel("网址:");
+		labelZhiboProxyAddress.setSize(50, 25);
+		labelZhiboProxyAddress.setLocation(Xposition + 200, Yposition);
+
+		textFieldZhiboProxyAddress = new JTextField();
+		textFieldZhiboProxyAddress.setSize(100, 25);
+		textFieldZhiboProxyAddress.setLocation(Xposition + 50 + 200, Yposition);
+		textFieldZhiboProxyAddress.setText("103.26.127.50");
+
+		JLabel labelZhiboProxyAccount = new JLabel("端口:");
+		labelZhiboProxyAccount.setSize(50, 25);
+		labelZhiboProxyAccount.setLocation(Xposition + 200, Yposition + 30);
+        
+        
+        
+		textFieldZhiboProxyAccount = new JTextField();
+		textFieldZhiboProxyAccount.setSize(100, 25);
+		textFieldZhiboProxyAccount.setLocation(Xposition + 50 + 200, Yposition + 30);
+		textFieldZhiboProxyAccount.setText("25836");
+        
+        
+		btnZhiboConnect = new JButton("显示智博");
+		btnZhiboConnect.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				try{
+					
+					if(zhiboConnected){
+						showZhibo = true;
+						ZhiboManager.showEventsDeatilsTable();
+						return;
+					}
+					String address = textFieldZhiboProxyAddress.getText();
+					String port = textFieldZhiboProxyAccount.getText();
+					
+					ZhiboClient.HOST = address;
+					ZhiboClient.PORT = Integer.parseInt(port);
+					
+					if(ZhiboClient.connect() == false){
+						JOptionPane.showMessageDialog(null,"连接智博失败！");
+						return;
+					}
+					
+					zhiboConnected = true;
+					
+
+					
+					zhiboThread = new ZhiboThread();
+					zhiboThread.start();
+					
+					System.out.println("连接成功");
+					
+					showZhibo = true;
+
+					
+				}catch(Exception ex){
+					ex.printStackTrace();
+				}
+				
+
+
+			}
+		});
+
+		btnZhiboConnect.setSize(90, 25);
+		btnZhiboConnect.setLocation(Xposition + 200, Yposition + 60);
+		
+		
+		
+		
+		btnMergeWnd = new JButton("显示合并");
+		
+		btnMergeWnd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				try{
+					
+					if(bLogin == false){
+						JOptionPane.showMessageDialog(null,"请先连接平博");
+						return;
+					}
+					
+					
+					if(zhiboConnected == false){
+						JOptionPane.showMessageDialog(null,"请先连接智博");
+						return;
+					}
+					
+
+					showMergeWnd = true;
+					
+			        MergeManager.clearMergeData();
+			        MergeManager.constructMergeRes();
+			        MergeManager.updateEventsDetails();
+			        MergeManager.showMergeDetailsWnd(StoneAge.showMergeWnd);
+
+					
+				}catch(Exception ex){
+					ex.printStackTrace();
+				}
+				
+
+
+			}
+		});
+		
+		btnMergeWnd.setSize(90, 25);
+		btnMergeWnd.setLocation(Xposition + 200, Yposition + 120);
+		
+		
+		contain.add(labelZhiboProxyAddress);
+		contain.add(textFieldZhiboProxyAddress);
+		contain.add(labelZhiboProxyAccount);
+		contain.add(textFieldZhiboProxyAccount);
+		contain.add(btnZhiboConnect);
+		
+		contain.add(btnMergeWnd);
+		
 		
 
 		mainFrame.setSize(img.getIconWidth(), img.getIconHeight());

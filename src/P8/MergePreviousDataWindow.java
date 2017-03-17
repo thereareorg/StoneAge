@@ -1,136 +1,53 @@
 package P8;
 
-import java.awt.BasicStroke;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
-import java.awt.Container;  
- 
+import java.awt.Container;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;  
-import java.awt.event.ActionListener;  
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Vector;  
-  
-import java.awt.Color;
-
-
-
-
-
-
+import java.util.Vector;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JFrame;  
-import javax.swing.JLabel;  
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;  
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;  
-import javax.swing.JTable;  
-import javax.swing.JTextField;  
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel; 
-import javax.swing.table.AbstractTableModel; 
-
-
-import javax.swing.table.TableCellRenderer;
-
-import java.util.Date;      
-
-import javax.swing.Timer;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.text.SimpleDateFormat;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.Stack;
 
 
 
-
-
-class ColorTableCellRenderer extends JLabel implements TableCellRenderer
-
-{
-
-private static final long serialVersionUID = 1L;
-
-//定义构造器
-
-public ColorTableCellRenderer ()
-
-{
-
-//设置标签为不透明状态
-
-this.setOpaque(true);
-
-//设置标签的文本对齐方式为居中
-
-this.setHorizontalAlignment(JLabel.CENTER);
-
-}
-
-//实现获取呈现控件的getTableCellRendererComponent方法
-
-public Component getTableCellRendererComponent(JTable table,Object value,
-
-           boolean isSelected,boolean hasFocus,int row,int column)
-
-{           
-
-//获取要呈现的颜色
-
-Color c=(Color)value;
-
-//根据参数value设置背景色
-
-this.setBackground(c);
-
-
-
-return this;
-
-}
-
- }   
-
-
-
-public class EventsDetailsWindow extends JFrame  
+public class MergePreviousDataWindow extends PreviousDataWindow  
 {  
   
    
-	private static final long serialVersionUID = 508685938515369544L;
-	
-	private  Vector<String[]> originalDetailsData = null;
+	private static final long serialVersionUID = 538685938515369544L;
 	
 	private  Vector<String[]> detailsData = null;
+	
+	private Vector<String[]> originalDetailsData = null;
 	
 	private Vector<Integer> hightlightRows = new Vector<Integer>();
 	
 	
-    private JLabel labelHighlightNum = new JLabel("高亮金额:");
+    private JLabel labelHighlightNum = new JLabel("金额:");
     private JTextField textFieldHighlightNum = new JTextField(15);  
     
-    private JLabel labelInterval = new JLabel("刷新时间:");
+    private JLabel labelInterval = new JLabel("日期选择:");
     
-    String str1[] = {"30", "60","90","120","180"};
+    String str1[] = {"1", "2","3","4","5"};
     
     private JComboBox jcb = new JComboBox(str1); 
+    
+    DateChooser mp = new DateChooser("yyyy-MM-dd", this);
     
     
     private JLabel labelHideNum = new JLabel("隐藏金额:");
@@ -147,16 +64,6 @@ public class EventsDetailsWindow extends JFrame
     private JLabel labelGrabStat= new JLabel("状态:");
     private JTextField textFieldGrabStat = new JTextField(15);  
     
-    
-    private JPopupMenu m_popupMenu;
-    
-    private JMenuItem chooseMenItem; 
-    
-    private JMenuItem mergeMenItem; 
-    
-    private int focusedRowIndex = -1;
-    
-    private int selectedOrMerge = 0;
 	
     Double higlightBigNum = 1000000.0;
     
@@ -175,135 +82,18 @@ public class EventsDetailsWindow extends JFrame
     
     JTable table = null;
 
-    
+
     
     
 	
 
-	public EventsDetailsWindow()  
+	public MergePreviousDataWindow()  
     {  
-		setTitle("平博注单");  
+		setTitle("合并历史注单");  
 		
         intiComponent();  
         
-        addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				StoneAge.showP8 = false;
-				//setVisible(false);
-			}
-		});
-        
     }  
-	
-	
-	
-	private void createPopupMenu() {  
-        m_popupMenu = new JPopupMenu();  
-          
-        chooseMenItem = new JMenuItem();  
-        chooseMenItem.setText("选择");  
-        
-        mergeMenItem = new JMenuItem();
-        mergeMenItem.setText("合并");
-        
-        
-        mergeMenItem.addActionListener(new java.awt.event.ActionListener() {  
-            public void actionPerformed(java.awt.event.ActionEvent evt) {  
-                //该操作需要做的事  
-            	
-            	try{
-            		
-	            	if(focusedRowIndex != -1 && focusedRowIndex < detailsData.size()){
-	            		
-
-	            			
-	            			MergeManager.p8SelectedRow = detailsData.elementAt(focusedRowIndex);
-	            			System.out.println(Arrays.toString(MergeManager.p8SelectedRow));
-
-	            			MergeManager.showMergeWnd(true);
-	            			
-	            			MergeManager.zhiboSelectedRow = null;
-	            			MergeManager.p8SelectedRow = null;
-
-	            	}
-
-	    	        
-            	}catch(Exception e){
-            		
-            	}
-            	
-
-            	
-
-            	
-            }  
-        });  
-        
-        
-        chooseMenItem.addActionListener(new java.awt.event.ActionListener() {  
-            public void actionPerformed(java.awt.event.ActionEvent evt) {  
-                //该操作需要做的事  
-            	
-            	try{
-            		
-	            	if(focusedRowIndex != -1 && focusedRowIndex < detailsData.size()){
-
-	            			MergeManager.p8SelectedRow = detailsData.elementAt(focusedRowIndex);
-	            			System.out.println(Arrays.toString(MergeManager.p8SelectedRow));
-	            		
-	            	}
-
-	    	        
-            	}catch(Exception e){
-            		
-            	}
-
-            }  
-        });  
-        m_popupMenu.add(chooseMenItem);  
-        m_popupMenu.add(mergeMenItem);  
-    }  
-	
-	
-	
-	//鼠标右键点击事件  
-	   private void mouseRightButtonClick(java.awt.event.MouseEvent evt) {  
-	       //判断是否为鼠标的BUTTON3按钮，BUTTON3为鼠标右键  
-	       if (evt.getButton() == java.awt.event.MouseEvent.BUTTON3) {  
-	           //通过点击位置找到点击为表格中的行  
-	           focusedRowIndex = table.rowAtPoint(evt.getPoint());  
-	           if (focusedRowIndex == -1) {  
-	               return;  
-	           }  
-	           //将表格所选项设为当前右键点击的行  
-	           table.setRowSelectionInterval(focusedRowIndex, focusedRowIndex);  
-	           
-	           System.out.println(focusedRowIndex);
-	           //弹出菜单  
-	           
-	           if(MergeManager.zhiboSelectedRow == null){
-	        	   mergeMenItem.setEnabled(false);
-	       
-	           }else{
-	        	   mergeMenItem.setEnabled(true);
-	        	   
-	           }
-	           
-	           
-	           m_popupMenu.show(table, evt.getX(), evt.getY());  
-	       }  
-	  
-	   }  
-	
-	
-	
-	
-	private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {  
-		  
-	       mouseRightButtonClick(evt);  
-	}  
-	
-	
 	
 	
 	public void setStateText(String txt){
@@ -320,10 +110,48 @@ public class EventsDetailsWindow extends JFrame
 			String leagueName = detailsData.elementAt(i)[TYPEINDEX.LEAGUENAME.ordinal()];
 			
 			if(P8Http.isInShowLeagueName(leagueName) || true){
-				double betAmt1 = Double.parseDouble(detailsData.elementAt(i)[TYPEINDEX.PERIOD0HOME.ordinal()]);
-				double betAmt2 = Double.parseDouble(detailsData.elementAt(i)[TYPEINDEX.PERIOD0OVER.ordinal()]);
-				double betAmt3 = Double.parseDouble(detailsData.elementAt(i)[TYPEINDEX.PERIOD1HOME.ordinal()]);
-				double betAmt4 = Double.parseDouble(detailsData.elementAt(i)[TYPEINDEX.PERIOD1HOME.ordinal()]);
+				double betAmt1 =0.0;
+				double betAmt2 = 0.0;
+				double betAmt3 =0.0;
+				double betAmt4 = 0.0;
+				
+				String str1 = detailsData.elementAt(i)[TYPEINDEX.PERIOD0HOME.ordinal()];
+				
+				if(str1.contains("=")){
+					String[] tmp = str1.split("=");
+					betAmt1 = Double.parseDouble(tmp[1]);
+				}else{
+					betAmt1 = Double.parseDouble(str1);
+				}
+				
+				
+				String str2 = detailsData.elementAt(i)[TYPEINDEX.PERIOD0OVER.ordinal()];
+				
+				if(str2.contains("=")){
+					String[] tmp = str2.split("=");
+					betAmt2 = Double.parseDouble(tmp[1]);
+				}else{
+					betAmt2 = Double.parseDouble(str2);
+				}
+				
+				
+				String str3 = detailsData.elementAt(i)[TYPEINDEX.PERIOD1HOME.ordinal()];
+				
+				if(str3.contains("=")){
+					String[] tmp = str3.split("=");
+					betAmt3 = Double.parseDouble(tmp[1]);
+				}else{
+					betAmt3 = Double.parseDouble(str3);
+				}
+				
+				String str4 = detailsData.elementAt(i)[TYPEINDEX.PERIOD1OVER.ordinal()];
+				
+				if(str4.contains("=")){
+					String[] tmp = str4.split("=");
+					betAmt4 = Double.parseDouble(tmp[1]);
+				}else{
+					betAmt4 = Double.parseDouble(str4);
+				}
 				
 				if(Math.abs(betAmt1) > higlightBigNum || Math.abs(betAmt2) > higlightBigNum|| 
 						Math.abs(betAmt3) > higlightBigNum || Math.abs(betAmt4) > higlightBigNum){
@@ -386,23 +214,47 @@ public class EventsDetailsWindow extends JFrame
 	
 	
 	public void updateShowItem(){
+	
+	
+	
+		String date = mp.getChooseDate();
+		
+		Vector<String[]> Vectmp = new Vector<String[]>();
+		
+		for(int i = 0; i < originalDetailsData.size(); i++){
+			if(originalDetailsData.elementAt(i)[TYPEINDEX.TIME.ordinal()].contains(date)){
+				Vectmp.add(originalDetailsData.elementAt(i));
+			}
+						
+		}
+		
+		//
+		
+		if(Vectmp.size() == 0){
+			detailsData = (Vector<String[]>)Vectmp.clone();
+			hightlightBigNumrows();
+			
+			tableMode.updateTable();
+			return;
+		}
+			
 		
 		Vector<String[]> DetailsDatatmp = new Vector<String[]>();
 		
 		//只显示走地盘
 		if(bonlyShowInplay == true){
-			for(int i = 0; i < originalDetailsData.size(); i++){
-				if(originalDetailsData.elementAt(i)[TYPEINDEX.EVENTNAMNE.ordinal()].contains("滚动盘")){
-					DetailsDatatmp.add(originalDetailsData.elementAt(i));
+			for(int i = 0; i < Vectmp.size(); i++){
+				if(Vectmp.elementAt(i)[TYPEINDEX.EVENTNAMNE.ordinal()].contains("滚动盘")){
+					DetailsDatatmp.add(Vectmp.elementAt(i));
 				}
 			}
 		}
 		
 		//只显示单式盘
 		if(bonlyShowNotInplay == true){
-			for(int i = 0; i < originalDetailsData.size(); i++){
-				if(!originalDetailsData.elementAt(i)[TYPEINDEX.EVENTNAMNE.ordinal()].contains("滚动盘")){
-					DetailsDatatmp.add(originalDetailsData.elementAt(i));
+			for(int i = 0; i < Vectmp.size(); i++){
+				if(!Vectmp.elementAt(i)[TYPEINDEX.EVENTNAMNE.ordinal()].contains("滚动盘")){
+					DetailsDatatmp.add(Vectmp.elementAt(i));
 				}
 			}
 		}
@@ -411,7 +263,7 @@ public class EventsDetailsWindow extends JFrame
 		
 		
 		if(DetailsDatatmp.size() == 0){
-			DetailsDatatmp = (Vector<String[]>)originalDetailsData.clone();
+			DetailsDatatmp = (Vector<String[]>)Vectmp.clone();
 		}
 		
 		
@@ -437,18 +289,129 @@ public class EventsDetailsWindow extends JFrame
 			String leagueName = DetailsDatatmp1.elementAt(i)[TYPEINDEX.LEAGUENAME.ordinal()];
 			
 			if(P8Http.isInShowLeagueName(leagueName) || true){
-				double betAmt1 = Double.parseDouble(DetailsDatatmp1.elementAt(i)[TYPEINDEX.PERIOD0HOME.ordinal()]);
-				double betAmt2 = Double.parseDouble(DetailsDatatmp1.elementAt(i)[TYPEINDEX.PERIOD0OVER.ordinal()]);
-				double betAmt3 = Double.parseDouble(DetailsDatatmp1.elementAt(i)[TYPEINDEX.PERIOD1HOME.ordinal()]);
-				double betAmt4 = Double.parseDouble(DetailsDatatmp1.elementAt(i)[TYPEINDEX.PERIOD1HOME.ordinal()]);
+				double betAmt1 =0.0;
+				double betp81 = 0.0;
+				double betzhibo1 = 0.0;
 				
-				if(Math.abs(betAmt1) > hideNum || Math.abs(betAmt2) > hideNum|| 
+				double betAmt2 = 0.0;
+				double betp82 = 0.0;
+				double betzhibo2 = 0.0;
+				
+				double betAmt3 =0.0;
+				double betp83 = 0.0;
+				double betzhibo3 = 0.0;
+				
+				double betAmt4 = 0.0;
+				double betp84 = 0.0;
+				double betzhibo4 = 0.0;
+				
+				String str1 = DetailsDatatmp1.elementAt(i)[TYPEINDEX.PERIOD0HOME.ordinal()];
+				
+				if(str1.contains("=")){
+					String[] tmp = str1.split("=");
+					betAmt1 = Double.parseDouble(tmp[1]);
+					
+					String[] tmp1 = tmp[0].split("\\+");
+					tmp1[0] = tmp1[0].replace("(", "");
+					tmp1[0] = tmp1[0].replace(")", "");
+					
+				
+					tmp1[1] = tmp1[1].replace("(", "");
+					tmp1[1] = tmp1[1].replace(")", "");
+					
+					betp81 = Double.parseDouble(tmp1[0]);
+					betzhibo1 = Double.parseDouble(tmp1[1]);
+					
+					
+				}else{
+					betAmt1 = Double.parseDouble(str1);
+				}
+				
+				
+				String str2 = DetailsDatatmp1.elementAt(i)[TYPEINDEX.PERIOD0OVER.ordinal()];
+				
+				if(str2.contains("=")){
+					String[] tmp = str2.split("=");
+					betAmt2 = Double.parseDouble(tmp[1]);
+					
+					String[] tmp1 = tmp[0].split("\\+");
+					tmp1[0] = tmp1[0].replace("(", "");
+					tmp1[0] = tmp1[0].replace(")", "");
+					
+				
+					tmp1[1] = tmp1[1].replace("(", "");
+					tmp1[1] = tmp1[1].replace(")", "");
+					
+					betp82 = Double.parseDouble(tmp1[0]);
+					betzhibo2 = Double.parseDouble(tmp1[1]);
+					
+				}else{
+					betAmt2 = Double.parseDouble(str2);
+				}
+				
+				
+				String str3 = DetailsDatatmp1.elementAt(i)[TYPEINDEX.PERIOD1HOME.ordinal()];
+				
+				if(str3.contains("=")){
+					String[] tmp = str3.split("=");
+					betAmt3 = Double.parseDouble(tmp[1]);
+					
+					String[] tmp1 = tmp[0].split("\\+");
+					tmp1[0] = tmp1[0].replace("(", "");
+					tmp1[0] = tmp1[0].replace(")", "");
+					
+				
+					tmp1[1] = tmp1[1].replace("(", "");
+					tmp1[1] = tmp1[1].replace(")", "");
+					
+					betp83 = Double.parseDouble(tmp1[0]);
+					betzhibo3 = Double.parseDouble(tmp1[1]);
+					
+				}else{
+					betAmt3 = Double.parseDouble(str3);
+				}
+				
+				String str4 = DetailsDatatmp1.elementAt(i)[TYPEINDEX.PERIOD1OVER.ordinal()];
+				
+				if(str4.contains("=")){
+					String[] tmp = str4.split("=");
+					betAmt4 = Double.parseDouble(tmp[1]);
+					
+					String[] tmp1 = tmp[0].split("\\+");
+					tmp1[0] = tmp1[0].replace("(", "");
+					tmp1[0] = tmp1[0].replace(")", "");
+					
+				
+					tmp1[1] = tmp1[1].replace("(", "");
+					tmp1[1] = tmp1[1].replace(")", "");
+					
+					betp84 = Double.parseDouble(tmp1[0]);
+					betzhibo4 = Double.parseDouble(tmp1[1]);
+					
+				}else{
+					betAmt4 = Double.parseDouble(str4);
+				}
+				
+				
+				
+/*					if(Math.abs(betAmt1) > hideNum || Math.abs(betAmt2) > hideNum|| 
 						Math.abs(betAmt3) > hideNum || Math.abs(betAmt4) > hideNum){
 					//
 					
 					DetailsDatatmp2.add(DetailsDatatmp1.elementAt(i));
 					
+				}*/
+				
+				if( (Math.abs(betp81) > hideNum && Math.abs(betzhibo1) > hideNum) || 
+						(Math.abs(betp82) > hideNum && Math.abs(betzhibo2) > hideNum)|| 
+						(Math.abs(betp83) > hideNum && Math.abs(betzhibo3) > hideNum) || 
+						(Math.abs(betp84) > hideNum && Math.abs(betzhibo4) > hideNum)){
+					//
+					
+					DetailsDatatmp2.add(DetailsDatatmp1.elementAt(i));
+					
 				}
+
 				
 				
 			}
@@ -614,10 +577,9 @@ public class EventsDetailsWindow extends JFrame
 			}
         });
         
-        createPopupMenu();
         
         panelNorth.add(labelInterval);
-        panelNorth.add(jcb);
+        panelNorth.add(mp);
 
         
         panelNorth.add(labelHighlightNum);
@@ -646,14 +608,7 @@ public class EventsDetailsWindow extends JFrame
 		
 	    table = new JTable(tableMode);
 
-        JScrollPane scroll = new JScrollPane(table); 
-        
-        
-        table.addMouseListener(new java.awt.event.MouseAdapter() {  
-            public void mouseClicked(java.awt.event.MouseEvent evt) {  
-                jTable1MouseClicked(evt);  
-            }  
-        });  
+        JScrollPane scroll = new JScrollPane(table);  
         
         
 	    table.getColumnModel().getColumn(2).setPreferredWidth(240);
@@ -794,6 +749,12 @@ public class EventsDetailsWindow extends JFrame
         @Override  
         public int getRowCount()  
         {  
+        	
+        	
+        	if(null == detailsData){
+        		return 0;
+        	}
+        	
             return detailsData.size();  
         }  
   
@@ -842,6 +803,4 @@ public class EventsDetailsWindow extends JFrame
         
   
     }  
-    
-    
 }

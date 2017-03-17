@@ -137,7 +137,7 @@ public class PreviousDataWindow extends JFrame
     
     JTable table = null;
 
-    
+
     
     
 	
@@ -606,7 +606,7 @@ public class PreviousDataWindow extends JFrame
     
     
   
-    private class MyTableModel extends AbstractTableModel  
+    public class MyTableModel extends AbstractTableModel  
     {  
         /* 
          * 这里和刚才一样，定义列名和每个数据的值 
@@ -655,6 +655,12 @@ public class PreviousDataWindow extends JFrame
         @Override  
         public int getRowCount()  
         {  
+        	
+        	
+        	if(null == detailsData){
+        		return 0;
+        	}
+        	
             return detailsData.size();  
         }  
   
