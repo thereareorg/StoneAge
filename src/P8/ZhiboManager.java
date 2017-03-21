@@ -113,13 +113,41 @@ public class ZhiboManager {
     			
     			String oneItem = eventsStr.substring(posStart, posEnd);
     			
-    			oneItem = oneItem.replace("\"", "");
+    			//oneItem = oneItem.replace("\"", "");
     			
-    			String[] eventTmp = oneItem.split(",");
     			
-    			String[] event = {"0", eventTmp[ZHIBOINDEX.LEAGUENAME.ordinal()-1], eventTmp[ZHIBOINDEX.TIME.ordinal()-1], eventTmp[ZHIBOINDEX.EVENTNAMNE.ordinal()-1]
+    			String[] event = {"", "",  "", "", "", "", "", ""};
+    			event[0] = "0";
+    			
+    			//gaidong
+    			int posStartTmp = oneItem.indexOf("\"");
+    			int posEndTmp = oneItem.indexOf("\"", posStartTmp + 1);
+    			event[1] = oneItem.substring(posStartTmp + 1, posEndTmp);
+    			
+    			posStartTmp = oneItem.indexOf("\"", posEndTmp + 1);
+    			posEndTmp = oneItem.indexOf("\"", posStartTmp + 1);
+    			event[2] = oneItem.substring(posStartTmp + 1, posEndTmp);
+    			
+    			posStartTmp = oneItem.indexOf("\"", posEndTmp + 1);
+    			posEndTmp = oneItem.indexOf("\"", posStartTmp + 1);
+    			event[3] = oneItem.substring(posStartTmp + 1, posEndTmp);
+    			
+    			
+    			
+    			posStartTmp = oneItem.indexOf(",", posEndTmp + 1);
+    			
+    			String strNumber = oneItem.substring(posStartTmp + 1);
+    			
+    			String[] eventTmp = strNumber.split(",");
+    			
+    			event[4] = eventTmp[0];
+    			event[5] = eventTmp[1];
+    			event[6] = eventTmp[2];
+    			event[7] = eventTmp[3];
+    					
+/*    			String[] event = {"0", eventTmp[ZHIBOINDEX.LEAGUENAME.ordinal()-1], eventTmp[ZHIBOINDEX.TIME.ordinal()-1], eventTmp[ZHIBOINDEX.EVENTNAMNE.ordinal()-1]
     					,eventTmp[ZHIBOINDEX.PERIOD0HOME.ordinal()-1], eventTmp[ZHIBOINDEX.PERIOD0OVER.ordinal()-1], eventTmp[ZHIBOINDEX.PERIOD1HOME.ordinal()-1]
-    							,eventTmp[ZHIBOINDEX.PERIOD1OVER.ordinal()-1]};
+    							,eventTmp[ZHIBOINDEX.PERIOD1OVER.ordinal()-1]};*/
     			
     			if(event[ZHIBOINDEX.TIME.ordinal()].contains("(") || event[ZHIBOINDEX.TIME.ordinal()].contains(",")){
     				

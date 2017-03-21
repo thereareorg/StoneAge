@@ -58,7 +58,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class P8Http {
 	
 	//debug
-	public boolean printEvents = false;
+	public boolean printEvents = true;
 	
 	
 	
