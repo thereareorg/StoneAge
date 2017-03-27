@@ -7,6 +7,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Vector;
 
 public class ZhiboPreviousDataManager {
@@ -49,9 +52,37 @@ public class ZhiboPreviousDataManager {
 				
 				while ((str = reader.readLine()) != null) {
 					//System.out.println(str);
-					String[] account = str.split(",");
+					//String[] account = str.split(",");
 					
-					pEventsDetails.add(account);
+					String[] event = {"","","","","","","",""};
+					
+					int posStart = -1;
+					int posEnd = -1;
+					
+					event[0] = "0";
+					posStart = str.indexOf(",");
+					posEnd = str.indexOf(",20");
+					
+					event[1] = str.substring(posStart + 1, posEnd);
+					
+					String subStr = str.substring(posEnd + 1);
+					
+					String[] arr = subStr.split(",");
+					
+					event[2] = arr[0];
+					event[3] = arr[1];
+					event[4] = arr[2];
+					event[5] = arr[3];
+					event[6] = arr[4];
+					event[7] = arr[5];
+					
+					//String[] event = str.split(",");
+					
+					pEventsDetails.add(event);
+
+					
+					
+				//	pEventsDetails.add(account);
 					
 						
 					}
@@ -78,6 +109,16 @@ public class ZhiboPreviousDataManager {
 		try{
 			
 			for(int i = 0; i < pEventsDetails.size(); i++){
+				
+/*				System.out.println(Arrays.toString(pEventsDetails.elementAt(i)));
+				
+				System.out.println(pEventsDetails.elementAt(i)[ZHIBOINDEX.EVENTNAMNE.ordinal()]);
+				System.out.println(item[ZHIBOINDEX.EVENTNAMNE.ordinal()]);
+				System.out.println(pEventsDetails.elementAt(i)[ZHIBOINDEX.TIME.ordinal()]);
+				System.out.println(item[ZHIBOINDEX.TIME.ordinal()]);*/
+				
+				
+				
 				if(pEventsDetails.elementAt(i)[ZHIBOINDEX.EVENTNAMNE.ordinal()].contains(item[ZHIBOINDEX.EVENTNAMNE.ordinal()]) && 
 						pEventsDetails.elementAt(i)[ZHIBOINDEX.TIME.ordinal()].contains(item[ZHIBOINDEX.TIME.ordinal()])){
 					return false;
@@ -130,7 +171,30 @@ public class ZhiboPreviousDataManager {
 			
 			while ((str = reader1.readLine()) != null) {
 				//System.out.println(str);
-				String[] event = str.split(",");
+				
+				String[] event = {"","","","","","","",""};
+				
+				int posStart = -1;
+				int posEnd = -1;
+				
+				event[0] = "0";
+				posStart = str.indexOf(",");
+				posEnd = str.indexOf(",20");
+				
+				event[1] = str.substring(posStart + 1, posEnd);
+				
+				String subStr = str.substring(posEnd + 1);
+				
+				String[] arr = subStr.split(",");
+				
+				event[2] = arr[0];
+				event[3] = arr[1];
+				event[4] = arr[2];
+				event[5] = arr[3];
+				event[6] = arr[4];
+				event[7] = arr[5];
+				
+				//String[] event = str.split(",");
 				
 				pEventsDetails.add(event);
 				
@@ -155,4 +219,59 @@ public class ZhiboPreviousDataManager {
 		
 
 	}
+	
+	
+	
+	public String[] findLatestEvents(String eventName){
+		
+		
+		try{
+			String[] item = null;
+			boolean find = false;
+			
+			
+			SimpleDateFormat dfMin = new SimpleDateFormat("yyyy-MM-dd HH:mm");// 设置日期格式
+
+			
+			long currentTimeL = System.currentTimeMillis();
+			
+			
+			String MinStr = dfMin.format(currentTimeL);
+			
+
+			
+			
+			for(int i = 0; i < pEventsDetails.size(); i++){
+				item = pEventsDetails.elementAt(i).clone();
+				if(item[ZHIBOINDEX.EVENTNAMNE.ordinal()].contains(eventName)){
+					java.util.Date Mintime = dfMin.parse(item[ZHIBOINDEX.TIME.ordinal()]);
+					
+					Calendar eventTime = Calendar.getInstance();  
+					eventTime.setTime(Mintime);
+					
+					if(currentTimeL - eventTime.getTimeInMillis() < 3*60*60*1000){
+						find = true;
+						break;
+					}
+					
+					
+				}
+			}
+			
+			if(true == find){
+				return item;
+			}
+			
+			return null;
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return null;
+
+	}
+	
+	
+	
 }

@@ -7,6 +7,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Vector;
 
 public class MergePreviousDataManager {
@@ -152,4 +154,60 @@ public class MergePreviousDataManager {
 		
 
 	}
+	
+	
+	
+	
+	public String[] findLatestEvents(String eventName){
+		
+		
+		try{
+			String[] item = null;
+			boolean find = false;
+			
+			
+			SimpleDateFormat dfMin = new SimpleDateFormat("yyyy-MM-dd HH:mm");// 设置日期格式
+
+			
+			long currentTimeL = System.currentTimeMillis();
+			
+			
+			String MinStr = dfMin.format(currentTimeL);
+			
+
+			
+			
+			for(int i = 0; i < pEventsDetails.size(); i++){
+				item = pEventsDetails.elementAt(i).clone();
+				if(item[TYPEINDEX.EVENTNAMNE.ordinal()].contains(eventName)){
+					java.util.Date Mintime = dfMin.parse(item[ZHIBOINDEX.TIME.ordinal()]);
+					
+					Calendar eventTime = Calendar.getInstance();  
+					eventTime.setTime(Mintime);
+					
+					if(currentTimeL - eventTime.getTimeInMillis() < 3*60*60*1000){
+						find = true;
+						break;
+					}
+					
+					
+				}
+			}
+			
+			if(true == find){
+				return item;
+			}
+			
+			return null;
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return null;
+
+	}
+	
+	
+	
 }

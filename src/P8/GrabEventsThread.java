@@ -116,7 +116,9 @@ public class GrabEventsThread  extends Thread{
 						System.out.println("重新登录 " + p8.getAccount());
 						sa.setFileout();
 						
-						for(int k = 0; k < 3 && p8.islogin() == false; k++){
+						P8Http.addFailedCatchAccount( p8.getAccount());
+						
+						for(int k = 0; k < 2 && p8.islogin() == false; k++){
 							p8.login();
 							Thread.currentThread().sleep(1000);
 						}

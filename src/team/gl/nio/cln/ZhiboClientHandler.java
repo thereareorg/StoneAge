@@ -1,15 +1,15 @@
 package team.gl.nio.cln;
 
-import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 
-import team.gl.nio.cmn.Bag;
 import P8.MergeManager;
-import P8.P8Http;
 import P8.StoneAge;
 import P8.ZhiboManager;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.EventLoop;
+
+import java.util.concurrent.TimeUnit; 
 
 public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {  
 	
@@ -20,7 +20,11 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
 	
 	public static boolean firstTime = true;
 	
-	public static long time = 0L;
+	public static long time = 0L; 
+	
+	public static long time1 = 0L;
+	
+	public static ChannelHandlerContext ctx_s = null;
 	
 
     @Override  
@@ -29,7 +33,8 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
        
        res = (String)msg;
        
-
+       
+       time1 = System.currentTimeMillis();
            
        
        //ZhiboManager.setStateText("		连接成功");
@@ -73,7 +78,6 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
     	   lastRes = res;
        }
        
-       
        firstTime = false;
 
     }  
@@ -81,32 +85,40 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
     
     
 	@Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {		
         System.out.println("--- Server is active ---");
+        ctx_s = ctx;
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("--- Server is inactive ---");
-
+        System.out.println("--- Server is inactive ---"); 
         // 10s 之后尝试重新连接服务器
-        System.out.println("5s 之后尝试重新连接服务器...");
-        Thread.sleep(5 * 1000);
-        
         ZhiboManager.setStateText("		失去连接,重新连接中...");
+        System.out.println("尝试重新连接服务器...");
         
-        while(ZhiboClient.connect() == false){
-        	try{
-        		Thread.currentThread().sleep(5 * 1000);
-        	}catch(Exception e){
-        		e.printStackTrace();
-        	}
-        	
-        }
         
-        ZhiboManager.setStateText("		连接成功");
         
-       
+        ZhiboClient.group.schedule(new Runnable() {  
+            
+            @Override  
+          
+            public void run() {  
+                while(ZhiboClient.connect() == false) {
+                	
+                	try{  					
+    					Thread.currentThread().sleep(5000);
+    					
+    				}catch(Exception e){
+    					e.printStackTrace();
+    				} 
+                }
+            }  
+          
+          }, 1L, TimeUnit.SECONDS);  
+          
+        super.channelInactive(ctx);
+             
     }
     
     
@@ -115,9 +127,22 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
     	
     	try{
     		
+            if(System.currentTimeMillis() - time1 > 180 * 1000) {
+            	if(ctx_s != null) {
+            		ctx_s.close();
+            	}
+         	    time1 = System.currentTimeMillis();
+         	    
+         	    return;
+            }
+    		
+    		
+    		
             if(!res.contains("[[") || !res.contains("]]")){
           	   return;
              }
+            
+
              
              
              //ZhiboManager.clearEventsVec();

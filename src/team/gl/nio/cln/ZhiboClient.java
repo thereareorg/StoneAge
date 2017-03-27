@@ -1,6 +1,5 @@
 package team.gl.nio.cln;
 
-
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
@@ -15,16 +14,19 @@ public class ZhiboClient {
     public static String HOST = "103.26.127.50";
     public static int PORT = 25836;  
 
-    public static Bootstrap bootstrap = getBootstrap();  
-    public static Channel channel = null;
+    public static Bootstrap bootstrap = null; 
+    public static EventLoopGroup group = null;
+    //public static Channel channel = null;
 
 
     /** 
      * 初始化Bootstrap 
      * @return 
      */  
-    public static final Bootstrap getBootstrap(){ 
-        EventLoopGroup group = new NioEventLoopGroup();  
+    public static final Bootstrap getBootstrap(){
+    	if(group == null) {
+    		group = new NioEventLoopGroup();
+    	}
         Bootstrap b = new Bootstrap();  
         b.group(group).channel(NioSocketChannel.class);  
         b.handler(new ChannelInitializer<Channel>() {  
@@ -45,21 +47,28 @@ public class ZhiboClient {
 
     
     public static boolean connect(){
-    	
-    	channel = getChannel(HOST,PORT);  
-    	
-    	if(channel == null){
-    		return false;
-    	}else{
-    		return true;
-    	}
+    	bootstrap = getBootstrap();
+    	try {  
+            bootstrap.connect(HOST, PORT).sync();
+            System.out.println("connected");
+        } catch (Exception e) {  
+        	System.out.println("连接失败！！！！！！" );
+        	//e.printStackTrace();
+            return false; 
+        }  
+   
+    	return true;
     }
+    
+	 public static void reConnect(){
+		
+	  }
     
     public static final Channel getChannel(String host,int port){  
         Channel channel = null;  
         try {  
-            channel = bootstrap.connect(host, port).sync().channel();  
-            System.out.println("connected");
+            channel = bootstrap.connect(host, port).sync().channel();
+            System.out.println("connected!!!");
         } catch (Exception e) {   
             return null;  
         }  
