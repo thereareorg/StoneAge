@@ -10,6 +10,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Vector;
 
 import javax.swing.JCheckBox;
@@ -216,215 +218,253 @@ public class MergePreviousDataWindow extends PreviousDataWindow
 	public void updateShowItem(){
 	
 	
-	
-		String date = mp.getChooseDate();
-		
-		Vector<String[]> Vectmp = new Vector<String[]>();
-		
-		for(int i = 0; i < originalDetailsData.size(); i++){
-			if(originalDetailsData.elementAt(i)[TYPEINDEX.TIME.ordinal()].contains(date)){
-				Vectmp.add(originalDetailsData.elementAt(i));
+		try{
+			
+			String date = mp.getChooseDate();
+			
+			Vector<String[]> Vectmp = new Vector<String[]>();
+			
+			
+			String startTimeStr = date + " " + "13:00";
+			
+			SimpleDateFormat dfMin = new SimpleDateFormat("yyyy-MM-dd HH:mm");// 设置日期格式
+			
+			SimpleDateFormat dfDay = new SimpleDateFormat("yyyy-MM-dd");// 设置日期格式
+			
+			
+			java.util.Date startTimeDate = dfMin.parse(startTimeStr);
+			
+			Calendar startTime = Calendar.getInstance();  
+			startTime.setTime(startTimeDate);
+			
+			
+			long currentTimeL = System.currentTimeMillis();
+			
+			String LocaltodayStr = dfDay.format(currentTimeL);
+			
+			
+			String MinStr = dfMin.format(currentTimeL);
+			
+			java.util.Date Mintime = dfMin.parse(MinStr);
+			
+			for(int i = 0; i < originalDetailsData.size(); i++){
+				String timeStr = originalDetailsData.elementAt(i)[TYPEINDEX.TIME.ordinal()];
+				java.util.Date timeDate = dfMin.parse(timeStr);
+				
+				Calendar time = Calendar.getInstance();  
+				time.setTime(timeDate);
+				
+				
+				if(time.getTimeInMillis() >= startTime.getTimeInMillis() && time.getTimeInMillis() < startTime.getTimeInMillis() + 24*60*60*1000){
+					Vectmp.add(originalDetailsData.elementAt(i));
+				}
+							
 			}
+			
+			//
+			
+			if(Vectmp.size() == 0){
+				detailsData = (Vector<String[]>)Vectmp.clone();
+				hightlightBigNumrows();
+				
+				tableMode.updateTable();
+				return;
+			}
+				
+			
+			Vector<String[]> DetailsDatatmp = new Vector<String[]>();
+			
+			//只显示走地盘
+			if(bonlyShowInplay == true){
+				for(int i = 0; i < Vectmp.size(); i++){
+					if(Vectmp.elementAt(i)[TYPEINDEX.EVENTNAMNE.ordinal()].contains("滚动盘")){
+						DetailsDatatmp.add(Vectmp.elementAt(i));
+					}
+				}
+			}
+			
+			//只显示单式盘
+			if(bonlyShowNotInplay == true){
+				for(int i = 0; i < Vectmp.size(); i++){
+					if(!Vectmp.elementAt(i)[TYPEINDEX.EVENTNAMNE.ordinal()].contains("滚动盘")){
+						DetailsDatatmp.add(Vectmp.elementAt(i));
+					}
+				}
+			}
+			
+			Vector<String[]> DetailsDatatmp1 = new Vector<String[]>();
+			
+			
+			if(DetailsDatatmp.size() == 0){
+				DetailsDatatmp = (Vector<String[]>)Vectmp.clone();
+			}
+			
+			
+			//只看五大联赛
+			if(bonlyShow5Big == true){
+				for(int i = 0; i < DetailsDatatmp.size(); i++){
+					if(P8Http.isInShowLeagueName(DetailsDatatmp.elementAt(i)[TYPEINDEX.LEAGUENAME.ordinal()])){
+						DetailsDatatmp1.add(DetailsDatatmp.elementAt(i));
+					}
+				}
+			}
+			
+			Vector<String[]> DetailsDatatmp2 = new Vector<String[]>();
+			
+			if(DetailsDatatmp1.size() == 0){
+
+				DetailsDatatmp1 = (Vector<String[]>)DetailsDatatmp.clone();
+				
+			}
+			
+			//隐藏数额
+			for(int i = 0; i< DetailsDatatmp1.size(); i++){
+				String leagueName = DetailsDatatmp1.elementAt(i)[TYPEINDEX.LEAGUENAME.ordinal()];
+				
+				if(P8Http.isInShowLeagueName(leagueName) || true){
+					double betAmt1 =0.0;
+					double betp81 = 0.0;
+					double betzhibo1 = 0.0;
+					
+					double betAmt2 = 0.0;
+					double betp82 = 0.0;
+					double betzhibo2 = 0.0;
+					
+					double betAmt3 =0.0;
+					double betp83 = 0.0;
+					double betzhibo3 = 0.0;
+					
+					double betAmt4 = 0.0;
+					double betp84 = 0.0;
+					double betzhibo4 = 0.0;
+					
+					String str1 = DetailsDatatmp1.elementAt(i)[TYPEINDEX.PERIOD0HOME.ordinal()];
+					
+					if(str1.contains("=")){
+						String[] tmp = str1.split("=");
+						betAmt1 = Double.parseDouble(tmp[1]);
 						
-		}
-		
-		//
-		
-		if(Vectmp.size() == 0){
-			detailsData = (Vector<String[]>)Vectmp.clone();
+						String[] tmp1 = tmp[0].split("\\+");
+						tmp1[0] = tmp1[0].replace("(", "");
+						tmp1[0] = tmp1[0].replace(")", "");
+						
+					
+						tmp1[1] = tmp1[1].replace("(", "");
+						tmp1[1] = tmp1[1].replace(")", "");
+						
+						betp81 = Double.parseDouble(tmp1[0]);
+						betzhibo1 = Double.parseDouble(tmp1[1]);
+						
+						
+					}else{
+						betAmt1 = Double.parseDouble(str1);
+					}
+					
+					
+					String str2 = DetailsDatatmp1.elementAt(i)[TYPEINDEX.PERIOD0OVER.ordinal()];
+					
+					if(str2.contains("=")){
+						String[] tmp = str2.split("=");
+						betAmt2 = Double.parseDouble(tmp[1]);
+						
+						String[] tmp1 = tmp[0].split("\\+");
+						tmp1[0] = tmp1[0].replace("(", "");
+						tmp1[0] = tmp1[0].replace(")", "");
+						
+					
+						tmp1[1] = tmp1[1].replace("(", "");
+						tmp1[1] = tmp1[1].replace(")", "");
+						
+						betp82 = Double.parseDouble(tmp1[0]);
+						betzhibo2 = Double.parseDouble(tmp1[1]);
+						
+					}else{
+						betAmt2 = Double.parseDouble(str2);
+					}
+					
+					
+					String str3 = DetailsDatatmp1.elementAt(i)[TYPEINDEX.PERIOD1HOME.ordinal()];
+					
+					if(str3.contains("=")){
+						String[] tmp = str3.split("=");
+						betAmt3 = Double.parseDouble(tmp[1]);
+						
+						String[] tmp1 = tmp[0].split("\\+");
+						tmp1[0] = tmp1[0].replace("(", "");
+						tmp1[0] = tmp1[0].replace(")", "");
+						
+					
+						tmp1[1] = tmp1[1].replace("(", "");
+						tmp1[1] = tmp1[1].replace(")", "");
+						
+						betp83 = Double.parseDouble(tmp1[0]);
+						betzhibo3 = Double.parseDouble(tmp1[1]);
+						
+					}else{
+						betAmt3 = Double.parseDouble(str3);
+					}
+					
+					String str4 = DetailsDatatmp1.elementAt(i)[TYPEINDEX.PERIOD1OVER.ordinal()];
+					
+					if(str4.contains("=")){
+						String[] tmp = str4.split("=");
+						betAmt4 = Double.parseDouble(tmp[1]);
+						
+						String[] tmp1 = tmp[0].split("\\+");
+						tmp1[0] = tmp1[0].replace("(", "");
+						tmp1[0] = tmp1[0].replace(")", "");
+						
+					
+						tmp1[1] = tmp1[1].replace("(", "");
+						tmp1[1] = tmp1[1].replace(")", "");
+						
+						betp84 = Double.parseDouble(tmp1[0]);
+						betzhibo4 = Double.parseDouble(tmp1[1]);
+						
+					}else{
+						betAmt4 = Double.parseDouble(str4);
+					}
+					
+					
+					
+	/*					if(Math.abs(betAmt1) > hideNum || Math.abs(betAmt2) > hideNum|| 
+							Math.abs(betAmt3) > hideNum || Math.abs(betAmt4) > hideNum){
+						//
+						
+						DetailsDatatmp2.add(DetailsDatatmp1.elementAt(i));
+						
+					}*/
+					
+					if( (Math.abs(betp81) > hideNum && Math.abs(betzhibo1) > hideNum) || 
+							(Math.abs(betp82) > hideNum && Math.abs(betzhibo2) > hideNum)|| 
+							(Math.abs(betp83) > hideNum && Math.abs(betzhibo3) > hideNum) || 
+							(Math.abs(betp84) > hideNum && Math.abs(betzhibo4) > hideNum)){
+						//
+						
+						DetailsDatatmp2.add(DetailsDatatmp1.elementAt(i));
+						
+					}
+
+					
+					
+				}
+				
+				
+			}
+			
+			detailsData = (Vector<String[]>)DetailsDatatmp2.clone();
+			
+			
 			hightlightBigNumrows();
 			
 			tableMode.updateTable();
-			return;
-		}
 			
-		
-		Vector<String[]> DetailsDatatmp = new Vector<String[]>();
-		
-		//只显示走地盘
-		if(bonlyShowInplay == true){
-			for(int i = 0; i < Vectmp.size(); i++){
-				if(Vectmp.elementAt(i)[TYPEINDEX.EVENTNAMNE.ordinal()].contains("滚动盘")){
-					DetailsDatatmp.add(Vectmp.elementAt(i));
-				}
-			}
+		}catch(Exception e){
+			e.printStackTrace();
 		}
 		
-		//只显示单式盘
-		if(bonlyShowNotInplay == true){
-			for(int i = 0; i < Vectmp.size(); i++){
-				if(!Vectmp.elementAt(i)[TYPEINDEX.EVENTNAMNE.ordinal()].contains("滚动盘")){
-					DetailsDatatmp.add(Vectmp.elementAt(i));
-				}
-			}
-		}
-		
-		Vector<String[]> DetailsDatatmp1 = new Vector<String[]>();
-		
-		
-		if(DetailsDatatmp.size() == 0){
-			DetailsDatatmp = (Vector<String[]>)Vectmp.clone();
-		}
-		
-		
-		//只看五大联赛
-		if(bonlyShow5Big == true){
-			for(int i = 0; i < DetailsDatatmp.size(); i++){
-				if(P8Http.isInShowLeagueName(DetailsDatatmp.elementAt(i)[TYPEINDEX.LEAGUENAME.ordinal()])){
-					DetailsDatatmp1.add(DetailsDatatmp.elementAt(i));
-				}
-			}
-		}
-		
-		Vector<String[]> DetailsDatatmp2 = new Vector<String[]>();
-		
-		if(DetailsDatatmp1.size() == 0){
+	
 
-			DetailsDatatmp1 = (Vector<String[]>)DetailsDatatmp.clone();
-			
-		}
-		
-		//隐藏数额
-		for(int i = 0; i< DetailsDatatmp1.size(); i++){
-			String leagueName = DetailsDatatmp1.elementAt(i)[TYPEINDEX.LEAGUENAME.ordinal()];
-			
-			if(P8Http.isInShowLeagueName(leagueName) || true){
-				double betAmt1 =0.0;
-				double betp81 = 0.0;
-				double betzhibo1 = 0.0;
-				
-				double betAmt2 = 0.0;
-				double betp82 = 0.0;
-				double betzhibo2 = 0.0;
-				
-				double betAmt3 =0.0;
-				double betp83 = 0.0;
-				double betzhibo3 = 0.0;
-				
-				double betAmt4 = 0.0;
-				double betp84 = 0.0;
-				double betzhibo4 = 0.0;
-				
-				String str1 = DetailsDatatmp1.elementAt(i)[TYPEINDEX.PERIOD0HOME.ordinal()];
-				
-				if(str1.contains("=")){
-					String[] tmp = str1.split("=");
-					betAmt1 = Double.parseDouble(tmp[1]);
-					
-					String[] tmp1 = tmp[0].split("\\+");
-					tmp1[0] = tmp1[0].replace("(", "");
-					tmp1[0] = tmp1[0].replace(")", "");
-					
-				
-					tmp1[1] = tmp1[1].replace("(", "");
-					tmp1[1] = tmp1[1].replace(")", "");
-					
-					betp81 = Double.parseDouble(tmp1[0]);
-					betzhibo1 = Double.parseDouble(tmp1[1]);
-					
-					
-				}else{
-					betAmt1 = Double.parseDouble(str1);
-				}
-				
-				
-				String str2 = DetailsDatatmp1.elementAt(i)[TYPEINDEX.PERIOD0OVER.ordinal()];
-				
-				if(str2.contains("=")){
-					String[] tmp = str2.split("=");
-					betAmt2 = Double.parseDouble(tmp[1]);
-					
-					String[] tmp1 = tmp[0].split("\\+");
-					tmp1[0] = tmp1[0].replace("(", "");
-					tmp1[0] = tmp1[0].replace(")", "");
-					
-				
-					tmp1[1] = tmp1[1].replace("(", "");
-					tmp1[1] = tmp1[1].replace(")", "");
-					
-					betp82 = Double.parseDouble(tmp1[0]);
-					betzhibo2 = Double.parseDouble(tmp1[1]);
-					
-				}else{
-					betAmt2 = Double.parseDouble(str2);
-				}
-				
-				
-				String str3 = DetailsDatatmp1.elementAt(i)[TYPEINDEX.PERIOD1HOME.ordinal()];
-				
-				if(str3.contains("=")){
-					String[] tmp = str3.split("=");
-					betAmt3 = Double.parseDouble(tmp[1]);
-					
-					String[] tmp1 = tmp[0].split("\\+");
-					tmp1[0] = tmp1[0].replace("(", "");
-					tmp1[0] = tmp1[0].replace(")", "");
-					
-				
-					tmp1[1] = tmp1[1].replace("(", "");
-					tmp1[1] = tmp1[1].replace(")", "");
-					
-					betp83 = Double.parseDouble(tmp1[0]);
-					betzhibo3 = Double.parseDouble(tmp1[1]);
-					
-				}else{
-					betAmt3 = Double.parseDouble(str3);
-				}
-				
-				String str4 = DetailsDatatmp1.elementAt(i)[TYPEINDEX.PERIOD1OVER.ordinal()];
-				
-				if(str4.contains("=")){
-					String[] tmp = str4.split("=");
-					betAmt4 = Double.parseDouble(tmp[1]);
-					
-					String[] tmp1 = tmp[0].split("\\+");
-					tmp1[0] = tmp1[0].replace("(", "");
-					tmp1[0] = tmp1[0].replace(")", "");
-					
-				
-					tmp1[1] = tmp1[1].replace("(", "");
-					tmp1[1] = tmp1[1].replace(")", "");
-					
-					betp84 = Double.parseDouble(tmp1[0]);
-					betzhibo4 = Double.parseDouble(tmp1[1]);
-					
-				}else{
-					betAmt4 = Double.parseDouble(str4);
-				}
-				
-				
-				
-/*					if(Math.abs(betAmt1) > hideNum || Math.abs(betAmt2) > hideNum|| 
-						Math.abs(betAmt3) > hideNum || Math.abs(betAmt4) > hideNum){
-					//
-					
-					DetailsDatatmp2.add(DetailsDatatmp1.elementAt(i));
-					
-				}*/
-				
-				if( (Math.abs(betp81) > hideNum && Math.abs(betzhibo1) > hideNum) || 
-						(Math.abs(betp82) > hideNum && Math.abs(betzhibo2) > hideNum)|| 
-						(Math.abs(betp83) > hideNum && Math.abs(betzhibo3) > hideNum) || 
-						(Math.abs(betp84) > hideNum && Math.abs(betzhibo4) > hideNum)){
-					//
-					
-					DetailsDatatmp2.add(DetailsDatatmp1.elementAt(i));
-					
-				}
-
-				
-				
-			}
-			
-			
-		}
-		
-		detailsData = (Vector<String[]>)DetailsDatatmp2.clone();
-		
-		
-		hightlightBigNumrows();
-		
-		tableMode.updateTable();
 		
 	}
 

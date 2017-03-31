@@ -16,6 +16,8 @@ import java.util.Vector;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import Mail.MailManager;
+
 public class MergeManager {
 	
 	static BufferedWriter fw = null;  //写	
@@ -33,6 +35,11 @@ public class MergeManager {
 	public static MergeDetailsWindow mergeDetailsWnd = new MergeDetailsWindow();
 	
 	
+	
+	public static int mergeHideNumber = 5000;
+	public static int mergeSendNumber = 10000;
+	
+	static Map<String, Vector<Integer>> mailRecords = new HashMap<String, Vector<Integer>>();  
 	
 	public static String[] zhiboSelectedRow = null;
 	public static String[] p8SelectedRow = null;
@@ -598,6 +605,236 @@ public class MergeManager {
 
 		
 	}
+	
+	
+	public static void sendMails(){
+		try{
+			
+			for(int i = 0; i < mergeEventDetailsVec.size(); i++){
+				
+				String[] item = mergeEventDetailsVec.elementAt(i).clone();
+				
+				if(item[TYPEINDEX.EVENTNAMNE.ordinal()].contains("滚动盘")){
+					continue;
+				}
+				
+				double betAmt1 =0.0;
+				double betp81 = 0.0;
+				double betzhibo1 = 0.0;
+				
+				double betAmt2 = 0.0;
+				double betp82 = 0.0;
+				double betzhibo2 = 0.0;
+				
+				double betAmt3 =0.0;
+				double betp83 = 0.0;
+				double betzhibo3 = 0.0;
+				
+				double betAmt4 = 0.0;
+				double betp84 = 0.0;
+				double betzhibo4 = 0.0;
+				
+				String str1 = item[TYPEINDEX.PERIOD0HOME.ordinal()];
+				
+				if(str1.contains("=")){
+					String[] tmp = str1.split("=");
+					betAmt1 = Double.parseDouble(tmp[1]);
+					
+					String[] tmp1 = tmp[0].split("\\+");
+					tmp1[0] = tmp1[0].replace("(", "");
+					tmp1[0] = tmp1[0].replace(")", "");
+					
+				
+					tmp1[1] = tmp1[1].replace("(", "");
+					tmp1[1] = tmp1[1].replace(")", "");
+					
+					betp81 = Double.parseDouble(tmp1[0]);
+					betzhibo1 = Double.parseDouble(tmp1[1]);
+					
+					
+				}else{
+					betAmt1 = Double.parseDouble(str1);
+				}
+				
+				
+				String str2 = item[TYPEINDEX.PERIOD0OVER.ordinal()];
+				
+				if(str2.contains("=")){
+					String[] tmp = str2.split("=");
+					betAmt2 = Double.parseDouble(tmp[1]);
+					
+					String[] tmp1 = tmp[0].split("\\+");
+					tmp1[0] = tmp1[0].replace("(", "");
+					tmp1[0] = tmp1[0].replace(")", "");
+					
+				
+					tmp1[1] = tmp1[1].replace("(", "");
+					tmp1[1] = tmp1[1].replace(")", "");
+					
+					betp82 = Double.parseDouble(tmp1[0]);
+					betzhibo2 = Double.parseDouble(tmp1[1]);
+					
+				}else{
+					betAmt2 = Double.parseDouble(str2);
+				}
+				
+				
+				String str3 = item[TYPEINDEX.PERIOD1HOME.ordinal()];
+				
+				if(str3.contains("=")){
+					String[] tmp = str3.split("=");
+					betAmt3 = Double.parseDouble(tmp[1]);
+					
+					String[] tmp1 = tmp[0].split("\\+");
+					tmp1[0] = tmp1[0].replace("(", "");
+					tmp1[0] = tmp1[0].replace(")", "");
+					
+				
+					tmp1[1] = tmp1[1].replace("(", "");
+					tmp1[1] = tmp1[1].replace(")", "");
+					
+					betp83 = Double.parseDouble(tmp1[0]);
+					betzhibo3 = Double.parseDouble(tmp1[1]);
+					
+				}else{
+					betAmt3 = Double.parseDouble(str3);
+				}
+				
+				String str4 = item[TYPEINDEX.PERIOD1OVER.ordinal()];
+				
+				if(str4.contains("=")){
+					String[] tmp = str4.split("=");
+					betAmt4 = Double.parseDouble(tmp[1]);
+					
+					String[] tmp1 = tmp[0].split("\\+");
+					tmp1[0] = tmp1[0].replace("(", "");
+					tmp1[0] = tmp1[0].replace(")", "");
+					
+				
+					tmp1[1] = tmp1[1].replace("(", "");
+					tmp1[1] = tmp1[1].replace(")", "");
+					
+					betp84 = Double.parseDouble(tmp1[0]);
+					betzhibo4 = Double.parseDouble(tmp1[1]);
+					
+				}else{
+					betAmt4 = Double.parseDouble(str4);
+				}
+				
+				
+				//SimpleDateFormat dfMin = new SimpleDateFormat("yyyy-MM-dd HH:mm");// 设置日期格式
+				
+				SimpleDateFormat dfDay = new SimpleDateFormat("yyyy-MM-dd");// 设置日期格式
+				
+				
+				long currentTimeL = System.currentTimeMillis();
+				
+				String todayStr = dfDay.format(currentTimeL);
+				
+
+					
+				String timeStr = item[TYPEINDEX.TIME.ordinal()];
+				
+				if(!timeStr.contains("-")){
+					timeStr = todayStr + " " + timeStr;
+				}
+				
+				String key = item[TYPEINDEX.EVENTNAMNE.ordinal()] + timeStr;
+				
+        		if(true != mailRecords.containsKey(key)){
+        			Vector<Integer> records = new Vector<Integer>();
+        			mailRecords.put(key, records);
+        		}
+				
+				
+        		
+        		Vector<Integer> records = mailRecords.get(key); 
+        		
+				if(Math.abs(betp81) > mergeHideNumber && Math.abs(betzhibo1) > mergeHideNumber){
+					
+					
+					
+	    			int p0hsend = (int) (betAmt1/mergeSendNumber);    			
+	    			
+	    			if(true != records.contains(p0hsend) && p0hsend != 0){
+	    				records.add(p0hsend);
+	    				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", "【合并】" + key, "全场让球:" + Integer.toString(p0hsend));
+	    			}
+				}
+				
+				if(Math.abs(betp82) > mergeHideNumber && Math.abs(betzhibo2) > mergeHideNumber){
+					
+	    			int p0osend = (int) (betAmt2/mergeSendNumber);
+	    			int p0osendsaved = 0;
+	    			if(p0osend != 0){
+	    				if(p0osend < 0){
+	    					p0osendsaved = p0osend - 10;
+	    				}else{
+	    					p0osendsaved = p0osend + 10;
+	    				}
+	    				
+	        			if(true != records.contains(p0osendsaved)){
+	        				records.add(p0osendsaved);
+	        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", "【合并】" + key, "全场大小:" + Integer.toString(p0osend));
+	        			}
+	    				
+	    			}
+				}
+				
+				
+				if(Math.abs(betp83) > mergeHideNumber && Math.abs(betzhibo3) > mergeHideNumber){
+					
+	    			int p1hsend = (int) (betAmt3/mergeSendNumber);
+	    			int p1hsendsaved = 0;
+	    			if(p1hsend != 0){
+	    				if(p1hsend < 0){
+	    					p1hsendsaved = p1hsend - 20;
+	    				}else{
+	    					p1hsendsaved = p1hsend + 20;
+	    				}
+	    				
+	        			if(true != records.contains(p1hsendsaved)){
+	        				records.add(p1hsendsaved);
+	        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", "【合并】" + key, "全场大小:" + Integer.toString(p1hsend));
+	        			}
+	    				
+	    			}
+				}
+				
+				
+				if(Math.abs(betp84) > mergeHideNumber && Math.abs(betzhibo4) > mergeHideNumber){
+					
+	    			int p1osend = (int) (betAmt3/mergeSendNumber);
+	    			int p1osendsaved = 0;
+	    			if(p1osend != 0){
+	    				if(p1osend < 0){
+	    					p1osendsaved = p1osend - 30;
+	    				}else{
+	    					p1osendsaved = p1osend + 30;
+	    				}
+	    				
+	        			if(true != records.contains(p1osendsaved)){
+	        				records.add(p1osendsaved);
+	        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", "【合并】" + key, "全场大小:" + Integer.toString(p1osend));
+	        			}
+	    				
+	    			}
+				}
+				
+				
+				
+				
+				
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+
+	}
+	
+	
+	
 	
 	
 	

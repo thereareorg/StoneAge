@@ -61,6 +61,7 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
                }
                
                MergeManager.constructMergeRes();
+               MergeManager.sendMails();
                MergeManager.updateEventsDetails();
                MergeManager.copyTofinalEventsDetails();
                MergeManager.showMergeDetailsWnd(StoneAge.showMergeWnd);
@@ -169,6 +170,7 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
              
              MergeManager.clearMergeData();
              MergeManager.constructMergeRes();
+             MergeManager.sendMails();
              MergeManager.copyTofinalEventsDetails();
              MergeManager.updateEventsDetails();
              MergeManager.showMergeDetailsWnd(StoneAge.showMergeWnd);

@@ -22,7 +22,9 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 import org.apache.http.Header;
@@ -46,6 +48,8 @@ import org.apache.http.util.EntityUtils;
 
 
 import org.json.*;
+
+import Mail.MailManager;
 
 import java.util.Vector;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -74,6 +78,9 @@ public class P8Http {
     boolean bLogin = false;
     
     
+    public static int P8SendNumber = 10000;
+    
+    
     static PreviousDataWindow pDataWindow = new PreviousDataWindow();
     
     static PreviousDataManager pDataManager = new PreviousDataManager(pDataWindow);
@@ -84,6 +91,9 @@ public class P8Http {
     
 
     public static   Vector<String[]> eventDetailsVec = new Vector<String[]>();
+    
+    
+    static Map<String, Vector<Integer>> mailRecords = new HashMap<String, Vector<Integer>>();  
     
     
     private static ReadWriteLock lockeFinalEventsDetails = new ReentrantReadWriteLock();
@@ -235,6 +245,104 @@ public class P8Http {
     
     
 
+    
+    public static void sendMails(){
+    	
+    	try{
+    		
+    		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    		
+        	for(int i = 0; i < eventDetailsVec.size(); i++){
+        		String[] item = eventDetailsVec.elementAt(i).clone();
+        		
+        		
+        		
+        		long time = Long.parseLong(item[TYPEINDEX.TIME.ordinal()]);
+        		
+        		String key = item[TYPEINDEX.EVENTNAMNE.ordinal()] + " " + df.format(time);
+        		
+        		//过滤滚动盘
+        		if(key.contains("滚动盘")){
+        			continue;
+        		}
+        		
+        		if(true != mailRecords.containsKey(key)){
+        			Vector<Integer> records = new Vector<Integer>();
+        			mailRecords.put(key, records);
+        		}
+        		
+        		//开始解析数据
+    			double p0h = Double.parseDouble(item[TYPEINDEX.PERIOD0HOME.ordinal()]);
+    			double p0o = Double.parseDouble(item[TYPEINDEX.PERIOD0OVER.ordinal()]);
+    			double p1h = Double.parseDouble(item[TYPEINDEX.PERIOD1HOME.ordinal()]);
+    			double p1o = Double.parseDouble(item[TYPEINDEX.PERIOD1OVER.ordinal()]);
+    			
+    			int p0hsend = (int) (p0h/P8SendNumber);    			
+    			Vector<Integer> records = mailRecords.get(key);    			
+    			if(true != records.contains(p0hsend) && p0hsend != 0){
+    				records.add(p0hsend);
+    				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", key, "全场让球:" + Integer.toString(p0hsend));
+    			}
+    			
+    			int p0osend = (int) (p0o/P8SendNumber);
+    			int p0osendsaved = 0;
+    			if(p0osend != 0){
+    				if(p0osend < 0){
+    					p0osendsaved = p0osend - 10;
+    				}else{
+    					p0osendsaved = p0osend + 10;
+    				}
+    				
+        			if(true != records.contains(p0osendsaved)){
+        				records.add(p0osendsaved);
+        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", key, "全场大小:" + Integer.toString(p0osend));
+        			}
+    				
+    			}
+    			
+    			
+    			int p1hsend = (int) (p1h/P8SendNumber);
+    			int p1hsendsaved = 0;
+    			if(p1hsend != 0){
+    				if(p1hsend < 0){
+    					p1hsendsaved = p1hsend - 20;
+    				}else{
+    					p1hsendsaved = p1hsend + 20;
+    				}
+    				
+        			if(true != records.contains(p1hsendsaved)){
+        				records.add(p1hsendsaved);
+        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", key, "半场让球:" + Integer.toString(p1hsend));
+        			}
+    				
+    			}
+    			
+    			
+    			int p1osend = (int) (p1o/P8SendNumber);
+    			int p1osendsaved = 0;
+    			if(p1osend != 0){
+    				if(p1osend < 0){
+    					p1osendsaved = p1osend - 30;
+    				}else{
+    					p1osendsaved = p1osend + 30;
+    				}
+    				
+        			if(true != records.contains(p1osendsaved)){
+        				records.add(p1osendsaved);
+        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", key, "半场大小:" + Integer.toString(p1osend));
+        			}
+    				
+    			}
+    			
+
+        	}
+    		
+    	}catch(Exception e){
+    		e.printStackTrace();
+    	}
+    	
+
+    }
     
     
     

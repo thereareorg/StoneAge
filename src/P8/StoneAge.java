@@ -294,7 +294,7 @@ public class StoneAge {
 		textFieldZhiboProxyAddress = new JTextField();
 		textFieldZhiboProxyAddress.setSize(100, 25);
 		textFieldZhiboProxyAddress.setLocation(Xposition + 50 + 200, Yposition);
-		textFieldZhiboProxyAddress.setText("103.26.127.50");
+		textFieldZhiboProxyAddress.setText("103.26.127.87");
 
 		JLabel labelZhiboProxyAccount = new JLabel("端口:");
 		labelZhiboProxyAccount.setSize(50, 25);

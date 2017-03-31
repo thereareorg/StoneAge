@@ -62,7 +62,7 @@ import java.util.Stack;
 import java.awt.Button;
 
 
-
+import javax.swing.JTabbedPane;  
 
 
 
@@ -80,8 +80,11 @@ public class AccountsDetailsWindow extends JFrame
 	
     private Button addAccountBtn = new Button("增加账户");
    
-
+    private JTabbedPane jTabbedpane = new JTabbedPane();// 存放选项卡的组件  
     
+    JPanel jpanelMailCountSetting = new JPanel(null);  
+    
+    JPanel accountDetailsPan = new JPanel(null);
     
     MyTableModel tableMode = new MyTableModel();
     
@@ -89,13 +92,24 @@ public class AccountsDetailsWindow extends JFrame
     EditAccountWindow editAccWnd = new EditAccountWindow();
 
     
+    //mail panel
+    private JLabel labelP8Amonut = new JLabel("PP金额:");
+    private JTextField textFieldP8Amonut = new JTextField(15); 
+
+    private JLabel labelZhiboAmount = new JLabel("LL金额:");
+    private JTextField textFieldZhiboAmount = new JTextField(15); 
     
+    private JLabel labelMergeAmount = new JLabel("合并金额:");
+    private JTextField textFieldMergeAmount = new JTextField(15); 
+
+    private JLabel labelMergeBegAmount = new JLabel("合并起始金额:");
+    private JTextField textFieldMergeBegAmount = new JTextField(15); 
     
-	
 
 	public AccountsDetailsWindow()  
     {  
         intiComponent();  
+        setTitle("设置");
     }
 	
 	
@@ -158,9 +172,18 @@ public class AccountsDetailsWindow extends JFrame
 		
 		container.setLayout(new BorderLayout());
 		
-		JPanel panelNorth = new JPanel(new GridLayout(5, 4));
+		//JPanel accountDetailsPan = new JPanel(new GridLayout(10, 10));
+		//accountDetailsPan = new JPanel(null);
+		
+		
+		jTabbedpane.addTab("账户设置", null, accountDetailsPan, "accountSet");// 加入第一个页面  
+		jTabbedpane.addTab("邮件设置", null, jpanelMailCountSetting, "mailSet");// 加入第一个页面  
+		
+		
+		accountDetailsPan.setLocation(0, 0);
+		accountDetailsPan.setSize(1220, 630);
 
-        container.add(panelNorth, BorderLayout.NORTH);  
+        container.add(jTabbedpane);  
         
        // addAccountBtn = new Button("连接");
         addAccountBtn.addActionListener(new ActionListener() {
@@ -169,12 +192,16 @@ public class AccountsDetailsWindow extends JFrame
 			}
 		});
         
+        addAccountBtn.setLocation(50, 50);
+        addAccountBtn.setSize(90, 25);
         
-        panelNorth.add(addAccountBtn);
         
+        accountDetailsPan.add(addAccountBtn);
         
-/*        panelNorth.add(labeltime);
-        panelNorth.add(textFieldtime);
+       
+        
+/*        accountDetailsPan.add(labeltime);
+        accountDetailsPan.add(textFieldtime);
         textFieldjinrichazhi.setEditable(false);*/
 
 
@@ -210,9 +237,13 @@ public class AccountsDetailsWindow extends JFrame
         
         JScrollPane scroll = new JScrollPane(table);  
         
+        scroll.setLocation(0, 100);
+        scroll.setSize(1220, 530);
+        
+       accountDetailsPan.add(scroll);
         
         
-        container.add(scroll, BorderLayout.CENTER);  
+        //container.add(scroll, BorderLayout.CENTER);  
 
         setVisible(false);  
         //setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  
@@ -251,6 +282,61 @@ public class AccountsDetailsWindow extends JFrame
               }
         });
         
+        
+        
+        //mail panel
+        
+        int mailX = 100;
+        int mailY = 100;
+        
+        labelP8Amonut.setSize(80, 25);
+        labelP8Amonut.setLocation(mailX, mailY);
+        
+        textFieldP8Amonut.setSize(90, 25);
+        textFieldP8Amonut.setLocation(mailX + 90, mailY);
+        
+        
+        labelZhiboAmount.setSize(80, 25);
+        labelZhiboAmount.setLocation(mailX, mailY + 50);
+        
+        textFieldZhiboAmount.setSize(90, 25);
+        textFieldZhiboAmount.setLocation(mailX + 90, mailY + 50);
+        
+        
+        labelMergeAmount.setSize(80, 25);
+        labelMergeAmount.setLocation(mailX, mailY + 100);
+        
+        textFieldMergeAmount.setSize(90, 25);
+        textFieldMergeAmount.setLocation(mailX + 90, mailY + 100);
+        
+        labelMergeBegAmount.setSize(80, 25);
+        labelMergeBegAmount.setLocation(mailX, mailY + 150);
+        
+        textFieldMergeBegAmount.setSize(90, 25);
+        textFieldMergeBegAmount.setLocation(mailX + 90, mailY + 150);
+        
+        jpanelMailCountSetting.add(labelP8Amonut);
+        jpanelMailCountSetting.add(textFieldP8Amonut);
+        jpanelMailCountSetting.add(labelZhiboAmount);
+        jpanelMailCountSetting.add(textFieldZhiboAmount);
+        jpanelMailCountSetting.add(labelMergeAmount);
+        jpanelMailCountSetting.add(textFieldMergeAmount);
+        jpanelMailCountSetting.add(labelMergeBegAmount);
+        jpanelMailCountSetting.add(textFieldMergeBegAmount);
+
+        
+/*        private JLabel labelP8Amonut = new JLabel("PP金额:");
+        private JTextField textFieldP8Amonut = new JTextField(15); 
+
+        private JLabel labelZhiboAmount = new JLabel("LL金额:");
+        private JTextField textFieldZhiboAmount = new JTextField(15); 
+        
+        private JLabel labelMergeAmount = new JLabel("合并金额:");
+        private JTextField textFieldMergeAmount = new JTextField(15); 
+
+        private JLabel labelMergeBegAmount = new JLabel("合并起始金额:");
+        private JTextField textFieldMergeBegAmount = new JTextField(15); 
+*/        
         
         
         
