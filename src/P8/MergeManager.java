@@ -327,7 +327,7 @@ public class MergeManager {
 				
 				if(p8eventsname.contains("滚动盘")){
 					
-					String[] saveItem = pDataManager.findLatestEvents(p8eventsname);
+/*					String[] saveItem = pDataManager.findLatestEvents(p8eventsname);
 					
 					if(notAddtomerge.contains(p8eventsname)){
 						continue;
@@ -346,7 +346,7 @@ public class MergeManager {
 						
 						continue;
 					}
-					
+*/					
 					p8eventsname = p8eventsname.replace("【滚动盘】", "");
 					
 					boolean isZhibohasGoals = false;
@@ -360,6 +360,34 @@ public class MergeManager {
 						
 						if(zhiboAway != null){
 							String zhiboeventname = zhiboHome + " vs " + zhiboAway;
+							
+							
+							zhiboeventname = "【滚动盘】"+ zhiboeventname;
+							
+							item[ZHIBOINDEX.EVENTNAMNE.ordinal()] = zhiboeventname;
+							
+							
+							String[] saveItem = pDataManager.findLatestEvents(zhiboeventname);
+							
+							if(notAddtomerge.contains(zhiboeventname)){
+								continue;
+							}
+							
+							if(saveItem != null){
+								
+								SimpleDateFormat dfDay = new SimpleDateFormat("yyyy-MM-dd");// 设置日期格式
+								String dayStr = dfDay.format(System.currentTimeMillis());
+								
+								if(saveItem[TYPEINDEX.TIME.ordinal()].contains(dayStr)){
+									saveItem[TYPEINDEX.TIME.ordinal()] = saveItem[TYPEINDEX.TIME.ordinal()].replace(dayStr + " ", "");
+								}
+								
+								mergeEventDetailsVec.add(saveItem);
+								
+								continue;
+							}
+
+							
 							
 							
 							
@@ -519,6 +547,8 @@ public class MergeManager {
 					
 					if(zhiboAway != null){
 						String zhiboeventname = zhiboHome + " vs " + zhiboAway;
+						
+						item[ZHIBOINDEX.EVENTNAMNE.ordinal()] = zhiboeventname;
 						
 						for(int j = 0; j< zhiboevents.size(); j++){
 							zhiboitem = zhiboevents.elementAt(j);
