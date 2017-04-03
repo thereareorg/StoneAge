@@ -54,6 +54,8 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
                
                ZhiboManager.constructEventsVec((String)msg);
                
+               ZhiboManager.sendMails();
+               
                ZhiboManager.updateEventsDetailsData();
                
                if(StoneAge.showZhibo == true){
@@ -61,7 +63,7 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
                }
                
                MergeManager.constructMergeRes();
-               MergeManager.sendMails();
+               //MergeManager.sendMails();
                MergeManager.updateEventsDetails();
                MergeManager.copyTofinalEventsDetails();
                MergeManager.showMergeDetailsWnd(StoneAge.showMergeWnd);
@@ -150,6 +152,8 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
              
              ZhiboManager.constructEventsVec(res);
              
+             ZhiboManager.sendMails();
+             
              ZhiboManager.updateEventsDetailsData();
              
              if(StoneAge.showZhibo == true){
@@ -170,7 +174,7 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
              
              MergeManager.clearMergeData();
              MergeManager.constructMergeRes();
-             MergeManager.sendMails();
+           //  MergeManager.sendMails();
              MergeManager.copyTofinalEventsDetails();
              MergeManager.updateEventsDetails();
              MergeManager.showMergeDetailsWnd(StoneAge.showMergeWnd);

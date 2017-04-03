@@ -769,7 +769,7 @@ public class MergeManager {
 					timeStr = todayStr + " " + timeStr;
 				}
 				
-				String key = item[TYPEINDEX.EVENTNAMNE.ordinal()] + timeStr;
+				String key = item[TYPEINDEX.EVENTNAMNE.ordinal()] + " " + timeStr;
 				
         		if(true != mailRecords.containsKey(key)){
         			Vector<Integer> records = new Vector<Integer>();
@@ -788,7 +788,7 @@ public class MergeManager {
 	    			
 	    			if(true != records.contains(p0hsend) && p0hsend != 0){
 	    				records.add(p0hsend);
-	    				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", "【合并】" + key, "全场让球:" + Integer.toString(p0hsend));
+	    				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "ks68889@163.com", "【合并】 " + key, "全场让球:" + Integer.toString(p0hsend));
 	    			}
 				}
 				
@@ -805,7 +805,7 @@ public class MergeManager {
 	    				
 	        			if(true != records.contains(p0osendsaved)){
 	        				records.add(p0osendsaved);
-	        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", "【合并】" + key, "全场大小:" + Integer.toString(p0osend));
+	        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "ks68889@163.com", "【合并】 " + key, "全场大小:" + Integer.toString(p0osend));
 	        			}
 	    				
 	    			}
@@ -825,7 +825,7 @@ public class MergeManager {
 	    				
 	        			if(true != records.contains(p1hsendsaved)){
 	        				records.add(p1hsendsaved);
-	        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", "【合并】" + key, "全场大小:" + Integer.toString(p1hsend));
+	        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "ks68889@163.com", "【合并】 " + key, "全场大小:" + Integer.toString(p1hsend));
 	        			}
 	    				
 	    			}
@@ -845,7 +845,7 @@ public class MergeManager {
 	    				
 	        			if(true != records.contains(p1osendsaved)){
 	        				records.add(p1osendsaved);
-	        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", "【合并】" + key, "全场大小:" + Integer.toString(p1osend));
+	        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "ks68889@163.com", "【合并】 " + key, "全场大小:" + Integer.toString(p1osend));
 	        			}
 	    				
 	    			}

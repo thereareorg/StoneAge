@@ -4,9 +4,13 @@ import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import Mail.MailManager;
 
 public class ZhiboManager {
 	
@@ -26,6 +30,11 @@ public class ZhiboManager {
 
 	
 	static Vector<String> showLeagueName = new Vector<String>();
+	
+	public static int ZhiboSendNumber = 700000;
+	
+	static Map<String, Vector<Integer>> mailRecords = new HashMap<String, Vector<Integer>>(); 
+	
 	
     public static void showEventsDeatilsTable(){
     	eventsDetailsDataWindow.setVisible(true);
@@ -283,6 +292,137 @@ public class ZhiboManager {
     }
     
 
+    
+    public static void sendMails(){
+    	
+    	try{
+    		
+    		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    		
+        	for(int i = 0; i < eventDetailsVec.size(); i++){
+        		String[] item = eventDetailsVec.elementAt(i).clone();
+        		
+				SimpleDateFormat dfDay = new SimpleDateFormat("yyyy-MM-dd");// 设置日期格式
+				
+				//SimpleDateFormat dfDay = new SimpleDateFormat("yyyy-MM-dd");// 设置日期格式
+				
+				
+				long currentTimeL = System.currentTimeMillis();
+				
+				String todayStr = dfDay.format(currentTimeL);
+				
+
+					
+				String timeStr = item[TYPEINDEX.TIME.ordinal()];
+				
+				if(!timeStr.contains("-")){
+					timeStr = todayStr + " " + timeStr;
+				}
+        		
+        		
+        		//long time = Long.parseLong(item[ZHIBOINDEX.TIME.ordinal()]);
+        		
+        		String key = item[ZHIBOINDEX.EVENTNAMNE.ordinal()] + " " + timeStr;
+        		
+        		String saved = item[ZHIBOINDEX.SAVED.ordinal()];
+        		
+        		if(saved.contains("1"))
+        			continue;
+        		
+        		//过滤滚动盘
+        		if(key.contains("滚动盘")){
+        			continue;
+        		}
+        		
+        		if(true != mailRecords.containsKey(key)){
+        			Vector<Integer> records = new Vector<Integer>();
+        			mailRecords.put(key, records);
+        		}
+        		
+        		//开始解析数据
+    			double p0h = Double.parseDouble(item[ZHIBOINDEX.PERIOD0HOME.ordinal()]);
+    			double p0o = Double.parseDouble(item[ZHIBOINDEX.PERIOD0OVER.ordinal()]);
+    			double p1h = Double.parseDouble(item[ZHIBOINDEX.PERIOD1HOME.ordinal()]);
+    			double p1o = Double.parseDouble(item[ZHIBOINDEX.PERIOD1OVER.ordinal()]);
+    			
+    			int p0hsend = (int) (p0h/ZhiboSendNumber);    			
+    			Vector<Integer> records = mailRecords.get(key);    			
+    			if(true != records.contains(p0hsend) && p0hsend != 0){
+    				records.add(p0hsend);
+    				System.out.println("LL send 全场让球 " + df.format(System.currentTimeMillis()));
+    				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "ks68889@163.com", "LL " + key, "全场让球:" + Integer.toString(p0hsend));
+    				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", "LL " + key, "全场让球:" + Integer.toString(p0hsend));
+
+    			}
+    			
+    			int p0osend = (int) (p0o/ZhiboSendNumber);
+    			int p0osendsaved = 0;
+    			if(p0osend != 0){
+    				if(p0osend < 0){
+    					p0osendsaved = p0osend - 10;
+    				}else{
+    					p0osendsaved = p0osend + 10;
+    				}
+    				
+        			if(true != records.contains(p0osendsaved)){
+        				records.add(p0osendsaved);
+        				System.out.println("LL send 全场大小 " +  df.format(System.currentTimeMillis()));
+        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "ks68889@163.com", "LL " + key, "全场大小:" + Integer.toString(p0osend));
+        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", "LL " + key, "全场大小:" + Integer.toString(p0osend));
+
+        			}
+    				
+    			}
+    			
+    			
+    			int p1hsend = (int) (p1h/ZhiboSendNumber);
+    			int p1hsendsaved = 0;
+    			if(p1hsend != 0){
+    				if(p1hsend < 0){
+    					p1hsendsaved = p1hsend - 20;
+    				}else{
+    					p1hsendsaved = p1hsend + 20;
+    				}
+    				
+        			if(true != records.contains(p1hsendsaved)){
+        				records.add(p1hsendsaved);
+        				System.out.println("LL send 半场让球 " + df.format(System.currentTimeMillis()));
+        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "ks68889@163.com", "LL " + key, "半场让球:" + Integer.toString(p1hsend));
+        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", "LL " + key, "半场让球:" + Integer.toString(p1hsend));
+        				
+        			}
+    				
+    			}
+    			
+    			
+    			int p1osend = (int) (p1o/ZhiboSendNumber);
+    			int p1osendsaved = 0;
+    			if(p1osend != 0){
+    				if(p1osend < 0){
+    					p1osendsaved = p1osend - 30;
+    				}else{
+    					p1osendsaved = p1osend + 30;
+    				}
+    				
+        			if(true != records.contains(p1osendsaved)){
+        				records.add(p1osendsaved);
+        				System.out.println("LL send 半场大小 "+ df.format(System.currentTimeMillis()));
+        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "ks68889@163.com", "LL " + key, "半场大小:" + Integer.toString(p1osend));
+        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", "LL " + key, "半场大小:" + Integer.toString(p1osend));
+
+        			}
+    				
+    			}
+    			
+
+        	}
+    		
+    	}catch(Exception e){
+    		e.printStackTrace();
+    	}
+    	
+
+    }
     
     
     
