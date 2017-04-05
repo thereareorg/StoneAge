@@ -1761,9 +1761,15 @@ public class P8Http {
 		
 		try{
 			
+/*			String[] test = {"993839509", "西班牙 - 西甲", "1491413400000", "【滚动盘】巴萨-vs-西维尔", "100000", "200000", "-100000", "-100000"};
+			eventDetailsVec.add(test);*/
+			
 			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 			
 			for(int i = 0; i < eventDetailsVec.size(); i++){
+				
+				//String[] tmp =  eventDetailsVec.elementAt(i).clone();
+				
 				long eventTime = Long.parseLong(eventDetailsVec.elementAt(i)[TYPEINDEX.TIME.ordinal()]);
 				
 				String eventName = eventDetailsVec.elementAt(i)[TYPEINDEX.EVENTNAMNE.ordinal()];
@@ -1827,6 +1833,11 @@ public class P8Http {
 	
 	public static void updatepDataDetails(){
 		pDataManager.updatepEventsDetails();
+	}
+	
+	
+	public static String[] getP8SaveItem(String eventName){
+		return pDataManager.findLatestEvents(eventName);
 	}
     
 }

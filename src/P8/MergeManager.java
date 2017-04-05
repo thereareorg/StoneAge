@@ -198,7 +198,7 @@ public class MergeManager {
 				
 				long currentTime = System.currentTimeMillis();
 				
-				long passMinutes = 108*60*1000;
+				long passMinutes = 105*60*1000;
 				
 				long twoMinutes = 2*60*1000;
 				
@@ -220,7 +220,7 @@ public class MergeManager {
 					continue;
 				}
 				
-				
+				//滚动盘，只有有进球，存
 				if(mergeEventDetailsVec.elementAt(i)[ZHIBOINDEX.SAVED.ordinal()].equals("1")){
 					//mergeEventDetailsVec.elementAt(i)[ZHIBOINDEX.SAVED.ordinal()] = "1";					
 					String[] item = mergeEventDetailsVec.elementAt(i).clone();
@@ -228,8 +228,18 @@ public class MergeManager {
 					boolean saveRes = pDataManager.saveTofile(item);	
 					if(saveRes == true){
 						System.out.println("merge inplay save success:" + Arrays.toString(item));
+					}//滚动盘，无进球，到105分钟，存
+				}else if(mergeEventDetailsVec.elementAt(i)[ZHIBOINDEX.EVENTNAMNE.ordinal()].contains("滚动盘")
+						&& pass > passMinutes){
+					
+					String[] item = mergeEventDetailsVec.elementAt(i).clone();
+					item[ZHIBOINDEX.TIME.ordinal()] = timeStr;
+					boolean saveRes = pDataManager.saveTofile(item);	
+					if(saveRes == true){
+						System.out.println("game over no goal merge inplay save success:" + Arrays.toString(item));
 					}
-				}				
+					
+				}	//单式盘，开赛两分钟,存			
 				else if(pass > twoMinutes){
 					//mergeEventDetailsVec.elementAt(i)[ZHIBOINDEX.SAVED.ordinal()] = "1";					
 					String[] item = mergeEventDetailsVec.elementAt(i).clone();
@@ -389,27 +399,42 @@ public class MergeManager {
 
 							
 							
-							
+							String findZhiboEventname = zhiboeventname.replace("【滚动盘】", "");
 							
 							for(int j = 0; j< inPlayzhiboevents.size(); j++){
 								String[] inplayItem = inPlayzhiboevents.elementAt(j).clone();
-								if(inplayItem[ZHIBOINDEX.EVENTNAMNE.ordinal()].contains(zhiboeventname)){
+								if(inplayItem[ZHIBOINDEX.EVENTNAMNE.ordinal()].contains(findZhiboEventname)){
 									isZhibohasGoals = true;
 									break;
 								}
 							}
 							
 							
-							String[] zhiboSaveItem = ZhiboManager.getZhiboSaveItem(zhiboeventname);
+							//String[] zhiboSaveItem = ZhiboManager.getZhiboSaveItem(zhiboeventname);
+							
+							String[] p8DanshiItem = null;
+							
+							for(int j = 0; j < p8events.size(); j++){
+								String[] p8tmpItem = p8events.elementAt(j).clone();
+								if(p8eventsname.contains(p8tmpItem[TYPEINDEX.EVENTNAMNE.ordinal()])){
+									p8DanshiItem = p8tmpItem;
+									break;
+								}
+							}
+							
+							if(p8DanshiItem == null){
+								p8DanshiItem = P8Http.getP8SaveItem(p8eventsname);
+							}
+							
 							
 							
 							//如果智博已经有进球
 							//if(isZhibohasGoals == true){
-							if(zhiboSaveItem != null){
+							if(p8DanshiItem != null){
 								for(int j = 0; j < zhiboevents.size(); j++){
 									String[] zhiboItemNow = zhiboevents.elementAt(j).clone();
 									
-									if(zhiboItemNow[ZHIBOINDEX.EVENTNAMNE.ordinal()].contains(zhiboeventname)){
+									if(zhiboItemNow[ZHIBOINDEX.EVENTNAMNE.ordinal()].contains(findZhiboEventname)){
 
 										
 										Double zhibo0homenow = Double.parseDouble(zhiboItemNow[ZHIBOINDEX.PERIOD0HOME.ordinal()]);
@@ -417,103 +442,105 @@ public class MergeManager {
 										Double zhibo1homenow = Double.parseDouble(zhiboItemNow[ZHIBOINDEX.PERIOD1HOME.ordinal()]);
 										Double zhibo1overnow = Double.parseDouble(zhiboItemNow[ZHIBOINDEX.PERIOD1OVER.ordinal()]);
 										
-										Double zhibo0homeInplayVal = 0.0;
-										Double zhibo0overInplayVal = 0.0;
-										Double zhibo1homeInplayVal = 0.0;										
-										Double zhibo1overInplayVal = 0.0;
+										Double p8nogoalsbet1 = 0.0;
+										Double p8nogoalsbet2 = 0.0;
+										Double p8nogoalsbet3 = 0.0;										
+										Double p8nogoalsbet4 = 0.0;
 										
 										//String[] zhiboSaveItem = ZhiboManager.getZhiboSaveItem(zhiboeventname);
 										
-										if(null != zhiboSaveItem){
-											Double zhibo0homesaved = Double.parseDouble(zhiboSaveItem[ZHIBOINDEX.PERIOD0HOME.ordinal()]);
-											Double zhibo0oversaved = Double.parseDouble(zhiboSaveItem[ZHIBOINDEX.PERIOD0OVER.ordinal()]);
-											Double zhibo1homesaved = Double.parseDouble(zhiboSaveItem[ZHIBOINDEX.PERIOD1HOME.ordinal()]);
-											Double zhibo1oversaved = Double.parseDouble(zhiboSaveItem[ZHIBOINDEX.PERIOD1OVER.ordinal()]);
-											
-											//计算走地值
-											zhibo0homeInplayVal = zhibo0homenow - zhibo0homesaved;
-											zhibo0overInplayVal = zhibo0overnow - zhibo0oversaved;
-											zhibo1homeInplayVal = zhibo1homenow - zhibo1homesaved;
-											zhibo1overInplayVal = zhibo1overnow - zhibo1oversaved;
-											
-											
-											
-											
-											Double p80homeInplayVal = Double.parseDouble(item[TYPEINDEX.PERIOD0HOME.ordinal()]);
-											Double p80overInplayVal = Double.parseDouble(item[TYPEINDEX.PERIOD0OVER.ordinal()]);
-											Double p81homeInplayVal = Double.parseDouble(item[TYPEINDEX.PERIOD1HOME.ordinal()]);
-											Double p81overInplayVal = Double.parseDouble(item[TYPEINDEX.PERIOD1OVER.ordinal()]);
-											
-											
-											boolean addTomerge = false;
-											
-											
-											if((p80homeInplayVal >0.0 && zhibo0homeInplayVal >0.0) || (p80homeInplayVal <0.0 && zhibo0homeInplayVal <0.0)){
-												
-												
-												item[TYPEINDEX.PERIOD0HOME.ordinal()] = String.format("(%.0f)", p80homeInplayVal) + "+" +
-														String.format("(%.0f)", zhibo0homeInplayVal) + "=" + String.format("%.0f", p80homeInplayVal + zhibo0homeInplayVal);
-												
-												addTomerge = true;
-											}else{
-												item[TYPEINDEX.PERIOD0HOME.ordinal()] = "0";
-											}
-											
-											if((p80overInplayVal >0.0 && zhibo0overInplayVal >0.0) || (p80overInplayVal <0.0 && zhibo0overInplayVal <0.0)){
-												//item[TYPEINDEX.PERIOD0OVER.ordinal()] = String.format("%.0f", p80over + zhibo0over);
-												
-												item[TYPEINDEX.PERIOD0OVER.ordinal()] = String.format("(%.0f)", p80overInplayVal) + "+" +
-														String.format("(%.0f)", zhibo0overInplayVal) + "=" + String.format("%.0f", p80overInplayVal + zhibo0overInplayVal);
-												
-												addTomerge = true;
-											}
-											else{
-												item[TYPEINDEX.PERIOD0OVER.ordinal()] = "0";
-											}
-											
-											if((p81overInplayVal >0.0 && zhibo1overInplayVal >0.0) || (p81overInplayVal <0.0 && zhibo1overInplayVal <0.0)){
-												//item[TYPEINDEX.PERIOD1OVER.ordinal()] = String.format("%.0f", p81over + zhibo1over);
-												
-												item[TYPEINDEX.PERIOD1OVER.ordinal()] = String.format("(%.0f)", p81overInplayVal) + "+" +
-														String.format("(%.0f)", zhibo1overInplayVal) + "=" + String.format("%.0f", p81overInplayVal + zhibo1overInplayVal);
-												
-												addTomerge = true;
-											}
-											else{
-												item[TYPEINDEX.PERIOD1OVER.ordinal()] = "0";
-											}
-											
-											if((p81homeInplayVal >0.0 && zhibo1homeInplayVal >0.0) || (p81homeInplayVal <0.0 && zhibo1homeInplayVal <0.0)){
-												//item[TYPEINDEX.PERIOD1HOME.ordinal()] = String.format("%.0f", p81home + zhibo1home);
-												item[TYPEINDEX.PERIOD1HOME.ordinal()] = String.format("(%.0f)", p81homeInplayVal) + "+" +
-														String.format("(%.0f)", zhibo1homeInplayVal) + "=" + String.format("%.0f", p81homeInplayVal + zhibo1homeInplayVal);
-												addTomerge = true;
-											}else{
-												item[TYPEINDEX.PERIOD1HOME.ordinal()] = "0";
-											}
-											
-											if(addTomerge == true){
-												
-												
-												System.out.println("merge inplay add" + Arrays.toString(item));
-												
-												if(isZhibohasGoals == true){
-													item[ZHIBOINDEX.SAVED.ordinal()] = "1";
-												}
-												
-												mergeEventDetailsVec.add(item);
-											}else{
-												if(isZhibohasGoals == true){
-													
-													System.out.println("not add to merge" + Arrays.toString(item));
-													
-													notAddtomerge.add(item[TYPEINDEX.EVENTNAMNE.ordinal()]);
-												}
-											}
+										//if(null != zhiboSaveItem){
+										Double p8danshibet1 = Double.parseDouble(p8DanshiItem[ZHIBOINDEX.PERIOD0HOME.ordinal()]);
+										Double p8danshibet2 = Double.parseDouble(p8DanshiItem[ZHIBOINDEX.PERIOD0OVER.ordinal()]);
+										Double p8danshibet3 = Double.parseDouble(p8DanshiItem[ZHIBOINDEX.PERIOD1HOME.ordinal()]);
+										Double p8danshibet4 = Double.parseDouble(p8DanshiItem[ZHIBOINDEX.PERIOD1OVER.ordinal()]);
+
+										
+										Double p80homeInplayVal = Double.parseDouble(item[TYPEINDEX.PERIOD0HOME.ordinal()]);
+										Double p80overInplayVal = Double.parseDouble(item[TYPEINDEX.PERIOD0OVER.ordinal()]);
+										Double p81homeInplayVal = Double.parseDouble(item[TYPEINDEX.PERIOD1HOME.ordinal()]);
+										Double p81overInplayVal = Double.parseDouble(item[TYPEINDEX.PERIOD1OVER.ordinal()]);
+										
+										//P8没进球之前的和值
+										p8nogoalsbet1 = p8danshibet1 + p80homeInplayVal;
+										p8nogoalsbet2 = p8danshibet2 + p80overInplayVal;
+										p8nogoalsbet3 = p8danshibet3 + p81homeInplayVal;
+										p8nogoalsbet4 = p8danshibet4 + p81overInplayVal;
+										
+										
+										boolean addTomerge = false;
+										
+										
+										if((p8nogoalsbet1 >0.0 && zhibo0homenow >0.0) || (p8nogoalsbet1 <0.0 && zhibo0homenow <0.0)){
 											
 											
+											item[TYPEINDEX.PERIOD0HOME.ordinal()] = String.format("(%.0f)", p8nogoalsbet1) + "+" +
+													String.format("(%.0f)", zhibo0homenow) + "=" + String.format("%.0f", p8nogoalsbet1 + zhibo0homenow);
 											
+											addTomerge = true;
+										}else{
+											item[TYPEINDEX.PERIOD0HOME.ordinal()] = "0";
 										}
+										
+										if((p8nogoalsbet2 >0.0 && zhibo0overnow >0.0) || (p8nogoalsbet2 <0.0 && zhibo0overnow <0.0)){
+											//item[TYPEINDEX.PERIOD0OVER.ordinal()] = String.format("%.0f", p80over + zhibo0over);
+											
+											item[TYPEINDEX.PERIOD0OVER.ordinal()] = String.format("(%.0f)", p8nogoalsbet2) + "+" +
+													String.format("(%.0f)", zhibo0overnow) + "=" + String.format("%.0f", p8nogoalsbet2 + zhibo0overnow);
+											
+											addTomerge = true;
+										}
+										else{
+											item[TYPEINDEX.PERIOD0OVER.ordinal()] = "0";
+										}
+										
+
+										
+										if((p8nogoalsbet3 >0.0 && zhibo1homenow >0.0) || (p8nogoalsbet3 <0.0 && zhibo1homenow <0.0)){
+											//item[TYPEINDEX.PERIOD1HOME.ordinal()] = String.format("%.0f", p81home + zhibo1home);
+											item[TYPEINDEX.PERIOD1HOME.ordinal()] = String.format("(%.0f)", p8nogoalsbet3) + "+" +
+													String.format("(%.0f)", zhibo1homenow) + "=" + String.format("%.0f", p8nogoalsbet3 + zhibo1homenow);
+											addTomerge = true;
+										}else{
+											item[TYPEINDEX.PERIOD1HOME.ordinal()] = "0";
+										}
+										
+										
+										if((p8nogoalsbet4 >0.0 && zhibo1overnow >0.0) || (p8nogoalsbet4 <0.0 && zhibo1overnow <0.0)){
+											//item[TYPEINDEX.PERIOD1OVER.ordinal()] = String.format("%.0f", p81over + zhibo1over);
+											
+											item[TYPEINDEX.PERIOD1OVER.ordinal()] = String.format("(%.0f)", p8nogoalsbet4) + "+" +
+													String.format("(%.0f)", zhibo1overnow) + "=" + String.format("%.0f", p8nogoalsbet4 + zhibo1overnow);
+											
+											addTomerge = true;
+										}
+										else{
+											item[TYPEINDEX.PERIOD1OVER.ordinal()] = "0";
+										}
+										
+										
+										if(addTomerge == true){
+											
+											
+											System.out.println("merge inplay add" + Arrays.toString(item));
+											
+											if(isZhibohasGoals == true){
+												item[ZHIBOINDEX.SAVED.ordinal()] = "1";
+											}
+											
+											mergeEventDetailsVec.add(item);
+										}else{
+											if(isZhibohasGoals == true){
+												
+												System.out.println("not add to merge" + Arrays.toString(item));
+												
+												notAddtomerge.add(item[TYPEINDEX.EVENTNAMNE.ordinal()]);
+											}
+										}
+											
+											
+											
+										//}
 										
 										
 										
