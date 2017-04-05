@@ -263,6 +263,8 @@ public class ZhiboManager {
 							eventDetailsVec.elementAt(i)[ZHIBOINDEX.PERIOD0OVER.ordinal()] = event[ZHIBOINDEX.PERIOD0OVER.ordinal()];
 							eventDetailsVec.elementAt(i)[ZHIBOINDEX.PERIOD1HOME.ordinal()] = event[ZHIBOINDEX.PERIOD1HOME.ordinal()];
 							eventDetailsVec.elementAt(i)[ZHIBOINDEX.PERIOD1OVER.ordinal()] = event[ZHIBOINDEX.PERIOD1OVER.ordinal()];
+							//eventDetailsVec.elementAt(i)[ZHIBOINDEX.PERIOD1OVER.ordinal()] = event[12];
+							
 							break;
 
     							
@@ -324,7 +326,7 @@ public class ZhiboManager {
         		
         		String key = item[ZHIBOINDEX.EVENTNAMNE.ordinal()] + " " + timeStr;
         		
-        		String saved = item[ZHIBOINDEX.SAVED.ordinal()];
+/*        		String saved = item[ZHIBOINDEX.SAVED.ordinal()];
         		
         		if(saved.contains("1"))
         			continue;
@@ -332,7 +334,7 @@ public class ZhiboManager {
         		//过滤滚动盘
         		if(key.contains("滚动盘")){
         			continue;
-        		}
+        		}*/
         		
         		if(true != mailRecords.containsKey(key)){
         			Vector<Integer> records = new Vector<Integer>();

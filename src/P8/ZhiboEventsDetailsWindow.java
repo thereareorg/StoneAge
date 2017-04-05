@@ -182,7 +182,7 @@ public class ZhiboEventsDetailsWindow  extends JFrame{
 
 		    	        
 	            	}catch(Exception e){
-	            		
+	            		e.printStackTrace();
 	            	}
 	            	
 
@@ -329,6 +329,8 @@ public class ZhiboEventsDetailsWindow  extends JFrame{
 		
 		public void updateShowItem(){
 			
+			
+			
 			Vector<String[]> DetailsDatatmp = new Vector<String[]>();
 			
 			//只显示走地盘
@@ -389,7 +391,7 @@ public class ZhiboEventsDetailsWindow  extends JFrame{
 						//
 						
 						DetailsDatatmp2.add(DetailsDatatmp1.elementAt(i));
-						
+						//DetailsDatatmp2.add(DetailsDatatmp1.elementAt(1000));
 					}
 					
 					

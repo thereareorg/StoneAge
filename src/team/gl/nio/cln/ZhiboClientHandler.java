@@ -24,6 +24,8 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
 	
 	public static long time1 = 0L;
 	
+	public static long printTime = 0L;
+	
 	public static ChannelHandlerContext ctx_s = null;
 	
 
@@ -77,6 +79,12 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
        }
        
        if(!lastRes.contains(res)){
+    	   
+    	   if(System.currentTimeMillis() - printTime > 300*1000){
+    		   System.out.println(res);
+    		   printTime =  System.currentTimeMillis();
+    	   }
+    	   
     	   time = System.currentTimeMillis();
     	   lastRes = res;
        }
