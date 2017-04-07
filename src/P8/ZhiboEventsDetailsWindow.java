@@ -17,6 +17,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -37,7 +38,6 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel; 
 import javax.swing.table.AbstractTableModel; 
-
 import javax.swing.table.TableCellRenderer;
 
 import java.util.Date;      
@@ -50,6 +50,7 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.Stack;
+
 
 
 
@@ -77,7 +78,9 @@ public class ZhiboEventsDetailsWindow  extends JFrame{
 	    private JLabel labelInterval = new JLabel("刷新时间:");
 	    
 	    //String str1[] = {"30", "60","90","120","180"};
-	    String str1[] = {"60"};
+	    String str1[] = {"20"};
+	    
+	   
 	    
 	    private JComboBox jcb = new JComboBox(str1); 
 	    
@@ -138,13 +141,9 @@ public class ZhiboEventsDetailsWindow  extends JFrame{
 			
 	        intiComponent();  
 	        
-	        addWindowListener(new WindowAdapter() {
-				public void windowClosing(WindowEvent e) {
-					StoneAge.showZhibo = false;
-					//setVisible(false);
-				}
-			});
 	        
+	        
+
 	    }  
 		
 		
@@ -311,13 +310,9 @@ public class ZhiboEventsDetailsWindow  extends JFrame{
 
 				
 				originalDetailsData = (Vector<String[]>)eventDetailsVec.clone();
-				
-				
-				
+
 				updateShowItem();
-				
-				
-				
+
 			}catch(Exception e){
 				e.printStackTrace();
 			}
@@ -441,7 +436,7 @@ public class ZhiboEventsDetailsWindow  extends JFrame{
 	               // int index = jcb.getSelectedIndex();
 	                String content = jcb.getSelectedItem().toString();
 	                
-	                StoneAge.setSleepTime(Integer.parseInt(content));
+	                StoneAge.setZhiboSleepTime(Integer.parseInt(content));
 				}
 	        });
 	        

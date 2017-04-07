@@ -28,6 +28,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableColumn;
 
 import P8.EventsDetailsWindow.MyTableModel;
 
@@ -49,9 +50,17 @@ public class MergeDetailsWindow extends JFrame{
 	    
 	    private JLabel labelInterval = new JLabel("刷新时间:");
 	    
-	    String str1[] = {"60","90"};
+	    String str1[] = {"20"};
 	    
 	    private JComboBox jcb = new JComboBox(str1); 
+	    
+	    
+	    String str2[] = {"0.2", "0.3","0.4"};
+	    
+	    private JLabel labelPercent = new JLabel("占成:");
+	    private JComboBox jcb2 = new JComboBox(str2); 
+	    
+	    private Double percent = 0.4;
 	    
 	    
 	    private JLabel labelHideNum = new JLabel("起始金额:");
@@ -65,7 +74,7 @@ public class MergeDetailsWindow extends JFrame{
 	    private boolean bonlyShowInplay = false;
 	    private boolean bonlyShowNotInplay = false;
 	    
-	    private JLabel labelGrabStat= new JLabel("状态:");
+	    private JLabel labelGrabStat= new JLabel("");
 	    private JTextField textFieldGrabStat = new JTextField(15);  
 	    
 	    
@@ -106,12 +115,8 @@ public class MergeDetailsWindow extends JFrame{
 	        intiComponent();  
 	        
 	        
-	        addWindowListener(new WindowAdapter() {
-				public void windowClosing(WindowEvent e) {
-					StoneAge.showMergeWnd = false;
-					//setVisible(false);
-				}
-			});
+	        
+	        
 	        
 	    }  
 		
@@ -205,73 +210,7 @@ public class MergeDetailsWindow extends JFrame{
 			textFieldGrabStat.setText(txt);
 		}
 		
-		public void hightlightBigNumrows(){
-			
-			if(hightlightRows.size() != 0){
-				hightlightRows.clear();
-			}
-			
-			for(int i = 0; i< detailsData.size(); i++){
-				String leagueName = detailsData.elementAt(i)[TYPEINDEX.LEAGUENAME.ordinal()];
-				
-				if(P8Http.isInShowLeagueName(leagueName) || true){
-					double betAmt1 =0.0;
-					double betAmt2 = 0.0;
-					double betAmt3 =0.0;
-					double betAmt4 = 0.0;
-					
-					String str1 = detailsData.elementAt(i)[TYPEINDEX.PERIOD0HOME.ordinal()];
-					
-					if(str1.contains("=")){
-						String[] tmp = str1.split("=");
-						betAmt1 = Double.parseDouble(tmp[1]);
-					}else{
-						betAmt1 = Double.parseDouble(str1);
-					}
-					
-					
-					String str2 = detailsData.elementAt(i)[TYPEINDEX.PERIOD0OVER.ordinal()];
-					
-					if(str2.contains("=")){
-						String[] tmp = str2.split("=");
-						betAmt2 = Double.parseDouble(tmp[1]);
-					}else{
-						betAmt2 = Double.parseDouble(str2);
-					}
-					
-					
-					String str3 = detailsData.elementAt(i)[TYPEINDEX.PERIOD1HOME.ordinal()];
-					
-					if(str3.contains("=")){
-						String[] tmp = str3.split("=");
-						betAmt3 = Double.parseDouble(tmp[1]);
-					}else{
-						betAmt3 = Double.parseDouble(str3);
-					}
-					
-					String str4 = detailsData.elementAt(i)[TYPEINDEX.PERIOD1OVER.ordinal()];
-					
-					if(str4.contains("=")){
-						String[] tmp = str4.split("=");
-						betAmt4 = Double.parseDouble(tmp[1]);
-					}else{
-						betAmt4 = Double.parseDouble(str4);
-					}
-					
-					if(Math.abs(betAmt1) > higlightBigNum || Math.abs(betAmt2) > higlightBigNum|| 
-							Math.abs(betAmt3) > higlightBigNum || Math.abs(betAmt4) > higlightBigNum){
-						//
-						
-						hightlightRows.add(i);
-						
-					}
-					
-					
-				}
-				
-				setOneRowBackgroundColor(table, 0, new Color(255, 100, 100));
-			}
-		}
+
 
 		
 		
@@ -369,24 +308,31 @@ public class MergeDetailsWindow extends JFrame{
 			for(int i = 0; i< DetailsDatatmp1.size(); i++){
 				String leagueName = DetailsDatatmp1.elementAt(i)[TYPEINDEX.LEAGUENAME.ordinal()];
 				
+				
+				String eventName = DetailsDatatmp1.elementAt(i)[TYPEINDEX.EVENTNAMNE.ordinal()];
+				
+
+				
 				if(P8Http.isInShowLeagueName(leagueName) || true){
-					
-					
 					double betAmt1 =0.0;
 					double betp81 = 0.0;
 					double betzhibo1 = 0.0;
+					double betp8inplay1 = 0.0;
 					
 					double betAmt2 = 0.0;
 					double betp82 = 0.0;
 					double betzhibo2 = 0.0;
+					double betp8inplay2 = 0.0;
 					
 					double betAmt3 =0.0;
 					double betp83 = 0.0;
 					double betzhibo3 = 0.0;
+					double betp8inplay3 = 0.0;
 					
 					double betAmt4 = 0.0;
 					double betp84 = 0.0;
 					double betzhibo4 = 0.0;
+					double betp8inplay4 = 0.0;
 					
 					String str1 = DetailsDatatmp1.elementAt(i)[TYPEINDEX.PERIOD0HOME.ordinal()];
 					
@@ -401,6 +347,12 @@ public class MergeDetailsWindow extends JFrame{
 					
 						tmp1[1] = tmp1[1].replace("(", "");
 						tmp1[1] = tmp1[1].replace(")", "");
+						
+						if(tmp1.length > 2){
+							tmp1[2] = tmp1[2].replace("(", "");
+							tmp1[2] = tmp1[2].replace(")", "");
+							betp8inplay1 = Double.parseDouble(tmp1[2]);
+						}
 						
 						betp81 = Double.parseDouble(tmp1[0]);
 						betzhibo1 = Double.parseDouble(tmp1[1]);
@@ -424,6 +376,12 @@ public class MergeDetailsWindow extends JFrame{
 					
 						tmp1[1] = tmp1[1].replace("(", "");
 						tmp1[1] = tmp1[1].replace(")", "");
+						
+						if(tmp1.length > 2){
+							tmp1[2] = tmp1[2].replace("(", "");
+							tmp1[2] = tmp1[2].replace(")", "");
+							betp8inplay2 = Double.parseDouble(tmp1[2]);
+						}
 						
 						betp82 = Double.parseDouble(tmp1[0]);
 						betzhibo2 = Double.parseDouble(tmp1[1]);
@@ -450,6 +408,12 @@ public class MergeDetailsWindow extends JFrame{
 						betp83 = Double.parseDouble(tmp1[0]);
 						betzhibo3 = Double.parseDouble(tmp1[1]);
 						
+						if(tmp1.length > 3){
+							tmp1[2] = tmp1[2].replace("(", "");
+							tmp1[2] = tmp1[2].replace(")", "");
+							betp8inplay3 = Double.parseDouble(tmp1[2]);
+						}
+						
 					}else{
 						betAmt3 = Double.parseDouble(str3);
 					}
@@ -471,13 +435,19 @@ public class MergeDetailsWindow extends JFrame{
 						betp84 = Double.parseDouble(tmp1[0]);
 						betzhibo4 = Double.parseDouble(tmp1[1]);
 						
+						if(tmp.length > 2){
+							tmp1[2] = tmp1[2].replace("(", "");
+							tmp1[2] = tmp1[2].replace(")", "");
+							betp8inplay4 = Double.parseDouble(tmp1[2]);
+						}
+						
 					}else{
 						betAmt4 = Double.parseDouble(str4);
 					}
 					
 					
 					
-/*					if(Math.abs(betAmt1) > hideNum || Math.abs(betAmt2) > hideNum|| 
+	/*					if(Math.abs(betAmt1) > hideNum || Math.abs(betAmt2) > hideNum|| 
 							Math.abs(betAmt3) > hideNum || Math.abs(betAmt4) > hideNum){
 						//
 						
@@ -485,17 +455,30 @@ public class MergeDetailsWindow extends JFrame{
 						
 					}*/
 					
-					if( (Math.abs(betp81) > hideNum && Math.abs(betzhibo1) > hideNum) || 
-							(Math.abs(betp82) > hideNum && Math.abs(betzhibo2) > hideNum)|| 
-							(Math.abs(betp83) > hideNum && Math.abs(betzhibo3) > hideNum) || 
-							(Math.abs(betp84) > hideNum && Math.abs(betzhibo4) > hideNum)){
-						//
-						
-						DetailsDatatmp2.add(DetailsDatatmp1.elementAt(i));
-						
+					if(eventName.contains("滚动盘")){
+						if( (Math.abs(betp81) > hideNum && Math.abs(betzhibo1) > hideNum   && Math.abs(betp8inplay1) > hideNum)|| 
+								(Math.abs(betp82) > hideNum && Math.abs(betzhibo2) > hideNum && Math.abs(betp8inplay2) > hideNum) || 
+								(Math.abs(betp83) > hideNum && Math.abs(betzhibo3) > hideNum && Math.abs(betp8inplay3) > hideNum)  || 
+								(Math.abs(betp84) > hideNum && Math.abs(betzhibo4) > hideNum && Math.abs(betp8inplay4) > hideNum)){
+							//
+							
+							DetailsDatatmp2.add(DetailsDatatmp1.elementAt(i));
+							
+						}
+					}else{
+						if( (Math.abs(betp81) > hideNum && Math.abs(betzhibo1) > hideNum) || 
+								(Math.abs(betp82) > hideNum && Math.abs(betzhibo2) > hideNum)|| 
+								(Math.abs(betp83) > hideNum && Math.abs(betzhibo3) > hideNum) || 
+								(Math.abs(betp84) > hideNum && Math.abs(betzhibo4) > hideNum)){
+							//
+							
+							DetailsDatatmp2.add(DetailsDatatmp1.elementAt(i));
+							
+						}
 					}
 					
-					
+
+
 					
 					
 				}
@@ -506,7 +489,7 @@ public class MergeDetailsWindow extends JFrame{
 			detailsData = (Vector<String[]>)DetailsDatatmp2.clone();
 			
 			
-			hightlightBigNumrows();
+			
 			
 			tableMode.updateTable();
 			
@@ -529,7 +512,7 @@ public class MergeDetailsWindow extends JFrame{
 			
 			container.setLayout(new BorderLayout());
 			
-			JPanel panelNorth = new JPanel(new GridLayout(3, 4));
+			JPanel panelNorth = new JPanel(new GridLayout(4, 4));
 
 	        container.add(panelNorth, BorderLayout.NORTH);  
 	        
@@ -545,6 +528,23 @@ public class MergeDetailsWindow extends JFrame{
 	                String content = jcb.getSelectedItem().toString();
 	                
 	                StoneAge.setSleepTime(Integer.parseInt(content));
+				}
+	        });
+	        
+	        
+	        jcb2.setSelectedIndex(2);
+	        
+	        jcb2.addItemListener(new ItemListener() {
+
+
+				@Override
+				public void itemStateChanged(ItemEvent e) {
+					// TODO Auto-generated method stub
+	               // int index = jcb.getSelectedIndex();
+	                percent = Double.parseDouble(jcb2.getSelectedItem().toString());
+	                
+	                tableMode.updateTable();
+	                //StoneAge.setSleepTime(Integer.parseInt(content));
 				}
 	        });
 	        
@@ -665,6 +665,9 @@ public class MergeDetailsWindow extends JFrame{
 	        
 	        panelNorth.add(labelInterval);
 	        panelNorth.add(jcb);
+		    
+	        panelNorth.add(labelPercent);
+	        panelNorth.add(jcb2);
 
 	        
 	        panelNorth.add(labelHighlightNum);
@@ -714,6 +717,97 @@ public class MergeDetailsWindow extends JFrame{
 		    //table.setColumnModel(columnModel);
 		    
 		    //tableMode.
+		    
+		    
+		    //设置列单元格渲染模式  开始
+	        TableColumn p0hColumn = table.getColumn("全场让球");   
+	        TableColumn p0oColumn = table.getColumn("全场大小");   
+	        TableColumn p1hColumn = table.getColumn("上半让球");
+	        TableColumn p1oColumn = table.getColumn("上半大小");   
+
+	        //绘制月薪列的字体颜色   
+
+	        DefaultTableCellRenderer fontColor = new DefaultTableCellRenderer() {   
+
+	            public void setValue(Object value) { //重写setValue方法，从而可以动态设置列单元字体颜色   
+
+	               
+	            	String str = value.toString();
+	            	Double betAmt = 0.0;
+	            	Double betp8 = 0.0;
+	            	Double betzhibo = 0.0;
+	            	Double betp8inplay = 0.0;
+	            	
+	            	String[] tmp1 = null;
+	            	
+					if(str.contains("=")){
+						String[] tmp = str.split("=");
+						betAmt = Double.parseDouble(tmp[1]);
+						
+						tmp1 = tmp[0].split("\\+");
+						tmp1[0] = tmp1[0].replace("(", "");
+						tmp1[0] = tmp1[0].replace(")", "");
+						
+					
+						tmp1[1] = tmp1[1].replace("(", "");
+						tmp1[1] = tmp1[1].replace(")", "");
+						
+						if(tmp1.length > 2){
+							tmp1[2] = tmp1[2].replace("(", "");
+							tmp1[2] = tmp1[2].replace(")", "");
+							
+							betp8inplay = Double.parseDouble(tmp1[2]);
+						}
+						
+						betp8 = Double.parseDouble(tmp1[0]);
+						betzhibo = Double.parseDouble(tmp1[1]);
+						
+						
+					}else{
+						betAmt = Double.parseDouble(str);
+					}
+					
+					if(Math.abs(betAmt) > higlightBigNum){
+						setForeground(Color.red);
+						
+						if(null != tmp1 && tmp1.length <= 2){
+							if(Math.abs(betp8) >= Math.abs(betAmt)*percent && Math.abs(betzhibo) >= Math.abs(betAmt)*percent){
+								setForeground(new Color(0, 0, 255));
+							}
+						}
+						
+					}else{
+						setForeground(Color.black);
+					}
+					
+
+					
+					setText((value == null) ? "" : value.toString());
+	            	
+
+	/*                double a = (value instanceof Double) ? ((Double) value).doubleValue() : 0.0; //获取月薪列中的值   
+
+	                   
+
+	                setForeground((a  > 3099.0) ? Color.red : Color.black); //如果月薪大于3099元，就将字体设置为红色   
+
+	                   
+
+	                setText((value == null) ? "" : value.toString());  */ 
+
+	            }   
+
+	        };   
+
+	        p0hColumn.setCellRenderer(fontColor);   
+	        p0oColumn.setCellRenderer(fontColor);   
+	        p1hColumn.setCellRenderer(fontColor);   
+	        p1oColumn.setCellRenderer(fontColor);   
+	      //设置列单元格渲染模式  结束
+		    
+
+		    
+		    
 
 		    
 	        DefaultTableCellRenderer tcr = new DefaultTableCellRenderer();// 设置table内容居中

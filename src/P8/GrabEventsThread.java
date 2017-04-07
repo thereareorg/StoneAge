@@ -151,7 +151,7 @@ public class GrabEventsThread  extends Thread{
 				}
 				
 				
-				P8Http.showEventsDeatilsTable();
+				//P8Http.showEventsDeatilsTable();
 				
 				
 				
@@ -160,6 +160,12 @@ public class GrabEventsThread  extends Thread{
 				if(P8Http.isfailedAccountEmpty()){
 					
 					StoneAge.bLogin = true;
+					
+					if(StoneAge.showP8 == true){
+						P8Http.showEventsDeatilsTable();
+						StoneAge.showP8 = false;
+						StoneAge.btnLogin.setEnabled(true);
+					}
 					
 					Thread.currentThread().sleep(sleepTime);
 				}else{

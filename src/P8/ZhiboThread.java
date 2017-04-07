@@ -6,7 +6,7 @@ import team.gl.nio.cmn.Bag;
 
 public class ZhiboThread extends Thread{
 	
-	public long sleepTime = 60*1000;
+	public long sleepTime = 20*1000;
 
 	
 	public void setSleepTime(int sec){

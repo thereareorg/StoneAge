@@ -22,7 +22,7 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
 	
 	public static long time = 0L; 
 	
-	public static long time1 = 0L;
+	public static long time1 = System.currentTimeMillis();
 	
 	public static long printTime = 0L;
 	
@@ -52,7 +52,7 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
                
                time = System.currentTimeMillis();
                
-               //ZhiboManager.clearEventsVec();
+               ZhiboManager.clearEventsVec();
                
                ZhiboManager.constructEventsVec((String)msg);
                
@@ -65,10 +65,10 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
                }
                
                MergeManager.constructMergeRes();
-               //MergeManager.sendMails();
+              // MergeManager.sendMails();
                MergeManager.updateEventsDetails();
                MergeManager.copyTofinalEventsDetails();
-               MergeManager.showMergeDetailsWnd(StoneAge.showMergeWnd);
+               //MergeManager.showMergeDetailsWnd(StoneAge.showMergeWnd);
                
                ZhiboManager.saveEvents();
                
@@ -156,7 +156,7 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
 
              
              
-             //ZhiboManager.clearEventsVec();
+             ZhiboManager.clearEventsVec();
              
              ZhiboManager.constructEventsVec(res);
              
@@ -165,7 +165,7 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
              ZhiboManager.updateEventsDetailsData();
              
              if(StoneAge.showZhibo == true){
-             	ZhiboManager.showEventsDeatilsTable();
+             	//ZhiboManager.showEventsDeatilsTable();
              }
              
              
@@ -185,7 +185,7 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
            //  MergeManager.sendMails();
              MergeManager.copyTofinalEventsDetails();
              MergeManager.updateEventsDetails();
-             MergeManager.showMergeDetailsWnd(StoneAge.showMergeWnd);
+             //MergeManager.showMergeDetailsWnd(StoneAge.showMergeWnd);
              
              
              

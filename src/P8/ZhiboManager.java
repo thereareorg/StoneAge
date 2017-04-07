@@ -46,13 +46,13 @@ public class ZhiboManager {
     	//lockeEventsDetails.readLock().unlock();
     }
     
-/*    public static void clearEventsVec(){
-    	lockeEventsDetails.writeLock().lock();
+    public static void clearEventsVec(){
+    	//lockeEventsDetails.writeLock().lock();
     	if(eventDetailsVec.size() != 0){
     		eventDetailsVec.clear();
     	}
-    	lockeEventsDetails.writeLock().unlock();
-    }*/
+    	//lockeEventsDetails.writeLock().unlock();
+    }
     
 
     
@@ -263,6 +263,7 @@ public class ZhiboManager {
 							eventDetailsVec.elementAt(i)[ZHIBOINDEX.PERIOD0OVER.ordinal()] = event[ZHIBOINDEX.PERIOD0OVER.ordinal()];
 							eventDetailsVec.elementAt(i)[ZHIBOINDEX.PERIOD1HOME.ordinal()] = event[ZHIBOINDEX.PERIOD1HOME.ordinal()];
 							eventDetailsVec.elementAt(i)[ZHIBOINDEX.PERIOD1OVER.ordinal()] = event[ZHIBOINDEX.PERIOD1OVER.ordinal()];
+							System.out.println("存在两场相同球赛");
 							//eventDetailsVec.elementAt(i)[ZHIBOINDEX.PERIOD1OVER.ordinal()] = event[12];
 							
 							break;
@@ -352,7 +353,8 @@ public class ZhiboManager {
     			if(true != records.contains(p0hsend) && p0hsend != 0){
     				records.add(p0hsend);
     				System.out.println("LL send 全场让球 " + df.format(System.currentTimeMillis()));
-    				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "ks68889@163.com", "LL " + key, "全场让球:" + Integer.toString(p0hsend));
+    				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "43069453@qq.com", "LL " + key, "全场让球:" + Integer.toString(p0hsend));
+    				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "490207143@qq.com", "LL " + key, "全场让球:" + Integer.toString(p0hsend));
     				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", "LL " + key, "全场让球:" + Integer.toString(p0hsend));
 
     			}
@@ -369,7 +371,8 @@ public class ZhiboManager {
         			if(true != records.contains(p0osendsaved)){
         				records.add(p0osendsaved);
         				System.out.println("LL send 全场大小 " +  df.format(System.currentTimeMillis()));
-        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "ks68889@163.com", "LL " + key, "全场大小:" + Integer.toString(p0osend));
+        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "43069453@qq.com", "LL " + key, "全场大小:" + Integer.toString(p0osend));
+        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "490207143@qq.com", "LL " + key, "全场大小:" + Integer.toString(p0osend));
         				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", "LL " + key, "全场大小:" + Integer.toString(p0osend));
 
         			}
@@ -389,7 +392,8 @@ public class ZhiboManager {
         			if(true != records.contains(p1hsendsaved)){
         				records.add(p1hsendsaved);
         				System.out.println("LL send 半场让球 " + df.format(System.currentTimeMillis()));
-        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "ks68889@163.com", "LL " + key, "半场让球:" + Integer.toString(p1hsend));
+        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "43069453@qq.com", "LL " + key, "半场让球:" + Integer.toString(p1hsend));
+        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "490207143@qq.com", "LL " + key, "半场让球:" + Integer.toString(p1hsend));
         				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", "LL " + key, "半场让球:" + Integer.toString(p1hsend));
         				
         			}
@@ -409,7 +413,8 @@ public class ZhiboManager {
         			if(true != records.contains(p1osendsaved)){
         				records.add(p1osendsaved);
         				System.out.println("LL send 半场大小 "+ df.format(System.currentTimeMillis()));
-        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "ks68889@163.com", "LL " + key, "半场大小:" + Integer.toString(p1osend));
+        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "43069453@qq.com", "LL " + key, "半场大小:" + Integer.toString(p1osend));
+        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "490207143@qq.com", "LL " + key, "半场大小:" + Integer.toString(p1osend));
         				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", "LL " + key, "半场大小:" + Integer.toString(p1osend));
 
         			}

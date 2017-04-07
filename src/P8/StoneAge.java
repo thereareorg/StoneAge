@@ -61,7 +61,7 @@ public class StoneAge {
 	
 	
 	
-	public static boolean showMergeWnd = false;
+	//public static boolean showMergeWnd = false;
 	public static boolean showP8 = false;
 	public static boolean showZhibo = false;
 
@@ -117,6 +117,10 @@ public class StoneAge {
 	
 	public static void setSleepTime(int sec){
 		grabThead.setSleepTime(sec);
+	}
+	
+	public static void setZhiboSleepTime(int sec){
+		zhiboThread.setSleepTime(sec);
 	}
 	
 	public void setFileout(){
@@ -244,6 +248,12 @@ public class StoneAge {
 		btnLogin = new JButton("即时注单");
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				
+					if(bLogin == true){
+						P8Http.showEventsDeatilsTable();
+						return;
+					}
+				
 					accountWnd.dispose();
 					
 					btnAccount.setEnabled(false);
@@ -253,6 +263,8 @@ public class StoneAge {
 					grabThead = new GrabEventsThread(sa);
 					
 					grabThead.start();
+					
+					showP8 = true;
 			}
 		});
 		
@@ -337,6 +349,8 @@ public class StoneAge {
 					zhiboThread = new ZhiboThread();
 					zhiboThread.start();
 					
+					ZhiboManager.showEventsDeatilsTable();
+					
 					System.out.println("连接成功");
 					
 					showZhibo = true;
@@ -364,6 +378,13 @@ public class StoneAge {
 				
 				try{
 					
+					if(bLogin == true && zhiboConnected == true){
+				        MergeManager.clearMergeData();
+				        MergeManager.constructMergeRes();
+				        MergeManager.updateEventsDetails();
+				        MergeManager.showMergeDetailsWnd(true);
+					}
+					
 					if(bLogin == false){
 						JOptionPane.showMessageDialog(null,"请先连接平博");
 						return;
@@ -376,12 +397,12 @@ public class StoneAge {
 					}
 					
 
-					showMergeWnd = true;
+					//showMergeWnd = true;
 					
 			        MergeManager.clearMergeData();
 			        MergeManager.constructMergeRes();
 			        MergeManager.updateEventsDetails();
-			        MergeManager.showMergeDetailsWnd(StoneAge.showMergeWnd);
+			        MergeManager.showMergeDetailsWnd(true);
 
 					
 				}catch(Exception ex){

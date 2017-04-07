@@ -116,7 +116,7 @@ public class PreviousDataManager {
 		
 		try{
 			
-			File file = new File("data/" + "events"
+/*			File file = new File("data/" + "events"
 					+ ".data");
 			
 			BufferedReader reader1 = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8")); // 指定读取文件的编码格式，要和写入的格式一致，以免出现中文乱码,
@@ -133,17 +133,14 @@ public class PreviousDataManager {
 				
 				pEventsDetails.add(event);
 				
-				//System.out.println(account);
 				
-				}
-			
-/*			for(int i = 0; i < pEventsDetails.size(); i++){
-				System.out.println(pEventsDetails.elementAt(i));
-			}*/
+				
+				}*/
+
 			
 			pdataWnd.updateEventsDetails(pEventsDetails);
 			
-			reader1.close();
+			//reader1.close();
 			
 		}catch(Exception e){
 			

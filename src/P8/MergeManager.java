@@ -471,50 +471,58 @@ public class MergeManager {
 										boolean addTomerge = false;
 										
 										
-										if((p8nogoalsbet1 >0.0 && zhibo0homenow >0.0) || (p8nogoalsbet1 <0.0 && zhibo0homenow <0.0)){
+										if((p8danshibet1 >0.0 && zhibo0homenow > 0.0&& p80homeInplayVal >0.0) || 
+												(p8danshibet1 <0.0 && zhibo0homenow <0.0 && p80homeInplayVal < 0.0)){
 											
 											
-											item[TYPEINDEX.PERIOD0HOME.ordinal()] = String.format("(%.0f)", p8nogoalsbet1) + "+" +
-													String.format("(%.0f)", zhibo0homenow) + "=" + String.format("%.0f", p8nogoalsbet1 + zhibo0homenow);
+											item[TYPEINDEX.PERIOD0HOME.ordinal()] = String.format("(%.0f)", p8danshibet1) + "+" +
+													String.format("(%.0f)", zhibo0homenow) + "+" + String.format("(%.0f)", p80homeInplayVal) + "=" 
+													+ String.format("%.0f", p8danshibet1 + zhibo0homenow + p80homeInplayVal);
 											
 											addTomerge = true;
 										}else{
 											item[TYPEINDEX.PERIOD0HOME.ordinal()] = "0";
 										}
 										
-										if((p8nogoalsbet2 >0.0 && zhibo0overnow >0.0) || (p8nogoalsbet2 <0.0 && zhibo0overnow <0.0)){
-											//item[TYPEINDEX.PERIOD0OVER.ordinal()] = String.format("%.0f", p80over + zhibo0over);
+										
+										if((p8danshibet2 >0.0 && zhibo0overnow > 0.0&& p80overInplayVal >0.0) || 
+												(p8danshibet2 <0.0 && zhibo0overnow <0.0 && p80overInplayVal < 0.0)){
 											
-											item[TYPEINDEX.PERIOD0OVER.ordinal()] = String.format("(%.0f)", p8nogoalsbet2) + "+" +
-													String.format("(%.0f)", zhibo0overnow) + "=" + String.format("%.0f", p8nogoalsbet2 + zhibo0overnow);
+											
+											item[TYPEINDEX.PERIOD0OVER.ordinal()] = String.format("(%.0f)", p8danshibet2) + "+" +
+													String.format("(%.0f)", zhibo0overnow) + "+" + String.format("(%.0f)", p80overInplayVal) + "=" 
+													+ String.format("%.0f", p8danshibet2 + zhibo0overnow + p80overInplayVal);
 											
 											addTomerge = true;
-										}
-										else{
+										}else{
 											item[TYPEINDEX.PERIOD0OVER.ordinal()] = "0";
 										}
 										
-
 										
-										if((p8nogoalsbet3 >0.0 && zhibo1homenow >0.0) || (p8nogoalsbet3 <0.0 && zhibo1homenow <0.0)){
-											//item[TYPEINDEX.PERIOD1HOME.ordinal()] = String.format("%.0f", p81home + zhibo1home);
+										if((p8nogoalsbet3 >0.0 && zhibo1homenow > 0.0&& p81homeInplayVal >0.0) || 
+												(p8nogoalsbet3 <0.0 && zhibo1homenow <0.0 && p81homeInplayVal < 0.0)){
+											
+											
 											item[TYPEINDEX.PERIOD1HOME.ordinal()] = String.format("(%.0f)", p8nogoalsbet3) + "+" +
-													String.format("(%.0f)", zhibo1homenow) + "=" + String.format("%.0f", p8nogoalsbet3 + zhibo1homenow);
+													String.format("(%.0f)", zhibo1homenow) + "+" + String.format("(%.0f)", p81homeInplayVal) + "=" 
+													+ String.format("%.0f", p8nogoalsbet3 + zhibo1homenow + p81homeInplayVal);
+											
 											addTomerge = true;
 										}else{
 											item[TYPEINDEX.PERIOD1HOME.ordinal()] = "0";
 										}
 										
 										
-										if((p8nogoalsbet4 >0.0 && zhibo1overnow >0.0) || (p8nogoalsbet4 <0.0 && zhibo1overnow <0.0)){
-											//item[TYPEINDEX.PERIOD1OVER.ordinal()] = String.format("%.0f", p81over + zhibo1over);
+										if((p8nogoalsbet4 >0.0 && zhibo1overnow > 0.0&& p81overInplayVal >0.0) || 
+												(p8nogoalsbet4 <0.0 && zhibo1overnow <0.0 && p81overInplayVal < 0.0)){
+											
 											
 											item[TYPEINDEX.PERIOD1OVER.ordinal()] = String.format("(%.0f)", p8nogoalsbet4) + "+" +
-													String.format("(%.0f)", zhibo1overnow) + "=" + String.format("%.0f", p8nogoalsbet4 + zhibo1overnow);
+													String.format("(%.0f)", zhibo1overnow) + "+" + String.format("(%.0f)", p81overInplayVal) + "=" 
+													+ String.format("%.0f", p8nogoalsbet4 + zhibo1overnow + p81overInplayVal);
 											
 											addTomerge = true;
-										}
-										else{
+										}else{
 											item[TYPEINDEX.PERIOD1OVER.ordinal()] = "0";
 										}
 										
@@ -537,9 +545,8 @@ public class MergeManager {
 												notAddtomerge.add(item[TYPEINDEX.EVENTNAMNE.ordinal()]);
 											}
 										}
-											
-											
-											
+										
+
 										//}
 										
 										
