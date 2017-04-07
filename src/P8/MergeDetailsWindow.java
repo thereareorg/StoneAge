@@ -86,9 +86,9 @@ public class MergeDetailsWindow extends JFrame{
 	    
 	    private int selectedOrMerge = 0;
 		
-	    Double higlightBigNum = 1000000.0;
+	    Double higlightBigNum = 500000.0;
 	    
-	    Double hideNum = 0.0;
+	    Double hideNum = 100000.0;
 
 	    
 	    
@@ -548,6 +548,7 @@ public class MergeDetailsWindow extends JFrame{
 				}
 	        });
 	        
+	        textFieldHighlightNum.setText("500000");
 	        
 	        textFieldHighlightNum.addKeyListener(new KeyListener(){
 	            public void keyPressed(KeyEvent e) {  
@@ -571,6 +572,7 @@ public class MergeDetailsWindow extends JFrame{
 
 	        });
 	        
+	        textFieldHideNum.setText("100000");
 	        
 	        textFieldHideNum.addKeyListener(new KeyListener(){
 	            public void keyPressed(KeyEvent e) {  
@@ -776,13 +778,32 @@ public class MergeDetailsWindow extends JFrame{
 							}
 						}
 						
+						setText((value == null) ? "" : value.toString());
+						
 					}else{
 						setForeground(Color.black);
+						setText("0");
 					}
 					
 
 					
-					setText((value == null) ? "" : value.toString());
+					if(null != tmp1){
+						
+						if(tmp1.length <= 2){
+							if(Math.abs(betp8)< hideNum || Math.abs(betzhibo) < hideNum){
+								setForeground(Color.black);
+								setText("0");
+							}
+						}
+						
+						if(tmp1.length > 2){
+							if(Math.abs(betp8) < hideNum || Math.abs(betzhibo) < hideNum || Math.abs(betp8inplay) < hideNum){
+								setForeground(Color.black);
+								setText("0");
+							}
+						}
+						
+					}
 	            	
 
 	/*                double a = (value instanceof Double) ? ((Double) value).doubleValue() : 0.0; //获取月薪列中的值   

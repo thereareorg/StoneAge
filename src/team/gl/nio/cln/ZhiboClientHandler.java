@@ -65,10 +65,8 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
                }
                
                MergeManager.constructMergeRes();
-              // MergeManager.sendMails();
                MergeManager.updateEventsDetails();
                MergeManager.copyTofinalEventsDetails();
-               //MergeManager.showMergeDetailsWnd(StoneAge.showMergeWnd);
                
                ZhiboManager.saveEvents();
                
@@ -164,11 +162,7 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
              
              ZhiboManager.updateEventsDetailsData();
              
-             if(StoneAge.showZhibo == true){
-             	//ZhiboManager.showEventsDeatilsTable();
-             }
-             
-             
+        
              SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");// 设置日期格式
      		
 
@@ -182,12 +176,9 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
              
              MergeManager.clearMergeData();
              MergeManager.constructMergeRes();
-           //  MergeManager.sendMails();
              MergeManager.copyTofinalEventsDetails();
              MergeManager.updateEventsDetails();
-             //MergeManager.showMergeDetailsWnd(StoneAge.showMergeWnd);
-             
-             
+           
              
              MergeManager.saveEvents();
     		

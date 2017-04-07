@@ -240,7 +240,7 @@ public class MergeManager {
 					}
 					
 				}	//单式盘，开赛两分钟,存			
-				else if(pass > twoMinutes){
+				else if((pass > twoMinutes) && ( !mergeEventDetailsVec.elementAt(i)[ZHIBOINDEX.EVENTNAMNE.ordinal()].contains("滚动盘") )){
 					//mergeEventDetailsVec.elementAt(i)[ZHIBOINDEX.SAVED.ordinal()] = "1";					
 					String[] item = mergeEventDetailsVec.elementAt(i).clone();
 					item[ZHIBOINDEX.TIME.ordinal()] = timeStr;
