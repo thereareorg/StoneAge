@@ -284,6 +284,8 @@ public class P8Http {
     				System.out.println("PP send 全场让球 :" + df.format(System.currentTimeMillis()));
     				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "43069453@qq.com", "PP " + key, "全场让球:" + Integer.toString(p0hsend));
     				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "490207143@qq.com", "PP " + key, "全场让球:" + Integer.toString(p0hsend));
+    				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "2503706418@qq.com", "PP " + key, "全场让球:" + Integer.toString(p0hsend));
+    				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "13557306171@163.com", "PP " + key, "全场让球:" + Integer.toString(p0hsend));
     				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", "PP " + key, "全场让球:" + Integer.toString(p0hsend));
 
     			}
@@ -303,6 +305,8 @@ public class P8Http {
         				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "43069453@qq.com", "PP " + key, "全场大小:" + Integer.toString(p0osend));
         				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "490207143@qq.com", "PP " + key, "全场大小:" + Integer.toString(p0osend));
         				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", "PP " + key, "全场大小:" + Integer.toString(p0osend));
+        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "2503706418@qq.com", "PP " + key, "全场大小:" + Integer.toString(p0osend));
+        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "13557306171@163.com", "PP " + key, "全场大小:" + Integer.toString(p0osend));
 
         			}
     				
@@ -324,6 +328,9 @@ public class P8Http {
         				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "43069453@qq.com", "PP " + key, "半场让球:" + Integer.toString(p1hsend));
         				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "490207143@qq.com", "PP " + key, "半场让球:" + Integer.toString(p1hsend));
         				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", "PP " + key, "半场让球:" + Integer.toString(p1hsend));
+        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "2503706418@qq.com", "PP " + key, "半场让球:" + Integer.toString(p1hsend));
+        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "13557306171@163.com", "PP " + key, "半场让球:" + Integer.toString(p1hsend));
+
         			}
     				
     			}
@@ -344,8 +351,8 @@ public class P8Http {
         				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "43069453@qq.com", "PP " + key, "半场大小:" + Integer.toString(p1osend));
         				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "490207143@qq.com", "PP " + key, "半场大小:" + Integer.toString(p1osend));
         				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", "PP " + key, "半场大小:" + Integer.toString(p1osend));
-
-        				
+        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "2503706418@qq.com", "PP " + key, "半场大小:" + Integer.toString(p1osend));
+        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "13557306171@163.com", "PP " + key, "半场大小:" + Integer.toString(p1osend));        				
         			}
     				
     			}
