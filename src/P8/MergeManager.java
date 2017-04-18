@@ -1,5 +1,6 @@
 package P8;
 
+import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -16,6 +17,7 @@ import java.util.Vector;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import team.gl.nio.cln.ZhiboClientHandler;
 import Mail.MailManager;
 
 public class MergeManager {
@@ -37,7 +39,12 @@ public class MergeManager {
 	
 	
 	public static int mergeHideNumber = 5000;
-	public static int mergeSendNumber = 10000;
+	
+	
+	
+	public static int mergep0hSendNumber = 1800000;
+	public static int mergep0oSendNumber = 800000;
+	public static int mergep0oHideSendNumber = 200000;
 	
 	static Map<String, Vector<Integer>> mailRecords = new HashMap<String, Vector<Integer>>();  
 	
@@ -68,7 +75,9 @@ public class MergeManager {
     
 
 
-    
+    public static Vector<String[]> getpSubMergeevents(){
+    	return pDataManager.getpSubevents();
+    }
     
 	
 	
@@ -87,7 +96,29 @@ public class MergeManager {
 	
 	
 	public static void updateEventsDetails(){
-		mergeDetailsWnd.updateEventsDetails(mergeEventDetailsVec);
+		
+		try{
+			if(mergeEventDetailsVec.size() != 0){
+				mergeDetailsWnd.updateEventsDetails(mergeEventDetailsVec);
+				
+				SimpleDateFormat dfMin = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+				mergeDetailsWnd.setStateText("数据更新于: " + dfMin.format(System.currentTimeMillis()));
+			}
+			
+			if(GrabEventsThread.grabStat && ZhiboClientHandler.grabStat){
+				mergeDetailsWnd.setStateColor(Color.GREEN);
+			}else{
+				mergeDetailsWnd.setStateColor(Color.RED);
+
+			}
+			
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+
+		
 	}
 	
 	
@@ -247,6 +278,114 @@ public class MergeManager {
 					boolean saveRes = pDataManager.saveTofile(item);	
 					if(saveRes == true){
 						System.out.println("merge save success:" + Arrays.toString(item));
+						
+						String eventNameStr = item[TYPEINDEX.EVENTNAMNE.ordinal()];
+						
+						String p0hstr = item[TYPEINDEX.PERIOD0HOME.ordinal()];
+						String p0ostr = item[TYPEINDEX.PERIOD0OVER.ordinal()];
+						
+						double betp8 = 0.0;
+						double betzhibo = 0.0;
+						
+						String[] p0htmp1 = null;
+						
+						double p0h = 0.0;
+						
+						boolean sendMail = false;
+						
+		    			String sendTitle = "合并 " + eventNameStr + " " + timeStr;
+		    			String sendContent = "";
+						
+						if(p0hstr.contains("=")){
+							String[] tmp = p0hstr.split("=");
+							p0h = Double.parseDouble(tmp[1]);
+							
+							p0htmp1 = tmp[0].split("\\+");
+							p0htmp1[0] = p0htmp1[0].replace("(", "");
+							p0htmp1[0] = p0htmp1[0].replace(")", "");
+							
+						
+							p0htmp1[1] = p0htmp1[1].replace("(", "");
+							p0htmp1[1] = p0htmp1[1].replace(")", "");
+							
+
+							
+							betp8 = Double.parseDouble(p0htmp1[0]);
+							betzhibo = Double.parseDouble(p0htmp1[1]);
+							
+							
+						}else{
+							p0h = Double.parseDouble(p0hstr);
+						}
+						
+
+
+						if(Math.abs(p0h) > mergep0hSendNumber){
+							if(Math.abs(betp8) >= Math.abs(p0h)*0.4 && Math.abs(betzhibo) >= Math.abs(p0h)*0.4){
+								sendMail = true;
+								sendContent = "全场让球: " + p0hstr + "\n";
+							}
+						}
+						
+						betp8 = 0.0;
+						betzhibo = 0.0;
+						
+						String[] p0otmp1 = null;
+						
+						double p0o = 0.0;
+						
+						
+						if(p0ostr.contains("=")){
+							String[] tmp = p0ostr.split("=");
+							p0o = Double.parseDouble(tmp[1]);
+							
+							p0otmp1 = tmp[0].split("\\+");
+							p0otmp1[0] = p0otmp1[0].replace("(", "");
+							p0otmp1[0] = p0otmp1[0].replace(")", "");
+							
+						
+							p0otmp1[1] = p0otmp1[1].replace("(", "");
+							p0otmp1[1] = p0otmp1[1].replace(")", "");
+							
+
+							
+							betp8 = Double.parseDouble(p0otmp1[0]);
+							betzhibo = Double.parseDouble(p0otmp1[1]);
+							
+							
+						}else{
+							p0o = Double.parseDouble(p0ostr);
+						}
+						
+						
+						
+						if(Math.abs(p0o) > mergep0oSendNumber && p0o < 0){
+							if(Math.abs(betp8) >= mergep0oHideSendNumber && Math.abs(betzhibo) >= mergep0oHideSendNumber){
+								sendMail = true;
+								sendContent = "全场大小: " + p0ostr + "\n";
+							}
+						}
+						
+						
+						if(true == sendMail){
+							
+							Vector<String> mails = StoneAge.getMailList();
+							
+							for(int k = 0; k < mails.size(); k++){
+								String mail = mails.elementAt(k);
+								MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", mail, sendTitle, sendContent);
+							}
+							
+/*							MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", sendTitle, sendContent);
+							MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "43069453@qq.com", sendTitle, sendContent);
+							MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "490207143@qq.com", sendTitle, sendContent);
+							MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "2503706418@qq.com", sendTitle, sendContent);
+							MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "281426295@qq.com", sendTitle, sendContent);
+							MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "84131403@qq.com", sendTitle, sendContent);	*/						
+						}
+						
+						
+						
 					}
 				}
 
@@ -499,7 +638,7 @@ public class MergeManager {
 										}
 										
 										
-										if((p8nogoalsbet3 >0.0 && zhibo1homenow > 0.0&& p81homeInplayVal >0.0) || 
+/*										if((p8nogoalsbet3 >0.0 && zhibo1homenow > 0.0&& p81homeInplayVal >0.0) || 
 												(p8nogoalsbet3 <0.0 && zhibo1homenow <0.0 && p81homeInplayVal < 0.0)){
 											
 											
@@ -524,7 +663,7 @@ public class MergeManager {
 											addTomerge = true;
 										}else{
 											item[TYPEINDEX.PERIOD1OVER.ordinal()] = "0";
-										}
+										}*/
 										
 										
 										if(addTomerge == true){
@@ -626,7 +765,7 @@ public class MergeManager {
 									item[TYPEINDEX.PERIOD0OVER.ordinal()] = "0";
 								}
 								
-								if((p81over >0.0 && zhibo1over >0.0) || (p81over <0.0 && zhibo1over <0.0)){
+/*								if((p81over >0.0 && zhibo1over >0.0) || (p81over <0.0 && zhibo1over <0.0)){
 									//item[TYPEINDEX.PERIOD1OVER.ordinal()] = String.format("%.0f", p81over + zhibo1over);
 									
 									item[TYPEINDEX.PERIOD1OVER.ordinal()] = String.format("(%.0f)", p81over) + "+" +
@@ -645,7 +784,7 @@ public class MergeManager {
 									addTomerge = true;
 								}else{
 									item[TYPEINDEX.PERIOD1HOME.ordinal()] = "0";
-								}
+								}*/
 								
 								if(addTomerge == true){
 									mergeEventDetailsVec.add(item);
@@ -672,7 +811,7 @@ public class MergeManager {
 	
 	
 	public static void sendMails(){
-		try{
+		/*		try{
 			
 			for(int i = 0; i < mergeEventDetailsVec.size(); i++){
 				
@@ -893,7 +1032,7 @@ public class MergeManager {
 			
 		}catch(Exception e){
 			e.printStackTrace();
-		}
+		}*/
 
 	}
 	

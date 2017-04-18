@@ -5,6 +5,7 @@ package P8;
 
 import org.python.util.PythonInterpreter;
 
+import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -78,7 +79,8 @@ public class P8Http {
     boolean bLogin = false;
     
     
-    public static int P8SendNumber = 1000000;
+    public static int P8p0hSendNumber = 1000000;
+    public static int P8p0oSendNumber = 700000;
     
     
     static PreviousDataWindow pDataWindow = new PreviousDataWindow();
@@ -248,7 +250,7 @@ public class P8Http {
     
     public static void sendMails(){
     	
-    	try{
+/*    	try{
     		
     		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     		
@@ -362,7 +364,7 @@ public class P8Http {
     		
     	}catch(Exception e){
     		e.printStackTrace();
-    	}
+    	}*/
     	
 
     }
@@ -1059,7 +1061,7 @@ public class P8Http {
     			
     		}
     		
-    		/*for(int k = 0; k<eventDetailsVec.size(); k++ ){
+/*    		for(int k = 0; k<eventDetailsVec.size(); k++ ){
     			
     			String[] outRow = eventDetailsVec.elementAt(k);
     			
@@ -1768,6 +1770,10 @@ public class P8Http {
 		eventsDetailsDataWindow.setStateText(timeStr + "   " + res);
 	}
 	
+	public static void setGrabColor(Color cr){
+		eventsDetailsDataWindow.setStateColor(cr);
+	}
+	
 	
 	public static void saveEvents(){
 		
@@ -1777,6 +1783,9 @@ public class P8Http {
 			eventDetailsVec.add(test);*/
 			
 			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+			
+
+			
 			
 			for(int i = 0; i < eventDetailsVec.size(); i++){
 				
@@ -1808,7 +1817,7 @@ public class P8Http {
 						}
 					}
 				}else if(eventName.contains("角球")){
-					return;
+					continue;
 				}else{
 					if(currentTime - eventTime > 0){
 						
@@ -1822,6 +1831,46 @@ public class P8Http {
 						
 						if(saveRes == true){
 							System.out.println("p8 save success:" + Arrays.toString(saveItem));
+							
+							boolean sendMail = false;
+							
+							String eventNameStr = saveItem[TYPEINDEX.EVENTNAMNE.ordinal()];
+			    			double p0h = Double.parseDouble(saveItem[TYPEINDEX.PERIOD0HOME.ordinal()]);
+			    			double p0o = Double.parseDouble(saveItem[TYPEINDEX.PERIOD0OVER.ordinal()]);
+			    			
+			    			String sendTitle = "PP " + eventNameStr + " " + eventTimestr;
+			    			String sendContent = "";
+							
+							if(Math.abs(p0h) >= P8p0hSendNumber){
+								sendMail = true;
+								sendContent = "全场让球: " + String.format("%.0f\n", p0h);
+							}
+							
+							if(Math.abs(p0o) >= P8p0oSendNumber && p0o < 0){
+								sendMail = true;
+								sendContent += "全场大小: " + String.format("%.0f\n", p0o);
+							}
+							
+							if(sendMail == true){
+								
+								Vector<String> mails = StoneAge.getMailList();
+								
+								for(int k = 0; k < mails.size(); k++){
+									String mail = mails.elementAt(k);
+									MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", mail, sendTitle, sendContent);
+								}
+								
+/*								MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", sendTitle, sendContent);
+								MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "43069453@qq.com", sendTitle, sendContent);
+								MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "490207143@qq.com", sendTitle, sendContent);
+								MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "2503706418@qq.com", sendTitle, sendContent);
+								MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "281426295@qq.com", sendTitle, sendContent);
+								MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "84131403@qq.com", sendTitle, sendContent);*/														
+							}
+							
+							
+							
+							
 						}
 					}
 				}			

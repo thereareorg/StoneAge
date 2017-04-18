@@ -1,5 +1,6 @@
 package P8;
 
+import java.awt.Color;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -28,10 +29,12 @@ public class ZhiboManager {
     public static   Vector<String[]> inPlayeventDetailsVec = new Vector<String[]>();
     
 
+    public static Vector<String> alreadSendmailEvents = new Vector<String>();
 	
 	static Vector<String> showLeagueName = new Vector<String>();
 	
-	public static int ZhiboSendNumber = 700000;
+	public static int Zhibop0hSendNumber = 400000;
+	public static int Zhibop0oSendNumber = 400000;
 	
 	static Map<String, Vector<Integer>> mailRecords = new HashMap<String, Vector<Integer>>(); 
 	
@@ -77,6 +80,11 @@ public class ZhiboManager {
 	
 	public static void setStateText(String txt){
 		eventsDetailsDataWindow.setStateText(txt);
+	}
+	
+	
+	public static void setStateColor(Color color){
+		eventsDetailsDataWindow.setStateColor(color);
 	}
 	
 	public  static boolean isInShowLeagueName(String str){
@@ -298,7 +306,7 @@ public class ZhiboManager {
     
     public static void sendMails(){
     	
-    	try{
+/*    	try{
     		
     		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     		
@@ -327,7 +335,7 @@ public class ZhiboManager {
         		
         		String key = item[ZHIBOINDEX.EVENTNAMNE.ordinal()] + " " + timeStr;
         		
-/*        		String saved = item[ZHIBOINDEX.SAVED.ordinal()];
+        		String saved = item[ZHIBOINDEX.SAVED.ordinal()];
         		
         		if(saved.contains("1"))
         			continue;
@@ -335,7 +343,7 @@ public class ZhiboManager {
         		//过滤滚动盘
         		if(key.contains("滚动盘")){
         			continue;
-        		}*/
+        		}
         		
         		if(true != mailRecords.containsKey(key)){
         			Vector<Integer> records = new Vector<Integer>();
@@ -426,7 +434,7 @@ public class ZhiboManager {
     		
     	}catch(Exception e){
     		e.printStackTrace();
-    	}
+    	}*/
     	
 
     }
@@ -489,9 +497,83 @@ public class ZhiboManager {
 					item[ZHIBOINDEX.TIME.ordinal()] = timeStr;
 					boolean res = pDataManager.saveTofile(item);	
 					
+					
+/*					boolean sendMail = false;
+					
+					String eventName = item[ZHIBOINDEX.EVENTNAMNE.ordinal()];
+	    			double p0h = Double.parseDouble(item[ZHIBOINDEX.PERIOD0HOME.ordinal()]);
+	    			double p0o = Double.parseDouble(item[ZHIBOINDEX.PERIOD0OVER.ordinal()]);
+	    			
+	    			String sendTitle = "LL " + eventName + " " + timeStr;
+	    			String sendContent = "";
+					
+						if(Math.abs(p0h) >= Zhibop0hSendNumber){
+						sendMail = true;
+						sendContent = "全场让球: " + String.format("%.0f\n", p0h);
+					}
+					
+					if(Math.abs(p0o) >= Zhibop0oSendNumber && p0o < 0){
+	    			//if(Math.abs(p0o) >= 1000){
+						sendMail = true;
+						sendContent += "全场大小: " + String.format("%.0f\n", p0o);
+					}
+					
+					if(sendMail == true && !alreadSendmailEvents.contains(sendTitle)){
+						MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", sendTitle, sendContent);
+						MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "43069453@qq.com", sendTitle, sendContent);
+						MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "490207143@qq.com", sendTitle, sendContent);
+						MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "2503706418@qq.com", sendTitle, sendContent);
+						MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "281426295@qq.com", sendTitle, sendContent);
+						MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "84131403@qq.com", sendTitle, sendContent);	
+					
+						alreadSendmailEvents.add(sendTitle);
+						
+					}*/
+					
+					
+					
+					
 					if(res == true){
 						
 						System.out.println("zhibo save success:" + Arrays.toString(item));
+						
+						boolean sendMail = false;
+						
+						String eventName = item[ZHIBOINDEX.EVENTNAMNE.ordinal()];
+		    			double p0h = Double.parseDouble(item[ZHIBOINDEX.PERIOD0HOME.ordinal()]);
+		    			double p0o = Double.parseDouble(item[ZHIBOINDEX.PERIOD0OVER.ordinal()]);
+		    			
+		    			String sendTitle = "LL " + eventName + " " + timeStr;
+		    			String sendContent = "";
+						
+/*						if(Math.abs(p0h) >= Zhibop0hSendNumber){
+							sendMail = true;
+							sendContent = "全场让球: " + String.format("%.0f\n", p0h);
+						}*/
+						
+						if(Math.abs(p0o) >= Zhibop0oSendNumber && p0o < 0){
+							sendMail = true;
+							sendContent += "全场大小: " + String.format("%.0f\n", p0o);
+						}
+						
+						if(sendMail == true){
+							
+							Vector<String> mails = StoneAge.getMailList();
+							
+							for(int k = 0; k < mails.size(); k++){
+								String mail = mails.elementAt(k);
+								MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", mail, sendTitle, sendContent);
+							}
+							
+/*							MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", sendTitle, sendContent);
+							MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "43069453@qq.com", sendTitle, sendContent);
+							MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "490207143@qq.com", sendTitle, sendContent);
+							MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "2503706418@qq.com", sendTitle, sendContent);
+							MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "281426295@qq.com", sendTitle, sendContent);
+							MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "84131403@qq.com", sendTitle, sendContent);*/							
+							
+						}
+						
 						eventDetailsVec.elementAt(i)[ZHIBOINDEX.SAVED.ordinal()] = "1";		
 					}
 				}

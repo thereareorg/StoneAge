@@ -45,8 +45,11 @@ public class MergeDetailsWindow extends JFrame{
 		private Vector<Integer> hightlightRows = new Vector<Integer>();
 		
 		
-	    private JLabel labelHighlightNum = new JLabel("高亮金额:");
+	    private JLabel labelHighlightNum = new JLabel("让球总金额:");
 	    private JTextField textFieldHighlightNum = new JTextField(15);  
+	    
+	    private JLabel labelp0oHighlightNum = new JLabel("大小球总金额:");
+	    private JTextField textFieldp0oHighlightNum = new JTextField(15);  
 	    
 	    private JLabel labelInterval = new JLabel("刷新时间:");
 	    
@@ -63,8 +66,11 @@ public class MergeDetailsWindow extends JFrame{
 	    private Double percent = 0.4;
 	    
 	    
-	    private JLabel labelHideNum = new JLabel("起始金额:");
+	    private JLabel labelHideNum = new JLabel("让球单边金额:");
 	    private JTextField textFieldHideNum = new JTextField(15); 
+	    
+	    private JLabel labelp0oHideNum = new JLabel("大小球单边金额:");
+	    private JTextField textFieldp0oHideNum = new JTextField(15); 
 	    
 	    private JCheckBox onlyShow5Big = new JCheckBox("只看五大联赛,欧冠");
 	    private JCheckBox onlyShowInplay = new JCheckBox("只看滚动盘");
@@ -74,7 +80,12 @@ public class MergeDetailsWindow extends JFrame{
 	    private boolean bonlyShowInplay = false;
 	    private boolean bonlyShowNotInplay = false;
 	    
-	    private JLabel labelGrabStat= new JLabel("");
+	    private JLabel labelGrabStat= new JLabel("状态");
+	    
+	    private JLabel labelGrabStatkong1= new JLabel("");
+	    private JLabel labelGrabStatkong2= new JLabel("");
+
+	    
 	    private JTextField textFieldGrabStat = new JTextField(15);  
 	    
 	    
@@ -86,9 +97,13 @@ public class MergeDetailsWindow extends JFrame{
 	    
 	    private int selectedOrMerge = 0;
 		
-	    Double higlightBigNum = 500000.0;
+	    Double p0hhiglightBigNum = 500000.0;
 	    
-	    Double hideNum = 100000.0;
+	    Double p0hhideNum = 100000.0;
+	    
+	    Double p0ohiglightBigNum = 500000.0;
+	    
+	    Double p0ohideNum = 100000.0;
 
 	    
 	    
@@ -210,7 +225,9 @@ public class MergeDetailsWindow extends JFrame{
 			textFieldGrabStat.setText(txt);
 		}
 		
-
+		public void setStateColor(Color cr){
+			textFieldGrabStat.setBackground(cr);
+		}
 
 		
 		
@@ -445,31 +462,23 @@ public class MergeDetailsWindow extends JFrame{
 						betAmt4 = Double.parseDouble(str4);
 					}
 					
+					if(Math.abs(betAmt1) < p0hhiglightBigNum && Math.abs(betAmt2) < p0ohiglightBigNum){
+						continue;
+					}
 					
-					
-	/*					if(Math.abs(betAmt1) > hideNum || Math.abs(betAmt2) > hideNum|| 
-							Math.abs(betAmt3) > hideNum || Math.abs(betAmt4) > hideNum){
-						//
-						
-						DetailsDatatmp2.add(DetailsDatatmp1.elementAt(i));
-						
-					}*/
+
 					
 					if(eventName.contains("滚动盘")){
-						if( (Math.abs(betp81) > hideNum && Math.abs(betzhibo1) > hideNum   && Math.abs(betp8inplay1) > hideNum)|| 
-								(Math.abs(betp82) > hideNum && Math.abs(betzhibo2) > hideNum && Math.abs(betp8inplay2) > hideNum) || 
-								(Math.abs(betp83) > hideNum && Math.abs(betzhibo3) > hideNum && Math.abs(betp8inplay3) > hideNum)  || 
-								(Math.abs(betp84) > hideNum && Math.abs(betzhibo4) > hideNum && Math.abs(betp8inplay4) > hideNum)){
+						if( (Math.abs(betp81) > p0hhideNum && Math.abs(betzhibo1) > p0hhideNum   && Math.abs(betp8inplay1) > p0hhideNum)|| 
+								(Math.abs(betp82) > p0ohideNum && Math.abs(betzhibo2) > p0ohideNum && Math.abs(betp8inplay2) > p0ohideNum)){
 							//
 							
 							DetailsDatatmp2.add(DetailsDatatmp1.elementAt(i));
 							
 						}
 					}else{
-						if( (Math.abs(betp81) > hideNum && Math.abs(betzhibo1) > hideNum) || 
-								(Math.abs(betp82) > hideNum && Math.abs(betzhibo2) > hideNum)|| 
-								(Math.abs(betp83) > hideNum && Math.abs(betzhibo3) > hideNum) || 
-								(Math.abs(betp84) > hideNum && Math.abs(betzhibo4) > hideNum)){
+						if( (Math.abs(betp81) > p0hhideNum && Math.abs(betzhibo1) > p0hhideNum) || 
+								(Math.abs(betp82) > p0ohideNum && Math.abs(betzhibo2) > p0ohideNum)){
 							//
 							
 							DetailsDatatmp2.add(DetailsDatatmp1.elementAt(i));
@@ -512,7 +521,7 @@ public class MergeDetailsWindow extends JFrame{
 			
 			container.setLayout(new BorderLayout());
 			
-			JPanel panelNorth = new JPanel(new GridLayout(4, 4));
+			JPanel panelNorth = new JPanel(new GridLayout(5, 4));
 
 	        container.add(panelNorth, BorderLayout.NORTH);  
 	        
@@ -550,6 +559,7 @@ public class MergeDetailsWindow extends JFrame{
 	        
 	        textFieldHighlightNum.setText("500000");
 	        
+	        
 	        textFieldHighlightNum.addKeyListener(new KeyListener(){
 	            public void keyPressed(KeyEvent e) {  
 	                if (e.getKeyCode() == KeyEvent.VK_ENTER) {  
@@ -558,7 +568,7 @@ public class MergeDetailsWindow extends JFrame{
 	                    if(!Common.isNum(value)){
 	                    	return;
 	                    }else{
-	                    	higlightBigNum = Double.parseDouble(value);
+	                    	p0hhiglightBigNum = Double.parseDouble(value);
 	                    	updateShowItem();
 	                    }
 	                    
@@ -574,6 +584,7 @@ public class MergeDetailsWindow extends JFrame{
 	        
 	        textFieldHideNum.setText("100000");
 	        
+	        
 	        textFieldHideNum.addKeyListener(new KeyListener(){
 	            public void keyPressed(KeyEvent e) {  
 	                if (e.getKeyCode() == KeyEvent.VK_ENTER) {  
@@ -582,7 +593,57 @@ public class MergeDetailsWindow extends JFrame{
 	                    if(!Common.isNum(value)){
 	                    	return;
 	                    }else{
-	                    	hideNum = Double.parseDouble(value);
+	                    	p0hhideNum = Double.parseDouble(value);
+	                    	updateShowItem();
+	                    	
+	                    	//tableMode.updateTable();
+	                    }
+	                    
+	                }  
+	                // System.out.println("Text " + value);  
+	            }  
+	            public void keyReleased(KeyEvent e) {  
+	            }  
+	            public void keyTyped(KeyEvent e) {  
+	            }  
+
+	        });
+	        
+	        textFieldp0oHighlightNum.setText("500000");
+	        
+	        textFieldp0oHighlightNum.addKeyListener(new KeyListener(){
+	            public void keyPressed(KeyEvent e) {  
+	                if (e.getKeyCode() == KeyEvent.VK_ENTER) {  
+	                    String value = textFieldp0oHighlightNum.getText();  
+	                    
+	                    if(!Common.isNum(value)){
+	                    	return;
+	                    }else{
+	                    	p0ohiglightBigNum = Double.parseDouble(value);
+	                    	updateShowItem();
+	                    }
+	                    
+	                }  
+	                // System.out.println("Text " + value);  
+	            }  
+	            public void keyReleased(KeyEvent e) {  
+	            }  
+	            public void keyTyped(KeyEvent e) {  
+	            }  
+
+	        });
+	        
+	        textFieldp0oHideNum.setText("100000");
+	        
+	        textFieldp0oHideNum.addKeyListener(new KeyListener(){
+	            public void keyPressed(KeyEvent e) {  
+	                if (e.getKeyCode() == KeyEvent.VK_ENTER) {  
+	                    String value = textFieldp0oHideNum.getText();  
+	                    
+	                    if(!Common.isNum(value)){
+	                    	return;
+	                    }else{
+	                    	p0ohideNum = Double.parseDouble(value);
 	                    	updateShowItem();
 	                    	
 	                    	//tableMode.updateTable();
@@ -675,15 +736,24 @@ public class MergeDetailsWindow extends JFrame{
 	        panelNorth.add(labelHighlightNum);
 	        panelNorth.add(textFieldHighlightNum);
 	        
+	        panelNorth.add(labelp0oHighlightNum);
+	        panelNorth.add(textFieldp0oHighlightNum);
+	        
 	        panelNorth.add(labelHideNum);
 	        panelNorth.add(textFieldHideNum);
+	        
+	        panelNorth.add(labelp0oHideNum);
+	        panelNorth.add(textFieldp0oHideNum);
 	        panelNorth.add(onlyShow5Big);
 	        panelNorth.add(onlyShowInplay);
 	        panelNorth.add(onlyShowNotInplay);
 
-	        
+	        //调整框位置
+	        panelNorth.add(labelGrabStatkong1);
+	        panelNorth.add(labelGrabStatkong2);
 	        
 	        panelNorth.add(labelGrabStat);
+
 	        panelNorth.add(textFieldGrabStat);
 	        
 	        
@@ -724,12 +794,11 @@ public class MergeDetailsWindow extends JFrame{
 		    //设置列单元格渲染模式  开始
 	        TableColumn p0hColumn = table.getColumn("全场让球");   
 	        TableColumn p0oColumn = table.getColumn("全场大小");   
-	        TableColumn p1hColumn = table.getColumn("上半让球");
-	        TableColumn p1oColumn = table.getColumn("上半大小");   
+
 
 	        //绘制月薪列的字体颜色   
 
-	        DefaultTableCellRenderer fontColor = new DefaultTableCellRenderer() {   
+	        DefaultTableCellRenderer p0hRender = new DefaultTableCellRenderer() {   
 
 	            public void setValue(Object value) { //重写setValue方法，从而可以动态设置列单元字体颜色   
 
@@ -769,8 +838,10 @@ public class MergeDetailsWindow extends JFrame{
 						betAmt = Double.parseDouble(str);
 					}
 					
-					if(Math.abs(betAmt) > higlightBigNum){
-						setForeground(Color.red);
+					if(Math.abs(betAmt) >= p0hhiglightBigNum){
+						//setForeground(Color.red);
+						
+						setForeground(Color.black);
 						
 						if(null != tmp1 && tmp1.length <= 2){
 							if(Math.abs(betp8) >= Math.abs(betAmt)*percent && Math.abs(betzhibo) >= Math.abs(betAmt)*percent){
@@ -782,48 +853,121 @@ public class MergeDetailsWindow extends JFrame{
 						
 					}else{
 						setForeground(Color.black);
+						//setText((value == null) ? "" : value.toString());
 						setText("0");
 					}
 					
-
 					
 					if(null != tmp1){
 						
 						if(tmp1.length <= 2){
-							if(Math.abs(betp8)< hideNum || Math.abs(betzhibo) < hideNum){
+							if(Math.abs(betp8)< p0hhideNum || Math.abs(betzhibo) < p0hhideNum){
 								setForeground(Color.black);
 								setText("0");
 							}
 						}
 						
 						if(tmp1.length > 2){
-							if(Math.abs(betp8) < hideNum || Math.abs(betzhibo) < hideNum || Math.abs(betp8inplay) < hideNum){
+							if(Math.abs(betp8) < p0hhideNum || Math.abs(betzhibo) < p0hhideNum || Math.abs(betp8inplay) < p0hhideNum){
 								setForeground(Color.black);
 								setText("0");
 							}
 						}
 						
 					}
+					
+
+
+	            }   
+
+	        };   
+	        
+	        
+	        DefaultTableCellRenderer p0oRender = new DefaultTableCellRenderer() {   
+
+	            public void setValue(Object value) { //重写setValue方法，从而可以动态设置列单元字体颜色   
+
+	               
+	            	String str = value.toString();
+	            	Double betAmt = 0.0;
+	            	Double betp8 = 0.0;
+	            	Double betzhibo = 0.0;
+	            	Double betp8inplay = 0.0;
 	            	
+	            	String[] tmp1 = null;
+	            	
+					if(str.contains("=")){
+						String[] tmp = str.split("=");
+						betAmt = Double.parseDouble(tmp[1]);
+						
+						tmp1 = tmp[0].split("\\+");
+						tmp1[0] = tmp1[0].replace("(", "");
+						tmp1[0] = tmp1[0].replace(")", "");
+						
+					
+						tmp1[1] = tmp1[1].replace("(", "");
+						tmp1[1] = tmp1[1].replace(")", "");
+						
+						if(tmp1.length > 2){
+							tmp1[2] = tmp1[2].replace("(", "");
+							tmp1[2] = tmp1[2].replace(")", "");
+							
+							betp8inplay = Double.parseDouble(tmp1[2]);
+						}
+						
+						betp8 = Double.parseDouble(tmp1[0]);
+						betzhibo = Double.parseDouble(tmp1[1]);
+						
+						
+					}else{
+						betAmt = Double.parseDouble(str);
+					}
+					
+					if(Math.abs(betAmt) >= p0ohiglightBigNum){
+						//setForeground(Color.red);
+						setForeground(Color.black);
+						
+						if(null != tmp1 && tmp1.length <= 2){
+							if(Math.abs(betp8) >= Math.abs(betAmt)*percent && Math.abs(betzhibo) >= Math.abs(betAmt)*percent){
+								setForeground(new Color(0, 0, 255));
+							}
+						}
+						
+						setText((value == null) ? "" : value.toString());
+						
+					}else{
+						setForeground(Color.black);
+						//setText((value == null) ? "" : value.toString());
+						setText("0");
+					}
+					
+					
+					if(null != tmp1){
+						
+						if(tmp1.length <= 2){
+							if(Math.abs(betp8)< p0ohideNum || Math.abs(betzhibo) < p0ohideNum){
+								setForeground(Color.black);
+								setText("0");
+							}
+						}
+						
+						if(tmp1.length > 2){
+							if(Math.abs(betp8) < p0ohideNum || Math.abs(betzhibo) < p0ohideNum || Math.abs(betp8inplay) < p0ohideNum){
+								setForeground(Color.black);
+								setText("0");
+							}
+						}
+						
+					}
+					
 
-	/*                double a = (value instanceof Double) ? ((Double) value).doubleValue() : 0.0; //获取月薪列中的值   
-
-	                   
-
-	                setForeground((a  > 3099.0) ? Color.red : Color.black); //如果月薪大于3099元，就将字体设置为红色   
-
-	                   
-
-	                setText((value == null) ? "" : value.toString());  */ 
 
 	            }   
 
 	        };   
 
-	        p0hColumn.setCellRenderer(fontColor);   
-	        p0oColumn.setCellRenderer(fontColor);   
-	        p1hColumn.setCellRenderer(fontColor);   
-	        p1oColumn.setCellRenderer(fontColor);   
+	        p0hColumn.setCellRenderer(p0hRender);   
+	        p0oColumn.setCellRenderer(p0oRender);   
 	      //设置列单元格渲染模式  结束
 		    
 
@@ -913,7 +1057,7 @@ public class MergeDetailsWindow extends JFrame{
 	         * 这里和刚才一样，定义列名和每个数据的值 
 	         */  
 	        String[] columnNames =  
-	        { "联赛", "时间", "球队", "全场让球", "全场大小", "上半让球", "上半大小"};  
+	        { "联赛", "时间", "球队", "全场让球", "全场大小"};  
 	        
 
 	        
@@ -956,6 +1100,9 @@ public class MergeDetailsWindow extends JFrame{
 	        @Override  
 	        public int getRowCount()  
 	        {  
+	        	if(null == detailsData){
+	        		return 0;
+	        	}
 	            return detailsData.size();  
 	        }  
 	  

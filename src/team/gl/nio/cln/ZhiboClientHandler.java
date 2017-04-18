@@ -1,5 +1,6 @@
 package team.gl.nio.cln;
 
+import java.awt.Color;
 import java.text.SimpleDateFormat;
 
 import P8.MergeManager;
@@ -24,7 +25,11 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
 	
 	public static long time1 = System.currentTimeMillis();
 	
+	public static long time2 = System.currentTimeMillis();
+	
 	public static long printTime = 0L;
+	
+	public static boolean grabStat = false;
 	
 	public static ChannelHandlerContext ctx_s = null;
 	
@@ -73,6 +78,10 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
                MergeManager.saveEvents();
                
                ZhiboManager.setStateText("		连接成功");
+               
+               grabStat = true;
+               
+               ZhiboManager.setStateColor(Color.GREEN);
            }
        }
        
@@ -83,7 +92,14 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
     		   printTime =  System.currentTimeMillis();
     	   }
     	   
+    	   time2 = System.currentTimeMillis();
+    	   
+    	   ZhiboManager.setStateColor(Color.GREEN);
+    	   
+    	   grabStat = true;
+    	   
     	   time = System.currentTimeMillis();
+    	   
     	   lastRes = res;
        }
        
@@ -104,6 +120,9 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
         System.out.println("--- Server is inactive ---"); 
         // 10s 之后尝试重新连接服务器
         ZhiboManager.setStateText("		失去连接,重新连接中...");
+        
+        ZhiboManager.setStateColor(Color.RED);
+        
         System.out.println("尝试重新连接服务器...");
         
         
@@ -120,8 +139,14 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
     					
     				}catch(Exception e){
     					e.printStackTrace();
-    				} 
+    				}
+                	
+
                 }
+                
+            	ZhiboManager.setStateColor(Color.GREEN);
+            	grabStat = true;
+                
             }  
           
           }, 1L, TimeUnit.SECONDS);  
@@ -171,6 +196,11 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
      		
      		ZhiboManager.setStateText("数据更新于:" + currentTime);
              
+     		if(System.currentTimeMillis() - time2 > 600 * 1000){
+     			grabStat = false;
+     			ZhiboManager.setStateColor(Color.RED);
+     		}
+     		
      		ZhiboManager.saveEvents();
      		
              

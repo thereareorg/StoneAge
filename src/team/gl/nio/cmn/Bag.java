@@ -8,7 +8,11 @@ public class Bag implements Serializable{
 	String req;
     private Vector<String[]> datas;
     private Vector<String[]> mergeDatas;
+    private Vector<String[]> mergepSubDatas;
     private String successTime = "";
+    
+    private boolean P8GrabStat = false;
+    private boolean MergeGrabStat = false;
 
 
     public Bag(String req){
@@ -23,10 +27,23 @@ public class Bag implements Serializable{
         return mergeDatas;
     }
     
+    public Vector<String[]> getMergepSubDatas() {
+        return mergepSubDatas;
+    }
+    
     
     public String getSuccessTime(){
     	return successTime;
     }
+    
+    public boolean getP8GrabStat(){
+    	return P8GrabStat;
+    }
+    
+    public boolean getMergeGrabStat(){
+    	return MergeGrabStat;
+    }
+    
     
     public void setSuccessTime(String time){
     	successTime = time;
@@ -38,6 +55,18 @@ public class Bag implements Serializable{
     
     public void setMergeDatas(Vector<String[]> datas) {
         this.mergeDatas = datas;
+    }
+    
+    public void setMergepSubDatas(Vector<String[]> datas) {
+        this.mergepSubDatas = datas;
+    }
+    
+    public void setP8GrabStat(boolean val){
+    	P8GrabStat = val;
+    }
+    
+    public void setMergeGrabStat(boolean val){
+    	MergeGrabStat = val;
     }
     
     public String getReq() {
@@ -64,7 +93,16 @@ public class Bag implements Serializable{
     		mergeStrData += "\n";
     	}
     	
+    	String mergepSubStrData = "";
+    	for(int i = 0; i < mergepSubDatas.size(); i++) {
+    		String []strs = mergepSubDatas.elementAt(i);
+    		for(int j = 0; j < 8; j++) {
+    			mergeStrData += strs[j] + ",";
+    		}
+    		mergeStrData += "\n";
+    	}
     	
-        return strData + mergeStrData + successTime;
+    	
+        return strData + mergeStrData + mergepSubStrData + successTime;
     }
 }

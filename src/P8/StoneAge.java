@@ -4,6 +4,8 @@
 
 
 import java.awt.Container; 
+import java.awt.Frame;
+import java.awt.Panel;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -28,6 +30,7 @@ import java.util.Vector;
 
 import javax.swing.ImageIcon;
 
+import Mail.MailManager;
 import team.gl.nio.cln.ZhiboClient;
 import team.gl.nio.svr.NettyServer;
 
@@ -53,6 +56,8 @@ public class StoneAge {
 	public static JButton btnZhiboConnect;
 	
 	public static JButton btnMergeWnd;
+	
+	public static Vector<String> mailList = new Vector<String>();
 	
 	
 	public static boolean zhiboConnected = false;
@@ -84,14 +89,33 @@ public class StoneAge {
 	public PrintStream psConsole = null;
 	
 	
+	public static void initMailList(){
+		mailList.add("240749322@qq.com");
+		mailList.add("43069453@qq.com");
+		mailList.add("490207143@qq.com");
+		mailList.add("2503706418@qq.com");
+		mailList.add("281426295@qq.com");
+		mailList.add("84131403@qq.com");
+		mailList.add("84131403@qq.com");
+		mailList.add("1131894627@qq.com");
+		
+/*		MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", sendTitle, sendContent);
+		MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "43069453@qq.com", sendTitle, sendContent);
+		MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "490207143@qq.com", sendTitle, sendContent);
+		MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "2503706418@qq.com", sendTitle, sendContent);
+		MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "281426295@qq.com", sendTitle, sendContent);
+		MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "84131403@qq.com", sendTitle, sendContent);	*/
+	}
+	
+	public static Vector<String> getMailList(){
+		return mailList;
+	}
+	
 	
 	public static void main(String[] args) throws Exception {
 		
-		System.setProperty("java.util.Arrays.useLegacyMergeSort", "true"); 
-		
 
-		System.out.println("start");
-		
+		initMailList();
 		
 		accMgr = new AccountManager(accountWnd);
 		
@@ -175,6 +199,8 @@ public class StoneAge {
 		JFrame mainFrame = new JFrame("实况足球");
 
 		mainFrame.setLayout(null);
+		
+		mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
 		//mainFrame.add(panel);
 		
@@ -187,6 +213,8 @@ public class StoneAge {
         mainFrame.getLayeredPane().add(imgLabel, new Integer(Integer.MIN_VALUE));  
         //将背景标签添加到jfram的LayeredPane面板里。  
         imgLabel.setBounds(0, 0, img.getIconWidth(), img.getIconHeight());  
+        
+
         
         Container contain = mainFrame.getContentPane();  
         ((JPanel) contain).setOpaque(false);   
@@ -249,6 +277,7 @@ public class StoneAge {
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
+				
 					if(bLogin == true){
 						P8Http.showEventsDeatilsTable();
 						return;
@@ -306,7 +335,7 @@ public class StoneAge {
 		textFieldZhiboProxyAddress = new JTextField();
 		textFieldZhiboProxyAddress.setSize(100, 25);
 		textFieldZhiboProxyAddress.setLocation(Xposition + 50 + 200, Yposition);
-		textFieldZhiboProxyAddress.setText("103.26.127.87");
+		textFieldZhiboProxyAddress.setText("110.165.46.85");
 
 		JLabel labelZhiboProxyAccount = new JLabel("端口:");
 		labelZhiboProxyAccount.setSize(50, 25);
@@ -433,7 +462,7 @@ public class StoneAge {
 		mainFrame.setVisible(true);
 		
 		mainFrame.setResizable(false);
-
+		
 		mainFrame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				int n = JOptionPane.showConfirmDialog(null, "确认退出吗?", "退出程序",

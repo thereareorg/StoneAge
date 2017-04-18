@@ -45,6 +45,7 @@ import java.awt.Color;
 
 
 
+
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;  
@@ -62,6 +63,7 @@ import javax.swing.table.AbstractTableModel;
 
 
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
 import java.util.Date;      
 
@@ -69,6 +71,7 @@ import javax.swing.Timer;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 
 
 
@@ -96,8 +99,11 @@ public class PreviousDataWindow extends JFrame
 	private Vector<Integer> hightlightRows = new Vector<Integer>();
 	
 	
-    private JLabel labelHighlightNum = new JLabel("金额:");
+    private JLabel labelHighlightNum = new JLabel("让球高亮金额:");
     private JTextField textFieldHighlightNum = new JTextField(15);  
+    
+    private JLabel labelp0oHighlightNum = new JLabel("大小球高亮金额:");
+    private JTextField textFieldp0oHighlightNum = new JTextField(15);  
     
     private JLabel labelInterval = new JLabel("日期选择:");
     
@@ -108,8 +114,11 @@ public class PreviousDataWindow extends JFrame
     DateChooser mp = new DateChooser("yyyy-MM-dd", this);
     
     
-    private JLabel labelHideNum = new JLabel("隐藏金额:");
+    private JLabel labelHideNum = new JLabel("让球隐藏金额:");
     private JTextField textFieldHideNum = new JTextField(15); 
+    
+    private JLabel labelp0oHideNum = new JLabel("大小球隐藏金额:");
+    private JTextField textFieldp0oHideNum = new JTextField(15); 
     
     private JCheckBox onlyShow5Big = new JCheckBox("只看五大联赛,欧冠");
     private JCheckBox onlyShowInplay = new JCheckBox("只看滚动盘");
@@ -123,9 +132,13 @@ public class PreviousDataWindow extends JFrame
     private JTextField textFieldGrabStat = new JTextField(15);  
     
 	
-    Double higlightBigNum = 1000000.0;
+    Double p0hhiglightBigNum = 1000000.0;
     
-    Double hideNum = 0.0;
+    Double p0hhideNum = 0.0;
+    
+    Double p0ohiglightBigNum = 1000000.0;
+    
+    Double p0ohideNum = 0.0;
 
     
     
@@ -158,7 +171,7 @@ public class PreviousDataWindow extends JFrame
 		textFieldGrabStat.setText(txt);
 	}
 	
-	public void hightlightBigNumrows(){
+/*	public void hightlightBigNumrows(){
 		
 		if(hightlightRows.size() != 0){
 			hightlightRows.clear();
@@ -173,8 +186,7 @@ public class PreviousDataWindow extends JFrame
 				double betAmt3 = Double.parseDouble(detailsData.elementAt(i)[TYPEINDEX.PERIOD1HOME.ordinal()]);
 				double betAmt4 = Double.parseDouble(detailsData.elementAt(i)[TYPEINDEX.PERIOD1HOME.ordinal()]);
 				
-				if(Math.abs(betAmt1) > higlightBigNum || Math.abs(betAmt2) > higlightBigNum|| 
-						Math.abs(betAmt3) > higlightBigNum || Math.abs(betAmt4) > higlightBigNum){
+				if(Math.abs(betAmt1) > higlightBigNum || Math.abs(betAmt2) > higlightBigNum){
 					//
 					
 					hightlightRows.add(i);
@@ -186,7 +198,7 @@ public class PreviousDataWindow extends JFrame
 			
 			setOneRowBackgroundColor(table, 0, new Color(255, 100, 100));
 		}
-	}
+	}*/
 
 	
 	
@@ -288,7 +300,7 @@ public class PreviousDataWindow extends JFrame
 			
 			if(Vectmp.size() == 0){
 				detailsData = (Vector<String[]>)Vectmp.clone();
-				hightlightBigNumrows();
+				
 				
 				tableMode.updateTable();
 				return;
@@ -350,8 +362,7 @@ public class PreviousDataWindow extends JFrame
 					double betAmt3 = Double.parseDouble(DetailsDatatmp1.elementAt(i)[TYPEINDEX.PERIOD1HOME.ordinal()]);
 					double betAmt4 = Double.parseDouble(DetailsDatatmp1.elementAt(i)[TYPEINDEX.PERIOD1HOME.ordinal()]);
 					
-					if(Math.abs(betAmt1) > hideNum || Math.abs(betAmt2) > hideNum|| 
-							Math.abs(betAmt3) > hideNum || Math.abs(betAmt4) > hideNum){
+					if(Math.abs(betAmt1) > p0hhideNum || Math.abs(betAmt2) > p0ohideNum){
 						//
 						
 						DetailsDatatmp2.add(DetailsDatatmp1.elementAt(i));
@@ -367,7 +378,7 @@ public class PreviousDataWindow extends JFrame
 			detailsData = (Vector<String[]>)DetailsDatatmp2.clone();
 			
 			
-			hightlightBigNumrows();
+			
 			
 			tableMode.updateTable();
 		}catch(Exception e){
@@ -397,7 +408,7 @@ public class PreviousDataWindow extends JFrame
 		
 		container.setLayout(new BorderLayout());
 		
-		JPanel panelNorth = new JPanel(new GridLayout(3, 4));
+		JPanel panelNorth = new JPanel(new GridLayout(4, 4));
 
         container.add(panelNorth, BorderLayout.NORTH);  
         
@@ -425,7 +436,7 @@ public class PreviousDataWindow extends JFrame
                     if(!Common.isNum(value)){
                     	return;
                     }else{
-                    	higlightBigNum = Double.parseDouble(value);
+                    	p0hhiglightBigNum = Double.parseDouble(value);
                     	updateShowItem();
                     }
                     
@@ -448,7 +459,7 @@ public class PreviousDataWindow extends JFrame
                     if(!Common.isNum(value)){
                     	return;
                     }else{
-                    	hideNum = Double.parseDouble(value);
+                    	p0hhideNum = Double.parseDouble(value);
                     	updateShowItem();
                     	
                     	//tableMode.updateTable();
@@ -463,6 +474,57 @@ public class PreviousDataWindow extends JFrame
             }  
 
         });
+        
+        
+        textFieldp0oHighlightNum.addKeyListener(new KeyListener(){
+            public void keyPressed(KeyEvent e) {  
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {  
+                    String value = textFieldp0oHighlightNum.getText();  
+                    
+                    if(!Common.isNum(value)){
+                    	return;
+                    }else{
+                    	p0ohiglightBigNum = Double.parseDouble(value);
+                    	updateShowItem();
+                    }
+                    
+                }  
+                // System.out.println("Text " + value);  
+            }  
+            public void keyReleased(KeyEvent e) {  
+            }  
+            public void keyTyped(KeyEvent e) {  
+            }  
+
+        });
+        
+        
+        textFieldp0oHideNum.addKeyListener(new KeyListener(){
+            public void keyPressed(KeyEvent e) {  
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {  
+                    String value = textFieldp0oHideNum.getText();  
+                    
+                    if(!Common.isNum(value)){
+                    	return;
+                    }else{
+                    	p0ohideNum = Double.parseDouble(value);
+                    	updateShowItem();
+                    	
+                    	//tableMode.updateTable();
+                    }
+                    
+                }  
+                // System.out.println("Text " + value);  
+            }  
+            public void keyReleased(KeyEvent e) {  
+            }  
+            public void keyTyped(KeyEvent e) {  
+            }  
+
+        });
+        
+        
+        
         
         
         textFieldGrabStat.setEditable(false);
@@ -533,12 +595,20 @@ public class PreviousDataWindow extends JFrame
         panelNorth.add(labelInterval);
         panelNorth.add(mp);
 
+        panelNorth.add(labelp0oHighlightNum);
+        panelNorth.add(textFieldp0oHighlightNum);
         
         panelNorth.add(labelHighlightNum);
         panelNorth.add(textFieldHighlightNum);
         
+        panelNorth.add(labelp0oHideNum);
+        panelNorth.add(textFieldp0oHideNum);
+        
         panelNorth.add(labelHideNum);
         panelNorth.add(textFieldHideNum);
+        
+
+        
         panelNorth.add(onlyShow5Big);
         panelNorth.add(onlyShowInplay);
         panelNorth.add(onlyShowNotInplay);
@@ -574,6 +644,80 @@ public class PreviousDataWindow extends JFrame
 	    //table.setColumnModel(columnModel);
 	    
 	    //tableMode.
+	    
+	    
+	    
+	    //设置列单元格渲染模式  开始
+        TableColumn p0hColumn = table.getColumn("全场让球");   
+        TableColumn p0oColumn = table.getColumn("全场大小");   
+
+
+        //绘制月薪列的字体颜色   
+
+        DefaultTableCellRenderer p0hRender = new DefaultTableCellRenderer() {   
+
+            public void setValue(Object value) { //重写setValue方法，从而可以动态设置列单元字体颜色   
+
+               
+            	String str = value.toString();
+				Double betAmt = Double.parseDouble(str);
+				
+				
+				if(Math.abs(betAmt) > p0hhiglightBigNum){
+					setForeground(Color.red);
+					
+				}else{
+					setForeground(Color.black);
+					
+				}
+				
+				setText((value == null) ? "" : value.toString());
+
+				if(Math.abs(betAmt) < p0hhideNum){
+					setForeground(Color.black);
+					setText("0");
+				}
+
+
+            }   
+
+        };   
+        
+        DefaultTableCellRenderer p0oRender = new DefaultTableCellRenderer() {   
+
+            public void setValue(Object value) { //重写setValue方法，从而可以动态设置列单元字体颜色   
+
+               
+            	String str = value.toString();
+				Double betAmt = Double.parseDouble(str);
+				
+				
+				if(Math.abs(betAmt) > p0ohiglightBigNum){
+					setForeground(Color.red);
+					
+				}else{
+					setForeground(Color.black);
+					
+				}
+				
+				setText((value == null) ? "" : value.toString());
+
+				if(Math.abs(betAmt) < p0ohideNum){
+					setForeground(Color.black);
+					setText("0");
+				}
+
+
+            }   
+
+        };   
+
+        p0hColumn.setCellRenderer(p0hRender);   
+        p0oColumn.setCellRenderer(p0oRender);   
+
+      //设置列单元格渲染模式  结束
+	    
+	    
 
 	    
         DefaultTableCellRenderer tcr = new DefaultTableCellRenderer();// 设置table内容居中
@@ -657,10 +801,11 @@ public class PreviousDataWindow extends JFrame
         /* 
          * 这里和刚才一样，定义列名和每个数据的值 
          */  
-        String[] columnNames =  
-        { "联赛", "时间", "球队", "全场让球", "全场大小", "上半让球", "上半大小"};  
+/*        String[] columnNames =  
+        { "联赛", "时间", "球队", "全场让球", "全场大小", "上半让球", "上半大小"};  */
         
-
+        String[] columnNames =  
+        { "联赛", "时间", "球队", "全场让球", "全场大小"};  
         
         //Object[][] data = new Object[2][5];  
         

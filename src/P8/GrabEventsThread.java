@@ -1,7 +1,11 @@
 package P8;
 
+import java.awt.Color;
+
 import java.text.SimpleDateFormat;
 import java.util.Vector;
+
+
 
 
 public class GrabEventsThread  extends Thread{
@@ -10,6 +14,10 @@ public class GrabEventsThread  extends Thread{
 	private StoneAge sa;
 	
 	public long sleepTime = 1*60*1000;
+	
+	public long time = System.currentTimeMillis();
+	
+	public static boolean grabStat = true;
 	
 	GrabEventsThread(StoneAge sat){
 		sa = sat;
@@ -167,6 +175,11 @@ public class GrabEventsThread  extends Thread{
 						StoneAge.btnLogin.setEnabled(true);
 					}
 					
+					grabStat = true;
+					
+					P8Http.setGrabColor(Color.GREEN);
+					
+					
 					Thread.currentThread().sleep(sleepTime);
 				}else{
 					sa.setConsoleout();
@@ -178,6 +191,10 @@ public class GrabEventsThread  extends Thread{
 					for(int j = 0;  j < P8Http.failedCatchAccount.size(); j++){
 						System.out.println("会员  " + P8Http.failedCatchAccount.elementAt(j) + " 抓取失败");
 					}
+					
+					grabStat = false;
+					
+					P8Http.setGrabColor(Color.RED);
 					
 					Thread.currentThread().sleep(10*1000);
 				}

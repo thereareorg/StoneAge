@@ -10,12 +10,21 @@ import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Vector;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class MergePreviousDataManager {
 	BufferedWriter fw = null;  //写	
 	BufferedReader reader = null; //读
 	
 	Vector<String[]> pEventsDetails = new Vector<String[]>();
+	
+	
+	private ReadWriteLock lockepSubeventsDetails = new ReentrantReadWriteLock();
+	
+	Vector<String[]> pSubEventsDetails = new Vector<String[]>();
+	
+	
 	
 	MergePreviousDataWindow pdataWnd = null; 
 	
@@ -62,6 +71,7 @@ public class MergePreviousDataManager {
 			
 			pdataWnd.updateEventsDetails(pEventsDetails);
 			
+			constructPmergeData();
 			
 			
 		}catch(Exception e){
@@ -101,7 +111,9 @@ public class MergePreviousDataManager {
 			
 			pEventsDetails.add(item);
 			
-			//updatepEventsDetails();
+			updatepEventsDetails();
+			
+			constructPmergeData();
 			
 			return true;
 			
@@ -151,6 +163,85 @@ public class MergePreviousDataManager {
 
 	}
 	
+	
+	public void constructPmergeData(){
+		
+		try{
+			SimpleDateFormat dfMin = new SimpleDateFormat("yyyy-MM-dd HH:mm");// 设置日期格式
+			
+			SimpleDateFormat dfDay = new SimpleDateFormat("yyyy-MM-dd");// 设置日期格式
+
+
+			long currentTimeL = System.currentTimeMillis();
+			
+			String LocaltodayStr = dfDay.format(currentTimeL);
+			
+			
+			
+			
+			String startTimeStr = LocaltodayStr + " " + "13:00";
+			
+
+			
+			
+			java.util.Date startTimeDate = dfMin.parse(startTimeStr);
+			
+			Calendar startTime = Calendar.getInstance();  
+			startTime.setTime(startTimeDate);
+			
+			startTime.add(Calendar.DAY_OF_MONTH, -10);
+			
+			
+			lockepSubeventsDetails.writeLock().lock();
+
+			
+			for(int i = 0; i < pEventsDetails.size(); i++){
+				String timeStr = pEventsDetails.elementAt(i)[TYPEINDEX.TIME.ordinal()];
+				java.util.Date timeDate = dfMin.parse(timeStr);
+				
+				Calendar time = Calendar.getInstance();  
+				time.setTime(timeDate);
+				
+				
+				if(time.getTimeInMillis() >= startTime.getTimeInMillis() && time.getTimeInMillis() < startTime.getTimeInMillis() + 280*60*60*1000){
+					pSubEventsDetails.add(pEventsDetails.elementAt(i));
+				}
+							
+			}
+			
+			lockepSubeventsDetails.writeLock().unlock();
+			
+		}catch(Exception e){
+			lockepSubeventsDetails.writeLock().unlock();
+			e.printStackTrace();
+		}
+		
+		
+		
+	}
+	
+	
+	public Vector<String[]> getpSubevents(){
+		try{
+			
+			lockepSubeventsDetails.readLock().lock();
+			
+			Vector<String[]> tmp = (Vector<String[]>) pSubEventsDetails.clone();
+			
+			
+			
+			lockepSubeventsDetails.readLock().unlock();
+			return tmp;
+			
+			
+		}catch(Exception e){
+			lockepSubeventsDetails.readLock().unlock();
+			
+			e.printStackTrace();
+			
+			return null;
+		}
+	}
 	
 	
 	

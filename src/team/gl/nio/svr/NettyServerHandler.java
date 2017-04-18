@@ -8,8 +8,10 @@ import io.netty.util.ReferenceCountUtil;
 
 import java.util.Vector;
 
+import P8.GrabEventsThread;
 import P8.MergeManager;
 import P8.P8Http;
+import team.gl.nio.cln.ZhiboClientHandler;
 import team.gl.nio.cmn.Bag;
 
 public class NettyServerHandler extends ChannelInboundHandlerAdapter {
@@ -22,6 +24,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         if(us.getReq().equals("request")) {
 	        Vector<String[]> datas = P8Http.getFinalEventsDetails();
 	        Vector<String[]> mergeDatas = MergeManager.getFinalEventsDetails();
+	        Vector<String[]> mergepSubDatas = MergeManager.getpSubMergeevents();
 	        String successTime = P8Http.getSuccessTime();
 /*	        String [] strs1 = {"你好", "111","111","111","111","111","111", "111"};
 	    	String [] strs2 = {"222", "222","222","222","222","222","222", "222"};
@@ -31,7 +34,10 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 	    	Bag bag = new Bag("response");
 	    	bag.setDatas(datas);
 	    	bag.setMergeDatas(mergeDatas);
+	    	bag.setMergepSubDatas(mergepSubDatas);
 	    	bag.setSuccessTime(successTime);
+	    	bag.setP8GrabStat(GrabEventsThread.grabStat);
+	    	bag.setMergeGrabStat(GrabEventsThread.grabStat&&ZhiboClientHandler.grabStat);
 	    	ctx.channel().writeAndFlush(bag);
         }
     }
