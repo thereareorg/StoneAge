@@ -147,7 +147,7 @@ public class GrabEventsThread  extends Thread{
 				
 				if(P8Http.isfailedAccountEmpty()){
 					P8Http.saveEvents();
-					P8Http.sendMails();
+
 				}
 				
 				
