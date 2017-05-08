@@ -11,6 +11,8 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Vector;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class ZhiboPreviousDataManager {
 
@@ -21,6 +23,10 @@ public class ZhiboPreviousDataManager {
 	Vector<String[]> pEventsDetails = new Vector<String[]>();
 	
 	ZhiboPreviousDataWindow pdataWnd = null; 
+	
+	private ReadWriteLock lockepSubeventsDetails = new ReentrantReadWriteLock();
+	
+	Vector<String[]> pSubEventsDetails = new Vector<String[]>();
 	
 	ZhiboPreviousDataManager(ZhiboPreviousDataWindow wnd) {
 		pdataWnd = wnd;
@@ -93,6 +99,8 @@ public class ZhiboPreviousDataManager {
 			
 			pdataWnd.updateEventsDetails(pEventsDetails);
 			
+			constructPmergeData();
+			
 			
 			
 		}catch(Exception e){
@@ -142,7 +150,9 @@ public class ZhiboPreviousDataManager {
 			
 			pEventsDetails.add(item);
 			
-			//updatepEventsDetails();
+			updatepEventsDetails();
+			
+			constructPmergeData();
 			
 			return true;
 			
@@ -215,6 +225,93 @@ public class ZhiboPreviousDataManager {
 		
 		
 
+	}
+	
+	
+	public void constructPmergeData(){
+		
+		try{
+			
+			lockepSubeventsDetails.writeLock().lock();
+			
+			if(pSubEventsDetails.size() != 0){
+				pSubEventsDetails.clear();
+			}
+			
+			SimpleDateFormat dfMin = new SimpleDateFormat("yyyy-MM-dd HH:mm");// 设置日期格式
+			
+			SimpleDateFormat dfDay = new SimpleDateFormat("yyyy-MM-dd");// 设置日期格式
+
+
+			long currentTimeL = System.currentTimeMillis();
+			
+			String LocaltodayStr = dfDay.format(currentTimeL);
+			
+			
+			
+			
+			String startTimeStr = LocaltodayStr + " " + "13:00";
+			
+
+			
+			
+			java.util.Date startTimeDate = dfMin.parse(startTimeStr);
+			
+			Calendar startTime = Calendar.getInstance();  
+			startTime.setTime(startTimeDate);
+			
+			startTime.add(Calendar.DAY_OF_MONTH, -10);
+			
+			
+		
+
+			
+			for(int i = 0; i < pEventsDetails.size(); i++){
+				String timeStr = pEventsDetails.elementAt(i)[TYPEINDEX.TIME.ordinal()];
+				java.util.Date timeDate = dfMin.parse(timeStr);
+				
+				Calendar time = Calendar.getInstance();  
+				time.setTime(timeDate);
+				
+				
+				if(time.getTimeInMillis() >= startTime.getTimeInMillis() && time.getTimeInMillis() < startTime.getTimeInMillis() + 280*60*60*1000){
+					pSubEventsDetails.add(pEventsDetails.elementAt(i));
+				}
+							
+			}
+			
+			lockepSubeventsDetails.writeLock().unlock();
+			
+		}catch(Exception e){
+			lockepSubeventsDetails.writeLock().unlock();
+			e.printStackTrace();
+		}
+		
+		
+		
+	}
+	
+	
+	public Vector<String[]> getpSubevents(){
+		try{
+			
+			lockepSubeventsDetails.readLock().lock();
+			
+			Vector<String[]> tmp = (Vector<String[]>) pSubEventsDetails.clone();
+			
+			
+			
+			lockepSubeventsDetails.readLock().unlock();
+			return tmp;
+			
+			
+		}catch(Exception e){
+			lockepSubeventsDetails.readLock().unlock();
+			
+			e.printStackTrace();
+			
+			return null;
+		}
 	}
 	
 	

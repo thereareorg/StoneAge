@@ -122,6 +122,10 @@ public class ZhiboManager {
 		return tmp;
 	}
 	
+    public static Vector<String[]> getpSubevents(){
+    	return pDataManager.getpSubevents();
+    }
+	
 	
     
     public static void constructEventsVec(String eventsStr){

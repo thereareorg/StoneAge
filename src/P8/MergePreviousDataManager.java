@@ -166,7 +166,17 @@ public class MergePreviousDataManager {
 	
 	public void constructPmergeData(){
 		
+		
+		
 		try{
+			
+			lockepSubeventsDetails.writeLock().lock();
+			
+			if(pSubEventsDetails.size() != 0){
+				pSubEventsDetails.clear();
+			}
+			
+			
 			SimpleDateFormat dfMin = new SimpleDateFormat("yyyy-MM-dd HH:mm");// 设置日期格式
 			
 			SimpleDateFormat dfDay = new SimpleDateFormat("yyyy-MM-dd");// 设置日期格式
@@ -192,7 +202,7 @@ public class MergePreviousDataManager {
 			startTime.add(Calendar.DAY_OF_MONTH, -10);
 			
 			
-			lockepSubeventsDetails.writeLock().lock();
+			
 
 			
 			for(int i = 0; i < pEventsDetails.size(); i++){

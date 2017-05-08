@@ -80,7 +80,7 @@ public class P8Http {
     
     
     public static int P8p0hSendNumber = 1000000;
-    public static int P8p0oSendNumber = 700000;
+    public static int P8p0oSendNumber = 1000000;
     
     
     static PreviousDataWindow pDataWindow = new PreviousDataWindow();
@@ -246,128 +246,16 @@ public class P8Http {
     }
     
     
+    public static Vector<String[]> getpSubevents(){
+    	return pDataManager.getpSubevents();
+    }
+    
+    
 
     
-    public static void sendMails(){
-    	
-/*    	try{
-    		
-    		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-    		
-        	for(int i = 0; i < eventDetailsVec.size(); i++){
-        		String[] item = eventDetailsVec.elementAt(i).clone();
-        		
-        		
-        		
-        		long time = Long.parseLong(item[TYPEINDEX.TIME.ordinal()]);
-        		
-        		String key = item[TYPEINDEX.EVENTNAMNE.ordinal()] + " " + df.format(time);
-        		
-        		//过滤滚动盘
-        		if(key.contains("滚动盘")){
-        			continue;
-        		}
-        		
-        		if(true != mailRecords.containsKey(key)){
-        			Vector<Integer> records = new Vector<Integer>();
-        			mailRecords.put(key, records);
-        		}
-        		
-        		//开始解析数据
-    			double p0h = Double.parseDouble(item[TYPEINDEX.PERIOD0HOME.ordinal()]);
-    			double p0o = Double.parseDouble(item[TYPEINDEX.PERIOD0OVER.ordinal()]);
-    			double p1h = Double.parseDouble(item[TYPEINDEX.PERIOD1HOME.ordinal()]);
-    			double p1o = Double.parseDouble(item[TYPEINDEX.PERIOD1OVER.ordinal()]);
-    			
-    			int p0hsend = (int) (p0h/P8SendNumber);    			
-    			Vector<Integer> records = mailRecords.get(key);    			
-    			if(true != records.contains(p0hsend) && p0hsend != 0){
-    				records.add(p0hsend);
-    				System.out.println("PP send 全场让球 :" + df.format(System.currentTimeMillis()));
-    				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "43069453@qq.com", "PP " + key, "全场让球:" + Integer.toString(p0hsend));
-    				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "490207143@qq.com", "PP " + key, "全场让球:" + Integer.toString(p0hsend));
-    				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "2503706418@qq.com", "PP " + key, "全场让球:" + Integer.toString(p0hsend));
-    				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "13557306171@163.com", "PP " + key, "全场让球:" + Integer.toString(p0hsend));
-    				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", "PP " + key, "全场让球:" + Integer.toString(p0hsend));
 
-    			}
-    			
-    			int p0osend = (int) (p0o/P8SendNumber);
-    			int p0osendsaved = 0;
-    			if(p0osend != 0){
-    				if(p0osend < 0){
-    					p0osendsaved = p0osend - 10;
-    				}else{
-    					p0osendsaved = p0osend + 10;
-    				}
-    				
-        			if(true != records.contains(p0osendsaved)){
-        				records.add(p0osendsaved);
-        				System.out.println("PP send 全场大小:" + df.format(System.currentTimeMillis()));
-        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "43069453@qq.com", "PP " + key, "全场大小:" + Integer.toString(p0osend));
-        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "490207143@qq.com", "PP " + key, "全场大小:" + Integer.toString(p0osend));
-        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", "PP " + key, "全场大小:" + Integer.toString(p0osend));
-        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "2503706418@qq.com", "PP " + key, "全场大小:" + Integer.toString(p0osend));
-        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "13557306171@163.com", "PP " + key, "全场大小:" + Integer.toString(p0osend));
-
-        			}
-    				
-    			}
-    			
-    			
-    			int p1hsend = (int) (p1h/P8SendNumber);
-    			int p1hsendsaved = 0;
-    			if(p1hsend != 0){
-    				if(p1hsend < 0){
-    					p1hsendsaved = p1hsend - 20;
-    				}else{
-    					p1hsendsaved = p1hsend + 20;
-    				}
-    				
-        			if(true != records.contains(p1hsendsaved)){
-        				records.add(p1hsendsaved);
-        				System.out.println("PP send 半场让球: " + df.format(System.currentTimeMillis()));
-        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "43069453@qq.com", "PP " + key, "半场让球:" + Integer.toString(p1hsend));
-        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "490207143@qq.com", "PP " + key, "半场让球:" + Integer.toString(p1hsend));
-        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", "PP " + key, "半场让球:" + Integer.toString(p1hsend));
-        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "2503706418@qq.com", "PP " + key, "半场让球:" + Integer.toString(p1hsend));
-        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "13557306171@163.com", "PP " + key, "半场让球:" + Integer.toString(p1hsend));
-
-        			}
-    				
-    			}
-    			
-    			
-    			int p1osend = (int) (p1o/P8SendNumber);
-    			int p1osendsaved = 0;
-    			if(p1osend != 0){
-    				if(p1osend < 0){
-    					p1osendsaved = p1osend - 30;
-    				}else{
-    					p1osendsaved = p1osend + 30;
-    				}
-    				
-        			if(true != records.contains(p1osendsaved)){
-        				records.add(p1osendsaved);
-        				System.out.println("PP send 半场大小: " + df.format(System.currentTimeMillis()));
-        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "43069453@qq.com", "PP " + key, "半场大小:" + Integer.toString(p1osend));
-        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "490207143@qq.com", "PP " + key, "半场大小:" + Integer.toString(p1osend));
-        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", "PP " + key, "半场大小:" + Integer.toString(p1osend));
-        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "2503706418@qq.com", "PP " + key, "半场大小:" + Integer.toString(p1osend));
-        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "13557306171@163.com", "PP " + key, "半场大小:" + Integer.toString(p1osend));        				
-        			}
-    				
-    			}
-    			
-
-        	}
-    		
-    	}catch(Exception e){
-    		e.printStackTrace();
-    	}*/
     	
 
-    }
     
     
     
@@ -381,7 +269,16 @@ public class P8Http {
 		String currentTime = df.format(currentTimeL);
     	
     	lockeFinalEventsDetails.writeLock().lock();
-    	finalEventDetailsVec = (Vector<String[]>)eventDetailsVec.clone();
+    	
+    	if(finalEventDetailsVec.size() != 0){
+    		finalEventDetailsVec.clear();
+    	}
+    	
+    	for(int i = 0; i < eventDetailsVec.size(); i++ ){
+    		finalEventDetailsVec.add(eventDetailsVec.elementAt(i).clone());
+    	}
+    	
+    	//finalEventDetailsVec = (Vector<String[]>)eventDetailsVec.clone();
     	
     	lockeFinalEventsDetails.writeLock().unlock();
     	
@@ -391,9 +288,14 @@ public class P8Http {
     }
     
     public static Vector<String[]> getFinalEventsDetails(){
-    	Vector<String[]> vec = null;
+    	Vector<String[]> vec = new Vector<String[]>();
     	lockeFinalEventsDetails.readLock().lock();
-    	vec = (Vector<String[]>)finalEventDetailsVec.clone();
+    	
+    	for(int i = 0; i < finalEventDetailsVec.size(); i++){
+    		vec.add(finalEventDetailsVec.elementAt(i).clone());
+    	}
+    	
+    	//vec = (Vector<String[]>)finalEventDetailsVec.clone();
     	lockeFinalEventsDetails.readLock().unlock();
     	return vec;
     }
@@ -820,6 +722,12 @@ public class P8Http {
     			event = eventsDetailsJarry.getJSONObject(i);    			
     			String leagueName = event.getString("leagueName");
     			
+    			String marketName = event.getString("marketName");
+    			
+    			if(marketName.contains("1X2")){
+    				continue;
+    			}
+    			
 /*    			if(!isInShowLeagueName(leagueName))
     				continue;*/
     			
@@ -849,6 +757,16 @@ public class P8Http {
     			boolean inPlay = event.getBoolean("inPlay");
     			
     			playerStake = Math.abs(event.getDouble("playerStake"));
+    			
+    			
+    			if(eventName.contains("角球")){
+    				continue;
+    			}
+    			
+    			
+    			if(!description.contains("HOME") && !description.contains("AWAY") && !description.contains("OVER") && !description.contains("UNDER")){
+    				continue;
+    			}
     			
     		
     			
@@ -941,6 +859,10 @@ public class P8Http {
 
     			
     			if(parsedeventstr.contains("HOMEAWAY") ){
+    				
+    				String p0hStr = "";
+    				double playerStake1 = 0.0;
+    				
 
     				for(int j = i + 1; j < eventsDetailsJarry.length(); j++){
     					
@@ -954,15 +876,30 @@ public class P8Http {
     	    			String period1 = event1.getString("period");    			
     	    			String description1 = event1.getString("description");
     	    			long eventId1 = event1.getLong("eventId");
-    	    			Double playerStake1 = Math.abs(event1.getDouble("playerStake"));
+    	    			playerStake1 = Math.abs(event1.getDouble("playerStake"));
+    	    			
+    	    			String marketName1 = event1.getString("marketName");
+    	    			
+    	    			if(marketName1.contains("1X2")){
+    	    				continue;
+    	    			}
+    	    			
+    	    			
+    	    			
+    	    			if(!description1.contains("HOME") && !description1.contains("AWAY") && !description1.contains("OVER") && !description1.contains("UNDER")){
+    	    				continue;
+    	    			}
+    	    			
     	    			
 
     	    			
     	    			if((eventId1 == eventId) && (period1.equals(period)) && homeover.contains(description1)){
     	    				if(description1.contains("HOME")){
-    	    					playerStake = playerStake1 - playerStake;
+    	    					//playerStake = playerStake1 - playerStake;
+    	    					p0hStr = String.format("(%.0f)", playerStake1) + "-" + String.format("(%.0f)", playerStake);
     	    				}else{
-    	    					playerStake = playerStake - playerStake1;
+    	    					//playerStake = playerStake - playerStake1;
+    	    					p0hStr = String.format("(%.0f)", playerStake) + "-" + String.format("(%.0f)", playerStake1);
     	    				}
     	    				find = true;
     	    				if(printEvents == true){
@@ -978,16 +915,87 @@ public class P8Http {
     				
     				if(find == false){
 	    				if(description.contains("HOME")){
-	    					playerStake = playerStake;
+	    					playerStake = playerStake - 0.0;
+	    					p0hStr = String.format("(%.0f)", Math.abs(playerStake)) + "-" + String.format("(%.0f)", 0.0);
 	    				}else{
-	    					playerStake = 0 - playerStake;
+	    					playerStake = 0.0 - playerStake;
+	    					p0hStr = String.format("(%.0f)", 0.0) + "-" + String.format("(%.0f)", Math.abs(playerStake));
 	    				}
     				}
     			
     				
     				if(period.contains("0")){
-    					Double d1= Double.parseDouble(eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0HOME.ordinal()]) + playerStake;    					
-    					eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0HOME.ordinal()] = String.format("%.0f", d1);    					
+    					
+    					String allP0hStr = eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0HOME.ordinal()];
+    					
+    					double bethome = 0.0;
+    					double betaway = 0.0;
+    					
+    					if(allP0hStr.contains("=")){
+    						String[] tmp = allP0hStr.split("=");
+    						
+    						
+    						String[] tmp1 = tmp[0].split("\\-");
+    						tmp1[0] = tmp1[0].replace("(", "");
+    						tmp1[0] = tmp1[0].replace(")", "");
+    						
+    					
+    						tmp1[1] = tmp1[1].replace("(", "");
+    						tmp1[1] = tmp1[1].replace(")", "");
+    						
+    						
+    						
+    						bethome = Double.parseDouble(tmp1[0]);
+    						betaway = Double.parseDouble(tmp1[1]);
+    						
+    						String[] tmp2 = p0hStr.split("\\-");
+    						tmp2[0] = tmp2[0].replace("(", "");
+    						tmp2[0] = tmp2[0].replace(")", "");
+    						
+    					
+    						tmp2[1] = tmp2[1].replace("(", "");
+    						tmp2[1] = tmp2[1].replace(")", "");
+    						
+    						double bethome1 = 0.0;
+    						double betaway1 = 0.0;
+    						
+    						bethome1 = Double.parseDouble(tmp2[0]);
+    						betaway1 = Double.parseDouble(tmp2[1]);
+    						
+    						eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0HOME.ordinal()] = String.format("(%.0f)", Math.abs(bethome1) + Math.abs(bethome))
+    																							+ "-" +String.format("(%.0f)", Math.abs(betaway1) + Math.abs(betaway))
+    																							+ "=" + String.format("%.0f", Math.abs(bethome1) + Math.abs(bethome) - Math.abs(betaway1) -Math.abs(betaway));
+    						
+    						
+    					}else{
+    						
+    						System.out.println(p0hStr + "=" + String.format("%.0f", playerStake));
+    						
+    						
+    						String[] tmp2 = p0hStr.split("\\-");
+    						tmp2[0] = tmp2[0].replace("(", "");
+    						tmp2[0] = tmp2[0].replace(")", "");
+    						
+    					
+    						tmp2[1] = tmp2[1].replace("(", "");
+    						tmp2[1] = tmp2[1].replace(")", "");
+    						
+    						double bethome1 = 0.0;
+    						double betaway1 = 0.0;
+    						
+    						bethome1 = Double.parseDouble(tmp2[0]);
+    						betaway1 = Double.parseDouble(tmp2[1]);
+
+    						
+    						
+    						eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0HOME.ordinal()] = p0hStr + "=" + String.format("%.0f", bethome1 - betaway1);
+    					}
+    					
+    					
+    					
+    					
+/*    					Double d1= Double.parseDouble(eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0HOME.ordinal()]) + playerStake;    					
+    					eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0HOME.ordinal()] = String.format("%.0f", d1);    	*/				
     				}
     				else{
     					Double d1= Double.parseDouble(eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD1HOME.ordinal()]) + playerStake;    					
@@ -998,6 +1006,9 @@ public class P8Http {
 
     				
     			}else{
+    				
+    				String p0oStr = "";
+    				double playerStake1 = 0.0;
     				
     				for(int j = i + 1; j < eventsDetailsJarry.length(); j++){
     					
@@ -1011,15 +1022,27 @@ public class P8Http {
     	    			String period1 = event1.getString("period");    			
     	    			String description1 = event1.getString("description");
     	    			Long eventId1 = event1.getLong("eventId"); 
-    	    			Double playerStake1 = Math.abs(event1.getDouble("playerStake"));
+    	    			playerStake1 = Math.abs(event1.getDouble("playerStake"));
     	    			
+    	    			String marketName1 = event1.getString("marketName");
+    	    			
+    	    			if(marketName1.contains("1X2")){
+    	    				continue;
+    	    			}
+    	    			
+    	    			
+    	    			if(!description1.contains("HOME") && !description1.contains("AWAY") && !description1.contains("OVER") && !description1.contains("UNDER")){
+    	    				continue;
+    	    			}
     	    			
     	    			
     	    			if(eventId1 == eventId && period1.equals(period) && homeover.contains(description1)){
     	    				if(description1.contains("OVER")){
-    	    					playerStake = playerStake1 - playerStake;
+    	    					//playerStake = playerStake1 - playerStake;
+    	    					p0oStr = String.format("(%.0f)", playerStake1) + "-" + String.format("(%.0f)", playerStake);
     	    				}else{
-    	    					playerStake = playerStake - playerStake1;
+    	    					//playerStake = playerStake - playerStake1;
+    	    					p0oStr = String.format("(%.0f)", playerStake) + "-" + String.format("(%.0f)", playerStake1);
     	    				}
     	    				find = true;
     	    				
@@ -1035,16 +1058,83 @@ public class P8Http {
     				
     				if(find == false){
 	    				if(description.contains("OVER")){
-	    					playerStake = playerStake;
+	    					playerStake = playerStake - 0.0;
+	    					p0oStr = String.format("(%.0f)", Math.abs(playerStake)) + "-" + String.format("(%.0f)", 0.0);
 	    				}else{
-	    					playerStake = 0 - playerStake;
+	    					playerStake = 0.0 - playerStake;
+	    					p0oStr = String.format("(%.0f)", 0.0) + "-" + String.format("(%.0f)", Math.abs(playerStake));
 	    				}
     				}
     				
     				if(period.contains("0")){
-    					Double d1= Double.parseDouble(eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0OVER.ordinal()]) + playerStake;
     					
-    					eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0OVER.ordinal()] = String.format("%.0f", d1);
+    					
+    					
+    					String allP0oStr = eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0OVER.ordinal()];
+    					
+    					double betover = 0.0;
+    					double betunder = 0.0;
+    					
+    					if(allP0oStr.contains("=")){
+    						String[] tmp = allP0oStr.split("=");
+    						
+    						
+    						String[] tmp1 = tmp[0].split("\\-");
+    						tmp1[0] = tmp1[0].replace("(", "");
+    						tmp1[0] = tmp1[0].replace(")", "");
+    						
+    					
+    						tmp1[1] = tmp1[1].replace("(", "");
+    						tmp1[1] = tmp1[1].replace(")", "");
+    						
+    						
+    						
+    						betover = Double.parseDouble(tmp1[0]);
+    						betunder = Double.parseDouble(tmp1[1]);
+    						
+    						String[] tmp2 = p0oStr.split("\\-");
+    						tmp2[0] = tmp2[0].replace("(", "");
+    						tmp2[0] = tmp2[0].replace(")", "");
+    						
+    					
+    						tmp2[1] = tmp2[1].replace("(", "");
+    						tmp2[1] = tmp2[1].replace(")", "");
+    						
+    						double betover1 = 0.0;
+    						double betunder1 = 0.0;
+    						
+    						betover1 = Double.parseDouble(tmp2[0]);
+    						betunder1 = Double.parseDouble(tmp2[1]);
+    						
+    						eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0OVER.ordinal()] = String.format("(%.0f)", betover + betover1)
+    																							+ "-" +String.format("(%.0f)", betunder + betunder1)
+    																							+ "=" + String.format("%.0f", betover1 + betover- betunder -betunder1);
+    						
+    						
+    					}else{
+    						
+    						String[] tmp2 = p0oStr.split("\\-");
+    						tmp2[0] = tmp2[0].replace("(", "");
+    						tmp2[0] = tmp2[0].replace(")", "");
+    						
+    					
+    						tmp2[1] = tmp2[1].replace("(", "");
+    						tmp2[1] = tmp2[1].replace(")", "");
+    						
+    						double betover1 = 0.0;
+    						double betunder1 = 0.0;
+    						
+    						betover1 = Double.parseDouble(tmp2[0]);
+    						betunder1 = Double.parseDouble(tmp2[1]);
+    						
+    						eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0OVER.ordinal()] = p0oStr + "=" + String.format("%.0f", betover1 - betunder1);
+    					}
+    					
+    					
+    					
+/*    					Double d1= Double.parseDouble(eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0OVER.ordinal()]) + playerStake;
+    					
+    					eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0OVER.ordinal()] = String.format("%.0f", d1);*/
     				}
     				else{
     					Double d1= Double.parseDouble(eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD1OVER.ordinal()]) + playerStake;
@@ -1158,14 +1248,25 @@ public class P8Http {
         		System.out.println("------------------------");*/
         		
         		
-            	Comparator ct = new MyCompare();        
+            	Comparator ct = new MyCompare();  
+            	
+            	Comparator cn = new EventNameCompare(); 
+            	
+
+            	
             	
             	if(eventDetailsVec.size() != 0){
+            		
+            		Collections.sort(eventDetailsVec, cn);
+            		
             		Collections.sort(eventDetailsVec, ct);
             	}
             	
         		
             	if(highShowVec.size() != 0){
+            		
+            		Collections.sort(highShowVec, cn);
+            		
             		Collections.sort(highShowVec, ct);
             		
 /*            		System.out.println("after sort event details:");
@@ -1835,8 +1936,23 @@ public class P8Http {
 							boolean sendMail = false;
 							
 							String eventNameStr = saveItem[TYPEINDEX.EVENTNAMNE.ordinal()];
-			    			double p0h = Double.parseDouble(saveItem[TYPEINDEX.PERIOD0HOME.ordinal()]);
-			    			double p0o = Double.parseDouble(saveItem[TYPEINDEX.PERIOD0OVER.ordinal()]);
+							
+			    			double p0h = 0.0;
+			    			double p0o = 0.0;
+			    			
+			    			String p0hStr = saveItem[TYPEINDEX.PERIOD0HOME.ordinal()];
+			    			String p0oStr = saveItem[TYPEINDEX.PERIOD0OVER.ordinal()];
+			    			
+			    			if(p0hStr.contains("=")){
+			    				String[] tmp = p0hStr.split("=");
+			    				p0h = Double.parseDouble(tmp[1]);
+			    			}
+			    			
+			    			if(p0oStr.contains("=")){
+			    				String[] tmp = p0oStr.split("=");
+			    				p0o = Double.parseDouble(tmp[1]);
+			    			}
+
 			    			
 			    			String sendTitle = "PP " + eventNameStr + " " + eventTimestr;
 			    			String sendContent = "";
@@ -1846,7 +1962,7 @@ public class P8Http {
 								sendContent = "全场让球: " + String.format("%.0f\n", p0h);
 							}
 							
-							if(Math.abs(p0o) >= P8p0oSendNumber && p0o < 0){
+							if(Math.abs(p0o) >= P8p0oSendNumber){
 								sendMail = true;
 								sendContent += "全场大小: " + String.format("%.0f\n", p0o);
 							}

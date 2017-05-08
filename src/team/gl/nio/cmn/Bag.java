@@ -9,6 +9,8 @@ public class Bag implements Serializable{
     private Vector<String[]> datas;
     private Vector<String[]> mergeDatas;
     private Vector<String[]> mergepSubDatas;
+    private Vector<String[]> p8pSubDatas;
+    private Vector<String[]> zhibopSubDatas;
     private String successTime = "";
     
     private boolean P8GrabStat = false;
@@ -30,7 +32,15 @@ public class Bag implements Serializable{
     public Vector<String[]> getMergepSubDatas() {
         return mergepSubDatas;
     }
+
     
+    public Vector<String[]> getP8pSubDatas() {
+        return p8pSubDatas;
+    }
+    
+    public Vector<String[]> getZhibopSubDatas() {
+        return zhibopSubDatas;
+    }
     
     public String getSuccessTime(){
     	return successTime;
@@ -59,6 +69,14 @@ public class Bag implements Serializable{
     
     public void setMergepSubDatas(Vector<String[]> datas) {
         this.mergepSubDatas = datas;
+    }
+    
+    public void setP8pSubDatas(Vector<String[]> datas) {
+        this.p8pSubDatas = datas;
+    }
+    
+    public void setZhibopSubDatas(Vector<String[]> datas) {
+        this.zhibopSubDatas = datas;
     }
     
     public void setP8GrabStat(boolean val){

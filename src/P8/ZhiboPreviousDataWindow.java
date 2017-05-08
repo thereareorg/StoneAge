@@ -76,7 +76,7 @@ public class ZhiboPreviousDataWindow extends PreviousDataWindow{
 		
 		private  Vector<String[]> detailsData = null;
 		
-		private Vector<String[]> originalDetailsData = null;
+		private Vector<String[]> originalDetailsData = new Vector<String[]>();
 		
 		private Vector<Integer> hightlightRows = new Vector<Integer>();
 		
@@ -161,10 +161,14 @@ public class ZhiboPreviousDataWindow extends PreviousDataWindow{
 			try{
 				
 				
-				
+				if(originalDetailsData.size() != 0){
+					originalDetailsData.clear();
+				}
 
 				
-				originalDetailsData = (Vector<String[]>)eventDetailsVec.clone();
+				for(int i = 0; i< eventDetailsVec.size(); i++){
+					originalDetailsData.add(eventDetailsVec.elementAt(i).clone());
+				}
 				
 				
 				

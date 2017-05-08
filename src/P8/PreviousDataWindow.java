@@ -46,6 +46,8 @@ import java.awt.Color;
 
 
 
+
+
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;  
@@ -75,6 +77,8 @@ import org.json.JSONObject;
 
 
 
+
+
 import java.text.SimpleDateFormat;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.Stack;
@@ -94,7 +98,7 @@ public class PreviousDataWindow extends JFrame
 	
 	private  Vector<String[]> detailsData = null;
 	
-	private Vector<String[]> originalDetailsData = null;
+	private Vector<String[]> originalDetailsData = new Vector<String[]>();
 	
 	private Vector<Integer> hightlightRows = new Vector<Integer>();
 	
@@ -104,6 +108,9 @@ public class PreviousDataWindow extends JFrame
     
     private JLabel labelp0oHighlightNum = new JLabel("大小球高亮金额:");
     private JTextField textFieldp0oHighlightNum = new JTextField(15);  
+
+    
+    
     
     private JLabel labelInterval = new JLabel("日期选择:");
     
@@ -119,6 +126,13 @@ public class PreviousDataWindow extends JFrame
     
     private JLabel labelp0oHideNum = new JLabel("大小球隐藏金额:");
     private JTextField textFieldp0oHideNum = new JTextField(15); 
+    
+    private JLabel labelInplayHideNum = new JLabel("走地让球隐藏金额:");
+    private JTextField textFieldInplayHideNum = new JTextField(15); 
+    
+    private JLabel labelp0oInplayHideNum = new JLabel("走地大小球隐藏金额:");
+    private JTextField textFieldp0oInplayHideNum = new JTextField(15); 
+    
     
     private JCheckBox onlyShow5Big = new JCheckBox("只看五大联赛,欧冠");
     private JCheckBox onlyShowInplay = new JCheckBox("只看滚动盘");
@@ -140,6 +154,10 @@ public class PreviousDataWindow extends JFrame
     
     Double p0ohideNum = 0.0;
 
+    Double p0hInplayhideNum = 1.0;
+    
+    Double p0oInplayhideNum = 1.0;
+    
     
     
 /*    private JLabel labeltime = new JLabel("距封盘:");
@@ -160,7 +178,7 @@ public class PreviousDataWindow extends JFrame
 
 	public PreviousDataWindow()  
     {  
-		setTitle("历史注单");  
+		setTitle("PP历史");  
 		
         intiComponent();  
         
@@ -210,9 +228,24 @@ public class PreviousDataWindow extends JFrame
 			
 			
 
+			if(originalDetailsData.size() != 0){
+				originalDetailsData.clear();
+			}
 			
-			originalDetailsData = (Vector<String[]>)eventDetailsVec.clone();
+			for(int i = 0; i< eventDetailsVec.size(); i++){
+				originalDetailsData.add(eventDetailsVec.elementAt(i).clone());
+			}
 			
+			
+
+			for(int i = 0; i < originalDetailsData.size(); i++){
+				String[] tmp = originalDetailsData.elementAt(i);
+				if(tmp[TYPEINDEX.EVENTNAMNE.ordinal()].contains("滚动盘")){
+					originalDetailsData.elementAt(i)[TYPEINDEX.PERIOD0HOME.ordinal()] = "g" + originalDetailsData.elementAt(i)[TYPEINDEX.PERIOD0HOME.ordinal()];
+					originalDetailsData.elementAt(i)[TYPEINDEX.PERIOD0OVER.ordinal()] = "g" + originalDetailsData.elementAt(i)[TYPEINDEX.PERIOD0OVER.ordinal()];
+				}
+			}
+
 			
 			
 			updateShowItem();
@@ -354,29 +387,144 @@ public class PreviousDataWindow extends JFrame
 			
 			//隐藏数额
 			for(int i = 0; i< DetailsDatatmp1.size(); i++){
-				String leagueName = DetailsDatatmp1.elementAt(i)[TYPEINDEX.LEAGUENAME.ordinal()];
+				String eventName = DetailsDatatmp1.elementAt(i)[TYPEINDEX.EVENTNAMNE.ordinal()];
+
 				
-				if(P8Http.isInShowLeagueName(leagueName) || true){
-					double betAmt1 = Double.parseDouble(DetailsDatatmp1.elementAt(i)[TYPEINDEX.PERIOD0HOME.ordinal()]);
-					double betAmt2 = Double.parseDouble(DetailsDatatmp1.elementAt(i)[TYPEINDEX.PERIOD0OVER.ordinal()]);
-					double betAmt3 = Double.parseDouble(DetailsDatatmp1.elementAt(i)[TYPEINDEX.PERIOD1HOME.ordinal()]);
-					double betAmt4 = Double.parseDouble(DetailsDatatmp1.elementAt(i)[TYPEINDEX.PERIOD1HOME.ordinal()]);
-					
-					if(Math.abs(betAmt1) > p0hhideNum || Math.abs(betAmt2) > p0ohideNum){
-						//
-						
-						DetailsDatatmp2.add(DetailsDatatmp1.elementAt(i));
-						
+				
+				double betAmt1 = 0.0;
+				double betAmt2 = 0.0;
+
+				
+				String bet1Str = DetailsDatatmp1.elementAt(i)[TYPEINDEX.PERIOD0HOME.ordinal()];
+				String bet2Str = DetailsDatatmp1.elementAt(i)[TYPEINDEX.PERIOD0OVER.ordinal()];
+
+				if(bet1Str.contains("=")){
+					String[] tmp = bet1Str.split("=");
+					betAmt1 = Double.parseDouble(tmp[1]);
+				}else{
+					if(bet1Str.contains("g")){
+						bet1Str = bet1Str.replace("g", "");
 					}
-					
-					
+					betAmt1 = Double.parseDouble(bet1Str);
 				}
 				
+				if(bet2Str.contains("=")){
+					String[] tmp = bet2Str.split("=");
+					betAmt2 = Double.parseDouble(tmp[1]);
+				}else{
+					if(bet2Str.contains("g")){
+						bet2Str = bet2Str.replace("g", "");
+					}
+					betAmt2 = Double.parseDouble(bet2Str);
+				}
+				
+				if(eventName.contains("滚动盘")){
+					if(Math.abs(betAmt1) > p0hInplayhideNum || Math.abs(betAmt2) > p0oInplayhideNum){
+
+						DetailsDatatmp2.add(DetailsDatatmp1.elementAt(i).clone());
+					}
+				}else{
+					if(Math.abs(betAmt1) > p0hhideNum || Math.abs(betAmt2) > p0ohideNum){
+						DetailsDatatmp2.add(DetailsDatatmp1.elementAt(i).clone());
+					}
+				}
+
 				
 			}
 			
+
+			
+			
+			
 			detailsData = (Vector<String[]>)DetailsDatatmp2.clone();
 			
+
+
+			
+			
+        	
+        	if(detailsData.size() != 0){
+        		
+        		Comparator cn = new EventNameCompare();  
+        		Collections.sort(detailsData, cn);
+        		
+        		Comparator ct = new TimeCompare(); 
+        		
+        		Collections.sort(detailsData, ct);
+        		
+        	}
+        	
+        	
+			for(int i = 0; i < detailsData.size(); i++){
+				String[] tmp = detailsData.elementAt(i).clone();
+				String name = tmp[TYPEINDEX.EVENTNAMNE.ordinal()];
+				
+				if(name.contains("滚动盘")){
+					
+					//System.out.println();
+					
+					for(int j = 0; j < detailsData.size(); j++){
+						if(j == i){
+							continue;
+						}
+						
+						String[] tmp1 = detailsData.elementAt(j).clone();
+						String name1 = tmp1[TYPEINDEX.EVENTNAMNE.ordinal()];
+						if(name.contains(name1)){
+							double betp0h = 0.0;
+							double betp0o = 0.0;
+							
+							String betp0hStr = tmp[TYPEINDEX.PERIOD0HOME.ordinal()];
+							String betp0oStr = tmp[TYPEINDEX.PERIOD0OVER.ordinal()];
+							
+							if(betp0hStr.contains("=")){
+								String[] tmpArray = betp0hStr.split("=");
+								betp0h = Double.parseDouble(tmpArray[1]);
+							}
+							
+							if(betp0oStr.contains("=")){
+								String[] tmpArray = betp0oStr.split("=");
+								betp0o = Double.parseDouble(tmpArray[1]);
+							}
+							
+							
+							double betp0h1 = 0.0;
+							double betp0o1 = 0.0;
+							
+							String betp0hStr1 = tmp1[TYPEINDEX.PERIOD0HOME.ordinal()];
+							String betp0oStr1 = tmp1[TYPEINDEX.PERIOD0OVER.ordinal()];
+							
+							if(betp0hStr1.contains("=")){
+								String[] tmpArray = betp0hStr1.split("=");
+								betp0h1 = Double.parseDouble(tmpArray[1]);
+							}
+							
+							if(betp0oStr1.contains("=")){
+								String[] tmpArray = betp0oStr1.split("=");
+								betp0o1 = Double.parseDouble(tmpArray[1]);
+							}
+							
+							
+							
+							if((betp0h > p0hInplayhideNum && betp0h1 >p0hhideNum) || (betp0h < 0.0 -  p0hInplayhideNum && betp0h1 < 0.0 - p0hhideNum)){
+								detailsData.elementAt(i)[TYPEINDEX.PERIOD0HOME.ordinal()] = "b" + detailsData.elementAt(i)[TYPEINDEX.PERIOD0HOME.ordinal()];
+								detailsData.elementAt(j)[TYPEINDEX.PERIOD0HOME.ordinal()] = "b" + detailsData.elementAt(j)[TYPEINDEX.PERIOD0HOME.ordinal()];
+							}
+							
+							if((betp0o > p0oInplayhideNum && betp0o1 >p0ohideNum) || (betp0o < 0.0 - p0oInplayhideNum && betp0o1 < 0.0 - p0ohideNum)){
+								detailsData.elementAt(i)[TYPEINDEX.PERIOD0OVER.ordinal()] = "b" + detailsData.elementAt(i)[TYPEINDEX.PERIOD0OVER.ordinal()];
+								detailsData.elementAt(j)[TYPEINDEX.PERIOD0OVER.ordinal()] = "b" + detailsData.elementAt(j)[TYPEINDEX.PERIOD0OVER.ordinal()];
+							}
+							
+							break;
+							
+						}
+						
+					}
+				}
+			}
+        	
+
 			
 			
 			
@@ -408,7 +556,7 @@ public class PreviousDataWindow extends JFrame
 		
 		container.setLayout(new BorderLayout());
 		
-		JPanel panelNorth = new JPanel(new GridLayout(4, 4));
+		JPanel panelNorth = new JPanel(new GridLayout(5, 4));
 
         container.add(panelNorth, BorderLayout.NORTH);  
         
@@ -499,6 +647,11 @@ public class PreviousDataWindow extends JFrame
         });
         
         
+        
+
+        
+        
+        
         textFieldp0oHideNum.addKeyListener(new KeyListener(){
             public void keyPressed(KeyEvent e) {  
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {  
@@ -524,7 +677,54 @@ public class PreviousDataWindow extends JFrame
         });
         
         
+        textFieldInplayHideNum.addKeyListener(new KeyListener(){
+            public void keyPressed(KeyEvent e) {  
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {  
+                    String value = textFieldInplayHideNum.getText();  
+                    
+                    if(!Common.isNum(value)){
+                    	return;
+                    }else{
+                    	p0hInplayhideNum = Double.parseDouble(value);
+                    	updateShowItem();
+                    	
+                    	//tableMode.updateTable();
+                    }
+                    
+                }  
+                // System.out.println("Text " + value);  
+            }  
+            public void keyReleased(KeyEvent e) {  
+            }  
+            public void keyTyped(KeyEvent e) {  
+            }  
+
+        });
         
+        
+        textFieldp0oInplayHideNum.addKeyListener(new KeyListener(){
+            public void keyPressed(KeyEvent e) {  
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {  
+                    String value = textFieldp0oInplayHideNum.getText();  
+                    
+                    if(!Common.isNum(value)){
+                    	return;
+                    }else{
+                    	p0oInplayhideNum = Double.parseDouble(value);
+                    	updateShowItem();
+                    	
+                    	//tableMode.updateTable();
+                    }
+                    
+                }  
+                // System.out.println("Text " + value);  
+            }  
+            public void keyReleased(KeyEvent e) {  
+            }  
+            public void keyTyped(KeyEvent e) {  
+            }  
+
+        });        
         
         
         textFieldGrabStat.setEditable(false);
@@ -606,8 +806,13 @@ public class PreviousDataWindow extends JFrame
         
         panelNorth.add(labelHideNum);
         panelNorth.add(textFieldHideNum);
-        
 
+        panelNorth.add(labelp0oInplayHideNum);
+        panelNorth.add(textFieldp0oInplayHideNum);
+        
+        panelNorth.add(labelInplayHideNum);
+        panelNorth.add(textFieldInplayHideNum);
+        
         
         panelNorth.add(onlyShow5Big);
         panelNorth.add(onlyShowInplay);
@@ -660,7 +865,19 @@ public class PreviousDataWindow extends JFrame
 
                
             	String str = value.toString();
-				Double betAmt = Double.parseDouble(str);
+            	
+				Double betAmt = 0.0;
+				
+				String showStr = str.replace("g", "");
+				showStr = showStr.replace("b", "");
+				
+				if(str.contains("=")){
+					String[] tmp = str.split("=");
+					betAmt = Double.parseDouble(tmp[1]);
+				}else{
+	
+					betAmt = Double.parseDouble(showStr);
+				}
 				
 				
 				if(Math.abs(betAmt) > p0hhiglightBigNum){
@@ -671,12 +888,29 @@ public class PreviousDataWindow extends JFrame
 					
 				}
 				
-				setText((value == null) ? "" : value.toString());
 
-				if(Math.abs(betAmt) < p0hhideNum){
+				
+				setText((value == null) ? "" : showStr);
+
+				Double hideNum = 0.0;
+				
+				if(str.contains("g")){
+					hideNum = p0hInplayhideNum;
+				}else{
+					hideNum = p0hhideNum;
+				}
+				
+				if(Math.abs(betAmt) < hideNum){
 					setForeground(Color.black);
 					setText("0");
 				}
+				
+				if(str.contains("b")){
+					setBackground(new Color(179,232,255));
+				}else{
+					setBackground(Color.white);
+				}
+					
 
 
             }   
@@ -689,7 +923,18 @@ public class PreviousDataWindow extends JFrame
 
                
             	String str = value.toString();
-				Double betAmt = Double.parseDouble(str);
+            	
+				Double betAmt = 0.0;
+				
+				String showStr = str.replace("g", "");
+				showStr = showStr.replace("b", "");
+				
+				if(str.contains("=")){
+					String[] tmp = str.split("=");
+					betAmt = Double.parseDouble(tmp[1]);
+				}else{
+					betAmt = Double.parseDouble(str.replace("g", ""));
+				}
 				
 				
 				if(Math.abs(betAmt) > p0ohiglightBigNum){
@@ -700,13 +945,26 @@ public class PreviousDataWindow extends JFrame
 					
 				}
 				
-				setText((value == null) ? "" : value.toString());
+				setText((value == null) ? "" : showStr);
+				
+				Double hideNum = 0.0;
+				
+				if(str.contains("g")){
+					hideNum = p0oInplayhideNum;
+				}else{
+					hideNum = p0ohideNum;
+				}
 
-				if(Math.abs(betAmt) < p0ohideNum){
+				if(Math.abs(betAmt) < hideNum){
 					setForeground(Color.black);
 					setText("0");
 				}
 
+				if(str.contains("b")){
+					setBackground(new Color(179,232,255));
+				}else{
+					setBackground(Color.white);
+				}
 
             }   
 

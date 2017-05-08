@@ -69,7 +69,7 @@ public class ZhiboEventsDetailsWindow  extends JFrame{
 	   
 		private static final long serialVersionUID = 508685038515369544L;
 		
-		private  Vector<String[]> originalDetailsData = null;
+		private  Vector<String[]> originalDetailsData = new Vector<String[]>();
 		
 		private  Vector<String[]> detailsData = null;
 		
@@ -300,10 +300,14 @@ public class ZhiboEventsDetailsWindow  extends JFrame{
 			try{
 				
 				
-				
+				if(originalDetailsData.size() != 0){
+					originalDetailsData.clear();
+				}
 
 				
-				originalDetailsData = (Vector<String[]>)eventDetailsVec.clone();
+				for(int i = 0; i< eventDetailsVec.size(); i++){
+					originalDetailsData.add(eventDetailsVec.elementAt(i).clone());
+				}
 
 				updateShowItem();
 

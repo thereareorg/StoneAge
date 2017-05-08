@@ -13,6 +13,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Vector;
 
 import javax.swing.JCheckBox;
@@ -38,7 +40,7 @@ public class MergeDetailsWindow extends JFrame{
 	   
 		private static final long serialVersionUID = 508685938515369544L;
 		
-		private  Vector<String[]> originalDetailsData = null;
+		private  Vector<String[]> originalDetailsData = new Vector<String[]>();
 		
 		private  Vector<String[]> detailsData = null;
 		
@@ -237,10 +239,14 @@ public class MergeDetailsWindow extends JFrame{
 			try{
 				
 				
-				
+				if(originalDetailsData.size() != 0){
+					originalDetailsData.clear();
+				}
 
 				
-				originalDetailsData = (Vector<String[]>)eventDetailsVec.clone();
+				for(int i = 0; i< eventDetailsVec.size(); i++){
+					originalDetailsData.add(eventDetailsVec.elementAt(i).clone());
+				}
 				
 				
 				
@@ -497,7 +503,7 @@ public class MergeDetailsWindow extends JFrame{
 			
 			detailsData = (Vector<String[]>)DetailsDatatmp2.clone();
 			
-			
+
 			
 			
 			tableMode.updateTable();

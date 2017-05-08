@@ -12,6 +12,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Vector;
 
 import javax.swing.JCheckBox;
@@ -36,7 +38,7 @@ public class MergePreviousDataWindow extends PreviousDataWindow
 	
 	private  Vector<String[]> detailsData = null;
 	
-	private Vector<String[]> originalDetailsData = null;
+	private Vector<String[]> originalDetailsData = new Vector<String[]>();
 	
 	private Vector<Integer> hightlightRows = new Vector<Integer>();
 	
@@ -128,10 +130,14 @@ public class MergePreviousDataWindow extends PreviousDataWindow
 		try{
 			
 			
-			
+			if(originalDetailsData.size() != 0){
+				originalDetailsData.clear();
+			}
 
 			
-			originalDetailsData = (Vector<String[]>)eventDetailsVec.clone();
+			for(int i = 0; i< eventDetailsVec.size(); i++){
+				originalDetailsData.add(eventDetailsVec.elementAt(i).clone());
+			}
 			
 			
 			
@@ -438,9 +444,8 @@ public class MergePreviousDataWindow extends PreviousDataWindow
 			
 			detailsData = (Vector<String[]>)DetailsDatatmp2.clone();
 			
-			
-			//hightlightBigNumrows();
-			
+	
+        	
 			tableMode.updateTable();
 			
 		}catch(Exception e){

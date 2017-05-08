@@ -43,8 +43,8 @@ public class MergeManager {
 	
 	
 	public static int mergep0hSendNumber = 1800000;
-	public static int mergep0oSendNumber = 800000;
-	public static int mergep0oHideSendNumber = 200000;
+	public static int mergep0oSendNumber = 700000;
+	public static int mergep0oHideSendNumber = 100000;
 	
 	static Map<String, Vector<Integer>> mailRecords = new HashMap<String, Vector<Integer>>();  
 	
@@ -367,7 +367,7 @@ public class MergeManager {
 						}
 						
 						
-						if(true == sendMail){
+						if(true == sendMail && false){//暂时合并不发
 							
 							Vector<String> mails = StoneAge.getMailList();
 							
@@ -589,14 +589,49 @@ public class MergeManager {
 										//String[] zhiboSaveItem = ZhiboManager.getZhiboSaveItem(zhiboeventname);
 										
 										//if(null != zhiboSaveItem){
-										Double p8danshibet1 = Double.parseDouble(p8DanshiItem[ZHIBOINDEX.PERIOD0HOME.ordinal()]);
-										Double p8danshibet2 = Double.parseDouble(p8DanshiItem[ZHIBOINDEX.PERIOD0OVER.ordinal()]);
+										
+										
+										Double p8danshibet1 = 0.0;
+										Double p8danshibet2 = 0.0;
+										
+										
+										String p8danshibet1Str = p8DanshiItem[ZHIBOINDEX.PERIOD0HOME.ordinal()];
+										String p8danshibet2Str = p8DanshiItem[ZHIBOINDEX.PERIOD0OVER.ordinal()];
+										
+										if(p8danshibet1Str.contains("=")){
+											String[] tmp = p8danshibet1Str.split("=");
+											p8danshibet1 = Double.parseDouble(tmp[1]);
+										}
+										
+										if(p8danshibet2Str.contains("=")){
+											String[] tmp = p8danshibet2Str.split("=");
+											p8danshibet2 = Double.parseDouble(tmp[1]);
+										}
+										
+
 										Double p8danshibet3 = Double.parseDouble(p8DanshiItem[ZHIBOINDEX.PERIOD1HOME.ordinal()]);
 										Double p8danshibet4 = Double.parseDouble(p8DanshiItem[ZHIBOINDEX.PERIOD1OVER.ordinal()]);
 
 										
-										Double p80homeInplayVal = Double.parseDouble(item[TYPEINDEX.PERIOD0HOME.ordinal()]);
-										Double p80overInplayVal = Double.parseDouble(item[TYPEINDEX.PERIOD0OVER.ordinal()]);
+										
+										Double p80homeInplayVal = 0.0;
+										Double p80overInplayVal = 0.0;
+										
+										
+										String p80homeInplayValStr = item[TYPEINDEX.PERIOD0HOME.ordinal()];
+										String p80overInplayValStr = item[TYPEINDEX.PERIOD0OVER.ordinal()];
+										
+										if(p80homeInplayValStr.contains("=")){
+											String[] tmp = p80homeInplayValStr.split("=");
+											p80homeInplayVal = Double.parseDouble(tmp[1]);
+										}
+										
+										if(p80overInplayValStr.contains("=")){
+											String[] tmp = p80overInplayValStr.split("=");
+											p80overInplayVal = Double.parseDouble(tmp[1]);
+										}
+										
+
 										Double p81homeInplayVal = Double.parseDouble(item[TYPEINDEX.PERIOD1HOME.ordinal()]);
 										Double p81overInplayVal = Double.parseDouble(item[TYPEINDEX.PERIOD1OVER.ordinal()]);
 										
@@ -731,10 +766,28 @@ public class MergeManager {
 								
 								boolean addTomerge = false;
 								
-								Double p80home = Double.parseDouble(item[TYPEINDEX.PERIOD0HOME.ordinal()]);
+								Double p80home = 0.0;
+								Double p80over = 0.0;
+								
+								
+								String p80homeStr = item[TYPEINDEX.PERIOD0HOME.ordinal()];
+								String p80overStr = item[TYPEINDEX.PERIOD0OVER.ordinal()];
+								
+								if(p80homeStr.contains("=")){
+									String[] tmp = p80homeStr.split("=");
+									p80home = Double.parseDouble(tmp[1]);
+								}
+								
+								if(p80overStr.contains("=")){
+									String[] tmp = p80overStr.split("=");
+									p80over = Double.parseDouble(tmp[1]);
+								}
+								
+								
+/*								Double p80home = Double.parseDouble(item[TYPEINDEX.PERIOD0HOME.ordinal()]);
 								Double p80over = Double.parseDouble(item[TYPEINDEX.PERIOD0OVER.ordinal()]);
 								Double p81home = Double.parseDouble(item[TYPEINDEX.PERIOD1HOME.ordinal()]);
-								Double p81over = Double.parseDouble(item[TYPEINDEX.PERIOD1OVER.ordinal()]);
+								Double p81over = Double.parseDouble(item[TYPEINDEX.PERIOD1OVER.ordinal()]);*/
 								
 								Double zhibo0home = Double.parseDouble(zhiboitem[ZHIBOINDEX.PERIOD0HOME.ordinal()]);
 								Double zhibo0over = Double.parseDouble(zhiboitem[ZHIBOINDEX.PERIOD0OVER.ordinal()]);

@@ -98,6 +98,7 @@ public class StoneAge {
 		mailList.add("84131403@qq.com");
 		mailList.add("84131403@qq.com");
 		mailList.add("1131894627@qq.com");
+		mailList.add("228394940@qq.com");
 		
 /*		MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", sendTitle, sendContent);
 		MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "43069453@qq.com", sendTitle, sendContent);
