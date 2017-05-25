@@ -146,6 +146,7 @@ public class GrabEventsThread  extends Thread{
 				
 				
 				if(P8Http.isfailedAccountEmpty()){
+					P8Http.parseDirection();
 					P8Http.saveEvents();
 
 				}

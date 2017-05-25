@@ -2,11 +2,12 @@
 
 
 
-
 import java.awt.Container; 
 import java.awt.Frame;
 import java.awt.Panel;
 
+import javax.print.DocFlavor.URL;
+import javax.sound.sampled.AudioInputStream;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -18,7 +19,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -30,9 +33,14 @@ import java.util.Vector;
 
 import javax.swing.ImageIcon;
 
+import HG.GrabHGEventsThread;
+import HG.HGhttp;
 import Mail.MailManager;
 import team.gl.nio.cln.ZhiboClient;
 import team.gl.nio.svr.NettyServer;
+
+
+
 
 public class StoneAge {
 	
@@ -45,11 +53,17 @@ public class StoneAge {
 	
 	public static JButton btnLogin;
 	
+	public static JButton btnhgLogin;
+	
 	public static JButton btnAccount;
 	
 	public static boolean bLogin = false;
 	
+	public static boolean bHGLogin = false;
+	
 	public static GrabEventsThread grabThead;
+	
+	public static GrabHGEventsThread grabhgThead;
 	
 	public static StoneAge sa;
 		
@@ -68,6 +82,7 @@ public class StoneAge {
 	
 	//public static boolean showMergeWnd = false;
 	public static boolean showP8 = false;
+	public static boolean showHG = false;
 	public static boolean showZhibo = false;
 
 	
@@ -81,6 +96,8 @@ public class StoneAge {
 	static AccountsDetailsWindow accountWnd = new AccountsDetailsWindow();
 	
 	public static AccountManager accMgr = null;
+	
+	public static AccounthgManager acchgMgr = null;
 	
 	static SeverThread serverThread = null;
 	
@@ -115,14 +132,37 @@ public class StoneAge {
 	
 	public static void main(String[] args) throws Exception {
 		
+		
+		//HGhttp.testXML();
 
+/*		HGhttp hgHttp = new HGhttp();
+		hgHttp.setLoginParams("https://ag.hg0088.com/", "long168", "aaa999", "aaa222");
+		if(true == hgHttp.login()){
+			hgHttp.getTotalBet();
+		}*/
+
+/*		String test = "-1|3";
+		
+		String[] testa = test.split("\\|");
+		
+		for(int i = 0; i < testa.length; i++){
+			System.out.println(testa[i]);
+		}
+*/		
+		
 		initMailList();
 		
 		accMgr = new AccountManager(accountWnd);
 		
+		acchgMgr = new AccounthgManager(accountWnd);
+		
 		accountWnd.setAccountMgr(accMgr);
 		
+		accountWnd.sethgAccountMgr(acchgMgr);
+		
 		accMgr.init();
+		
+		acchgMgr.init();
 		
 		MergeManager.init();
 		
@@ -142,6 +182,10 @@ public class StoneAge {
 	
 	public static void setSleepTime(int sec){
 		grabThead.setSleepTime(sec);
+	}
+	
+	public static void sethgSleepTime(int sec){
+		grabhgThead.setSleepTime(sec);
 	}
 	
 	public static void setZhiboSleepTime(int sec){
@@ -306,6 +350,44 @@ public class StoneAge {
 		contain.add(btnLogin);
 		
 		
+		
+		
+		
+		btnhgLogin = new JButton("HG注单");
+		btnhgLogin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				
+				if(bHGLogin == true){
+					HGhttp.showEventsDeatilsTable();
+					return;
+				}
+				
+					
+					
+				grabhgThead = new GrabHGEventsThread(sa);
+				
+				grabhgThead.start();
+				
+				showHG = true;
+					
+					
+			}
+		});
+		
+		
+		btnhgLogin.setSize(100, 25);
+		btnhgLogin.setLocation(Xposition, Yposition + 80);
+		
+		
+		contain.add(btnhgLogin);
+		
+		
+		
+		
+		
+		
+		
 		btnAccount = new JButton("账户详情");
 		btnAccount.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -318,7 +400,7 @@ public class StoneAge {
 		
 		
 		btnAccount.setSize(100, 25);
-		btnAccount.setLocation(Xposition, Yposition + 80);
+		btnAccount.setLocation(Xposition, Yposition + 120);
 
 		
 		contain.add(btnAccount);

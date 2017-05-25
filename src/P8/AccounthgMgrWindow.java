@@ -21,17 +21,19 @@ import javax.swing.JComboBox;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.*;
 
+import HG.HGhttp;
 
 
-public class AccountMgrWindow extends JFrame{
+
+public class AccounthgMgrWindow extends JFrame{
 	private static final long serialVersionUID = 508685938515369549L;
 	
-    private JLabel labelAddress = new JLabel("网址:");
+    //private JLabel labelAddress = new JLabel("网址:");
     //private JTextField textFieldAddress = new JTextField(15);  
     
-    String str1[] = {"https://www.p88agent.com", "http://www.ps38ag.com"};
+/*    String str1[] = {"http://www.p88agent.com", "http://www.ps38ag.com"};
     
-    private JComboBox jcb = new JComboBox(str1); 
+    private JComboBox jcb = new JComboBox(str1); */
 	
     private JLabel labelAccount = new JLabel("账号:");
     private JTextField textFieldAccount = new JTextField(15);  
@@ -51,11 +53,11 @@ public class AccountMgrWindow extends JFrame{
     private Button addAccountBtn = new Button("确定");
     private Button cancleBtn = new Button("取消");
     
-    private AccountManager accMgr = null;
+    private AccounthgManager accMgr = null;
     
     
     
-	public AccountMgrWindow()  
+	public AccounthgMgrWindow()  
     {  
 		setTitle("增加账户");  
 		
@@ -65,7 +67,7 @@ public class AccountMgrWindow extends JFrame{
         
     }  
 	
-	public void setAccountMgr(AccountManager acc){
+	public void setAccountMgr(AccounthgManager acc){
 		accMgr = acc;
 	}
 
@@ -89,7 +91,7 @@ public class AccountMgrWindow extends JFrame{
       	  
             @Override  
             public void actionPerformed(ActionEvent e) {  
-                String address = jcb.getSelectedItem().toString();
+                //String address = jcb.getSelectedItem().toString();
                 String account = textFieldAccount.getText();
                 String password = textFieldPassword.getText();
                 String secrityCode = textFieldSecurityCode.getText();
@@ -98,23 +100,23 @@ public class AccountMgrWindow extends JFrame{
                 Vector<String[]> details = accMgr.getAccountDetails();
                 
                 for(int i = 0; i < details.size(); i ++){
-                	if(address.contains(details.elementAt(i)[0]) && account.contains(details.elementAt(i)[1])){
+                	if(account.contains(details.elementAt(i)[1])){
                 		JOptionPane.showMessageDialog(null,"账号已存在");
                 		return;
                 	}                		
                 }
                 
-                P8Http p8tmp = new P8Http();
+                HGhttp hgtmp = new HGhttp();
                 
                 
-                p8tmp.setLoginParams(address, account, password, secrityCode);
+                hgtmp.setLoginParams("https://ag.hg0088.com/", account, password, secrityCode);
                 
-				int loginRes = 0;
-				loginRes = p8tmp.login();
+				boolean loginRes = false;
+				loginRes = hgtmp.login();
 				
 				
 				
-				for(int j = 0; j < 2 && loginRes == 0; j++){
+				for(int j = 0; j < 2 && loginRes == false; j++){
 					
 					try{
 						Thread.currentThread().sleep(5 * 1000);
@@ -124,12 +126,12 @@ public class AccountMgrWindow extends JFrame{
 					}
 					
 					
-					loginRes = p8tmp.login();			
+					loginRes = hgtmp.login();			
 				}      
 				
-				if(loginRes == 1 || loginRes == 0){
+				if(loginRes == true){
 					
-					String[] accountdetails = {address, account, password, secrityCode, Integer.toString(loginRes)};					
+					String[] accountdetails = {account, password, secrityCode};					
 					System.out.println("save to file");
             		
             		
@@ -160,8 +162,7 @@ public class AccountMgrWindow extends JFrame{
         
         
         
-        panelNorth.add(labelAddress);
-        panelNorth.add(jcb);
+
 
         
         panelNorth.add(labelAccount);

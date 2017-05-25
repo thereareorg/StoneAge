@@ -1,5 +1,4 @@
-package P8;
-
+package HG;
 
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
@@ -16,7 +15,9 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.Calendar;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Vector;  
@@ -45,23 +46,19 @@ import java.awt.Color;
 
 
 
-
-
-
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;  
 import javax.swing.JLabel;  
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;  
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;  
 import javax.swing.JTable;  
 import javax.swing.JTextField;  
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel; 
 import javax.swing.table.AbstractTableModel; 
-
-
-
 
 
 import javax.swing.table.TableCellRenderer;
@@ -74,10 +71,10 @@ import javax.swing.Timer;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-
-
-
-
+import P8.Common;
+import P8.MergeManager;
+import P8.StoneAge;
+import P8.TYPEINDEX;
 
 import java.text.SimpleDateFormat;
 import java.util.concurrent.atomic.AtomicLong;
@@ -87,18 +84,63 @@ import java.util.Stack;
 
 
 
+class ColorTableCellRenderer extends JLabel implements TableCellRenderer
+
+{
+
+private static final long serialVersionUID = 1L;
+
+//定义构造器
+
+public ColorTableCellRenderer ()
+
+{
+
+//设置标签为不透明状态
+
+this.setOpaque(true);
+
+//设置标签的文本对齐方式为居中
+
+this.setHorizontalAlignment(JLabel.CENTER);
+
+}
+
+//实现获取呈现控件的getTableCellRendererComponent方法
+
+public Component getTableCellRendererComponent(JTable table,Object value,
+
+           boolean isSelected,boolean hasFocus,int row,int column)
+
+{           
+
+//获取要呈现的颜色
+
+Color c=(Color)value;
+
+//根据参数value设置背景色
+
+this.setBackground(c);
 
 
 
-public class PreviousDataWindow extends JFrame  
+return this;
+
+}
+
+ }   
+
+
+
+public class HGEventsDetailsWindow extends JFrame  
 {  
   
    
 	private static final long serialVersionUID = 508685938515369544L;
 	
-	private  Vector<String[]> detailsData = null;
+	private  Vector<String[]> originalDetailsData = new Vector<String[]>();
 	
-	private Vector<String[]> originalDetailsData = new Vector<String[]>();
+	private  Vector<String[]> detailsData = null;
 	
 	private Vector<Integer> hightlightRows = new Vector<Integer>();
 	
@@ -108,17 +150,12 @@ public class PreviousDataWindow extends JFrame
     
     private JLabel labelp0oHighlightNum = new JLabel("大小球高亮金额:");
     private JTextField textFieldp0oHighlightNum = new JTextField(15);  
-
     
+    private JLabel labelInterval = new JLabel("刷新时间:");
     
-    
-    private JLabel labelInterval = new JLabel("日期选择:");
-    
-    String str1[] = {"1", "2","3","4","5"};
+    String str1[] = {"30", "60","90","120","180"};
     
     private JComboBox jcb = new JComboBox(str1); 
-    
-    DateChooser mp = new DateChooser("yyyy-MM-dd", this);
     
     
     private JLabel labelHideNum = new JLabel("让球隐藏金额:");
@@ -127,19 +164,11 @@ public class PreviousDataWindow extends JFrame
     private JLabel labelp0oHideNum = new JLabel("大小球隐藏金额:");
     private JTextField textFieldp0oHideNum = new JTextField(15); 
     
-    private JLabel labelInplayHideNum = new JLabel("走地让球隐藏金额:");
+/*    private JLabel labelInplayHideNum = new JLabel("走地让球隐藏金额:");
     private JTextField textFieldInplayHideNum = new JTextField(15); 
     
     private JLabel labelp0oInplayHideNum = new JLabel("走地大小球隐藏金额:");
-    private JTextField textFieldp0oInplayHideNum = new JTextField(15); 
-    
-    
-    private JLabel labelInplayDirNum = new JLabel("走地让球方向金额:");
-    private JTextField textFieldInplayDirNum = new JTextField(15); 
-    
-    private JLabel labelp0oInplayDirNum = new JLabel("走地大小球方向金额:");
-    private JTextField textFieldp0oInplayDirNum = new JTextField(15); 
-    
+    private JTextField textFieldp0oInplayHideNum = new JTextField(15); */
     
     private JCheckBox onlyShow5Big = new JCheckBox("只看五大联赛,欧冠");
     private JCheckBox onlyShowInplay = new JCheckBox("只看滚动盘");
@@ -152,6 +181,16 @@ public class PreviousDataWindow extends JFrame
     private JLabel labelGrabStat= new JLabel("状态:");
     private JTextField textFieldGrabStat = new JTextField(15);  
     
+    
+    private JPopupMenu m_popupMenu;
+    
+    private JMenuItem chooseMenItem; 
+    
+    private JMenuItem mergeMenItem; 
+    
+    private int focusedRowIndex = -1;
+    
+    private int selectedOrMerge = 0;
 	
     Double p0hhiglightBigNum = 1000000.0;
     
@@ -164,12 +203,7 @@ public class PreviousDataWindow extends JFrame
     Double p0hInplayhideNum = 1.0;
     
     Double p0oInplayhideNum = 1.0;
-    
-    Double p0hInplayDirNum = 1000.0;
-    
-    Double p0oInplayDirNum = 1000.0;
-    
-    
+   
     
 /*    private JLabel labeltime = new JLabel("距封盘:");
     private JTextField textFieldtime = new JTextField(15);  
@@ -182,52 +216,34 @@ public class PreviousDataWindow extends JFrame
     
     JTable table = null;
 
-
+    
     
     
 	
 
-	public PreviousDataWindow()  
+	public HGEventsDetailsWindow()  
     {  
-		setTitle("PP历史");  
+		setTitle("HG注单");  
 		
         intiComponent();  
         
+
+        
     }  
+	
+
+	
+	
 	
 	
 	public void setStateText(String txt){
 		textFieldGrabStat.setText(txt);
 	}
 	
-/*	public void hightlightBigNumrows(){
-		
-		if(hightlightRows.size() != 0){
-			hightlightRows.clear();
-		}
-		
-		for(int i = 0; i< detailsData.size(); i++){
-			String leagueName = detailsData.elementAt(i)[TYPEINDEX.LEAGUENAME.ordinal()];
-			
-			if(P8Http.isInShowLeagueName(leagueName) || true){
-				double betAmt1 = Double.parseDouble(detailsData.elementAt(i)[TYPEINDEX.PERIOD0HOME.ordinal()]);
-				double betAmt2 = Double.parseDouble(detailsData.elementAt(i)[TYPEINDEX.PERIOD0OVER.ordinal()]);
-				double betAmt3 = Double.parseDouble(detailsData.elementAt(i)[TYPEINDEX.PERIOD1HOME.ordinal()]);
-				double betAmt4 = Double.parseDouble(detailsData.elementAt(i)[TYPEINDEX.PERIOD1HOME.ordinal()]);
-				
-				if(Math.abs(betAmt1) > higlightBigNum || Math.abs(betAmt2) > higlightBigNum){
-					//
-					
-					hightlightRows.add(i);
-					
-				}
-				
-				
-			}
-			
-			setOneRowBackgroundColor(table, 0, new Color(255, 100, 100));
-		}
-	}*/
+	public void setStateColor(Color cr){
+		textFieldGrabStat.setBackground(cr);
+	}
+
 
 	
 	
@@ -237,27 +253,16 @@ public class PreviousDataWindow extends JFrame
 		try{
 			
 			
-			
-
 			if(originalDetailsData.size() != 0){
 				originalDetailsData.clear();
 			}
+
 			
 			for(int i = 0; i< eventDetailsVec.size(); i++){
 				originalDetailsData.add(eventDetailsVec.elementAt(i).clone());
 			}
 			
-			
 
-			for(int i = 0; i < originalDetailsData.size(); i++){
-				String[] tmp = originalDetailsData.elementAt(i);
-				if(tmp[TYPEINDEX.EVENTNAMNE.ordinal()].contains("滚动盘")){
-					originalDetailsData.elementAt(i)[TYPEINDEX.PERIOD0HOME.ordinal()] = "g" + originalDetailsData.elementAt(i)[TYPEINDEX.PERIOD0HOME.ordinal()];
-					originalDetailsData.elementAt(i)[TYPEINDEX.PERIOD0OVER.ordinal()] = "g" + originalDetailsData.elementAt(i)[TYPEINDEX.PERIOD0OVER.ordinal()];
-				}
-			}
-
-			
 			
 			updateShowItem();
 			
@@ -270,332 +275,104 @@ public class PreviousDataWindow extends JFrame
 
 		
 	}
-	
-	public  void addData(Object[] a){
-		
-/*		try{
-			detailsData.push(a);
-			
-	    	Comparator ct = new CompareStr();
-	    	
-	    	Collections.sort(detailsData, ct);
-			
-			tableMode.updateTable();
-		}catch(Exception e){
-			e.printStackTrace();
-		}*/
-		
 
-	}
 	
 	
 	public void updateShowItem(){
 		
-		try{
-			String date = mp.getChooseDate();
-			
-			
-			
-			Vector<String[]> Vectmp = new Vector<String[]>();
-			
-			String startTimeStr = date + " " + "13:00";
-			
-			SimpleDateFormat dfMin = new SimpleDateFormat("yyyy-MM-dd HH:mm");// 设置日期格式
-			
-			SimpleDateFormat dfDay = new SimpleDateFormat("yyyy-MM-dd");// 设置日期格式
-			
-			
-			java.util.Date startTimeDate = dfMin.parse(startTimeStr);
-			
-			Calendar startTime = Calendar.getInstance();  
-			startTime.setTime(startTimeDate);
-			
-			
-			long currentTimeL = System.currentTimeMillis();
-			
-			String LocaltodayStr = dfDay.format(currentTimeL);
-			
-			
-			String MinStr = dfMin.format(currentTimeL);
-			
-			java.util.Date Mintime = dfMin.parse(MinStr);
-			
-			
-
-			
-			
-			
+		Vector<String[]> DetailsDatatmp = new Vector<String[]>();
+		
+		//只显示走地盘
+		if(bonlyShowInplay == true){
 			for(int i = 0; i < originalDetailsData.size(); i++){
-
-				String timeStr = originalDetailsData.elementAt(i)[TYPEINDEX.TIME.ordinal()];
-				java.util.Date timeDate = dfMin.parse(timeStr);
-				
-				Calendar time = Calendar.getInstance();  
-				time.setTime(timeDate);
-				
-				
-				if(time.getTimeInMillis() >= startTime.getTimeInMillis() && time.getTimeInMillis() < startTime.getTimeInMillis() + 24*60*60*1000){
-					Vectmp.add(originalDetailsData.elementAt(i));
-				}
-							
-			}
-			
-			//
-			
-			if(Vectmp.size() == 0){
-				detailsData = (Vector<String[]>)Vectmp.clone();
-				
-				
-				tableMode.updateTable();
-				return;
-			}
-				
-			
-			Vector<String[]> DetailsDatatmp = new Vector<String[]>();
-			
-			//只显示走地盘
-			if(bonlyShowInplay == true){
-				for(int i = 0; i < Vectmp.size(); i++){
-					if(Vectmp.elementAt(i)[TYPEINDEX.EVENTNAMNE.ordinal()].contains("滚动盘")){
-						DetailsDatatmp.add(Vectmp.elementAt(i));
-					}
+				if(originalDetailsData.elementAt(i)[TYPEINDEX.EVENTNAMNE.ordinal()].contains("滚动盘")){
+					DetailsDatatmp.add(originalDetailsData.elementAt(i));
 				}
 			}
-			
-			//只显示单式盘
-			if(bonlyShowNotInplay == true){
-				for(int i = 0; i < Vectmp.size(); i++){
-					if(!Vectmp.elementAt(i)[TYPEINDEX.EVENTNAMNE.ordinal()].contains("滚动盘")){
-						DetailsDatatmp.add(Vectmp.elementAt(i));
-					}
-				}
-			}
-			
-			Vector<String[]> DetailsDatatmp1 = new Vector<String[]>();
-			
-			
-			if(DetailsDatatmp.size() == 0){
-				DetailsDatatmp = (Vector<String[]>)Vectmp.clone();
-			}
-			
-			
-			//只看五大联赛
-			if(bonlyShow5Big == true){
-				for(int i = 0; i < DetailsDatatmp.size(); i++){
-					if(P8Http.isInShowLeagueName(DetailsDatatmp.elementAt(i)[TYPEINDEX.LEAGUENAME.ordinal()])){
-						DetailsDatatmp1.add(DetailsDatatmp.elementAt(i));
-					}
-				}
-			}
-			
-			Vector<String[]> DetailsDatatmp2 = new Vector<String[]>();
-			
-			if(DetailsDatatmp1.size() == 0){
-
-				DetailsDatatmp1 = (Vector<String[]>)DetailsDatatmp.clone();
-				
-			}
-			
-			//隐藏数额
-			for(int i = 0; i< DetailsDatatmp1.size(); i++){
-				String eventName = DetailsDatatmp1.elementAt(i)[TYPEINDEX.EVENTNAMNE.ordinal()];
-
-				
-				
-				double betAmt1 = 0.0;
-				double betAmt2 = 0.0;
-
-				
-				String bet1Str = DetailsDatatmp1.elementAt(i)[TYPEINDEX.PERIOD0HOME.ordinal()];
-				String bet2Str = DetailsDatatmp1.elementAt(i)[TYPEINDEX.PERIOD0OVER.ordinal()];
-
-				if(bet1Str.contains("=")){
-					String[] tmp = bet1Str.split("=");
-					betAmt1 = Double.parseDouble(tmp[1]);
-				}else{
-					if(bet1Str.contains("g")){
-						bet1Str = bet1Str.replace("g", "");
-					}
-					betAmt1 = Double.parseDouble(bet1Str);
-				}
-				
-				if(bet2Str.contains("=")){
-					String[] tmp = bet2Str.split("=");
-					betAmt2 = Double.parseDouble(tmp[1]);
-				}else{
-					if(bet2Str.contains("g")){
-						bet2Str = bet2Str.replace("g", "");
-					}
-					betAmt2 = Double.parseDouble(bet2Str);
-				}
-				
-				if(eventName.contains("滚动盘")){
-					if(Math.abs(betAmt1) > p0hInplayhideNum || Math.abs(betAmt2) > p0oInplayhideNum){
-
-						DetailsDatatmp2.add(DetailsDatatmp1.elementAt(i).clone());
-					}
-				}else{
-					if(Math.abs(betAmt1) > p0hhideNum || Math.abs(betAmt2) > p0ohideNum){
-						DetailsDatatmp2.add(DetailsDatatmp1.elementAt(i).clone());
-					}
-				}
-
-				
-			}
-			
-
-			
-			
-			
-			detailsData = (Vector<String[]>)DetailsDatatmp2.clone();
-			
-
-
-			
-			
-        	
-        	if(detailsData.size() != 0){
-        		
-        		Comparator cn = new EventNameCompare();  
-        		Collections.sort(detailsData, cn);
-        		
-        		Comparator ct = new TimeCompare(); 
-        		
-        		Collections.sort(detailsData, ct);
-        		
-        	}
-        	
-        	
-			for(int i = 0; i < detailsData.size(); i++){
-				String[] tmp = detailsData.elementAt(i).clone();
-				String name = tmp[TYPEINDEX.EVENTNAMNE.ordinal()];
-				
-				if(name.contains("滚动盘")){
-					
-					//System.out.println();
-					
-					for(int j = 0; j < detailsData.size(); j++){
-						if(j == i){
-							continue;
-						}
-						
-						String[] tmp1 = detailsData.elementAt(j).clone();
-						String name1 = tmp1[TYPEINDEX.EVENTNAMNE.ordinal()];
-						if(name.contains(name1)){
-							double betp0h = 0.0;
-							double betp0o = 0.0;
-							
-							String betp0hStr = tmp[TYPEINDEX.PERIOD0HOME.ordinal()];
-							String betp0oStr = tmp[TYPEINDEX.PERIOD0OVER.ordinal()];
-							
-							if(betp0hStr.contains("=")){
-								String[] tmpArray = betp0hStr.split("=");
-								betp0h = Double.parseDouble(tmpArray[1]);
-							}
-							
-							if(betp0oStr.contains("=")){
-								String[] tmpArray = betp0oStr.split("=");
-								betp0o = Double.parseDouble(tmpArray[1]);
-							}
-							
-							
-							double betp0h1 = 0.0;
-							double betp0o1 = 0.0;
-							
-							String betp0hStr1 = tmp1[TYPEINDEX.PERIOD0HOME.ordinal()];
-							String betp0oStr1 = tmp1[TYPEINDEX.PERIOD0OVER.ordinal()];
-							
-							if(betp0hStr1.contains("=")){
-								String[] tmpArray = betp0hStr1.split("=");
-								betp0h1 = Double.parseDouble(tmpArray[1]);
-							}
-							
-							if(betp0oStr1.contains("=")){
-								String[] tmpArray = betp0oStr1.split("=");
-								betp0o1 = Double.parseDouble(tmpArray[1]);
-							}
-							
-							
-							
-							if((betp0h > p0hInplayhideNum && betp0h1 >p0hhideNum) || (betp0h < 0.0 -  p0hInplayhideNum && betp0h1 < 0.0 - p0hhideNum)){
-								detailsData.elementAt(i)[TYPEINDEX.PERIOD0HOME.ordinal()] = "b" + detailsData.elementAt(i)[TYPEINDEX.PERIOD0HOME.ordinal()];
-								detailsData.elementAt(j)[TYPEINDEX.PERIOD0HOME.ordinal()] = "b" + detailsData.elementAt(j)[TYPEINDEX.PERIOD0HOME.ordinal()];
-							}
-							
-							if((betp0o > p0oInplayhideNum && betp0o1 >p0ohideNum) || (betp0o < 0.0 - p0oInplayhideNum && betp0o1 < 0.0 - p0ohideNum)){
-								detailsData.elementAt(i)[TYPEINDEX.PERIOD0OVER.ordinal()] = "b" + detailsData.elementAt(i)[TYPEINDEX.PERIOD0OVER.ordinal()];
-								detailsData.elementAt(j)[TYPEINDEX.PERIOD0OVER.ordinal()] = "b" + detailsData.elementAt(j)[TYPEINDEX.PERIOD0OVER.ordinal()];
-							}
-							
-							break;
-							
-						}
-						
-					}
-					
-					
-					//deal direction
-					String p0hFlagStr = tmp[TYPEINDEX.PERIOD1HOME.ordinal()];
-					if(!p0hFlagStr.equals("0")){
-						String[] p0hFlags = p0hFlagStr.split("\\|");
-						int flag = (int) (p0hInplayDirNum/P8Http.flagNumber);
-						
-						if(flag < 100){
-							for(int k = 0; k < p0hFlags.length; k++){
-								if(flag <= Math.abs(Integer.parseInt(p0hFlags[k]))){
-									if(Integer.parseInt(p0hFlags[k]) < 0){
-										detailsData.elementAt(i)[TYPEINDEX.PERIOD0HOME.ordinal()] = "↓" + detailsData.elementAt(i)[TYPEINDEX.PERIOD0HOME.ordinal()];
-									}else{
-										detailsData.elementAt(i)[TYPEINDEX.PERIOD0HOME.ordinal()] = "↑" + detailsData.elementAt(i)[TYPEINDEX.PERIOD0HOME.ordinal()];
-									}
-									
-									break;
-								}
-							}
-						}
-						
-
-					}
-					
-					
-					String p0oFlagStr = tmp[TYPEINDEX.PERIOD1OVER.ordinal()];
-					if(!p0oFlagStr.equals("0")){
-						String[] p0oFlags = p0oFlagStr.split("\\|");
-						int flag = (int) (p0oInplayDirNum/P8Http.flagNumber);
-						
-						if(flag < 100){
-							for(int k = 0; k < p0oFlags.length; k++){
-								if(flag <= Math.abs(Integer.parseInt(p0oFlags[k]))){
-									if(Integer.parseInt(p0oFlags[k]) < 0){
-										detailsData.elementAt(i)[TYPEINDEX.PERIOD0OVER.ordinal()] = "↓" + detailsData.elementAt(i)[TYPEINDEX.PERIOD0OVER.ordinal()];
-									}else{
-										detailsData.elementAt(i)[TYPEINDEX.PERIOD0OVER.ordinal()] = "↑" + detailsData.elementAt(i)[TYPEINDEX.PERIOD0OVER.ordinal()];
-									}
-									break;
-								}
-							}
-						}
-						
-
-					}
-					
-					
-					
-				}
-			}
-        	
-
-			
-			
-			
-			tableMode.updateTable();
-		}catch(Exception e){
-			e.printStackTrace();
 		}
-	
-	
-	
+		
+		//只显示单式盘
+		if(bonlyShowNotInplay == true){
+			for(int i = 0; i < originalDetailsData.size(); i++){
+				if(!originalDetailsData.elementAt(i)[TYPEINDEX.EVENTNAMNE.ordinal()].contains("滚动盘")){
+					DetailsDatatmp.add(originalDetailsData.elementAt(i));
+				}
+			}
+		}
+		
+		Vector<String[]> DetailsDatatmp1 = new Vector<String[]>();
+		
+		
+		if(DetailsDatatmp.size() == 0){
+			DetailsDatatmp = (Vector<String[]>)originalDetailsData.clone();
+		}
+		
+		
+		//只看五大联赛
+		if(bonlyShow5Big == true){
+			for(int i = 0; i < DetailsDatatmp.size(); i++){
+				if(HGhttp.isInShowLeagueName(DetailsDatatmp.elementAt(i)[TYPEINDEX.LEAGUENAME.ordinal()])){
+					DetailsDatatmp1.add(DetailsDatatmp.elementAt(i));
+				}
+			}
+		}
+		
+		Vector<String[]> DetailsDatatmp2 = new Vector<String[]>();
+		
+		if(DetailsDatatmp1.size() == 0){
 
+			DetailsDatatmp1 = (Vector<String[]>)DetailsDatatmp.clone();
+			
+		}
+		
+		//隐藏数额
+		for(int i = 0; i< DetailsDatatmp1.size(); i++){
+			String eventName = DetailsDatatmp1.elementAt(i)[TYPEINDEX.EVENTNAMNE.ordinal()];
+
+			
+			
+			double betAmt1 = 0.0;
+			double betAmt2 = 0.0;
+
+			
+			String bet1Str = DetailsDatatmp1.elementAt(i)[TYPEINDEX.PERIOD0HOME.ordinal()];
+			String bet2Str = DetailsDatatmp1.elementAt(i)[TYPEINDEX.PERIOD0OVER.ordinal()];
+
+			if(bet1Str.contains("=")){
+				String[] tmp = bet1Str.split("=");
+				betAmt1 = Double.parseDouble(tmp[1]);
+			}else{
+				if(bet1Str.contains("g")){
+					bet1Str = bet1Str.replace("g", "");
+				}
+				betAmt1 = Double.parseDouble(bet1Str);
+			}
+			
+			if(bet2Str.contains("=")){
+				String[] tmp = bet2Str.split("=");
+				betAmt2 = Double.parseDouble(tmp[1]);
+			}else{
+				if(bet2Str.contains("g")){
+					bet2Str = bet2Str.replace("g", "");
+				}
+				betAmt2 = Double.parseDouble(bet2Str);
+			}
+			
+			
+			if(Math.abs(betAmt1) > p0hhideNum || Math.abs(betAmt2) > p0ohideNum){
+				DetailsDatatmp2.add(DetailsDatatmp1.elementAt(i).clone());
+			}
+			
+
+			
+			
+		}
+		
+		detailsData = (Vector<String[]>)DetailsDatatmp2.clone();
+
+
+		
+		tableMode.updateTable();
 		
 	}
 
@@ -616,7 +393,7 @@ public class PreviousDataWindow extends JFrame
 		
 		container.setLayout(new BorderLayout());
 		
-		JPanel panelNorth = new JPanel(new GridLayout(6, 4));
+		JPanel panelNorth = new JPanel(new GridLayout(4, 4));
 
         container.add(panelNorth, BorderLayout.NORTH);  
         
@@ -683,7 +460,6 @@ public class PreviousDataWindow extends JFrame
 
         });
         
-        
         textFieldp0oHighlightNum.addKeyListener(new KeyListener(){
             public void keyPressed(KeyEvent e) {  
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {  
@@ -705,11 +481,6 @@ public class PreviousDataWindow extends JFrame
             }  
 
         });
-        
-        
-        
-
-        
         
         
         textFieldp0oHideNum.addKeyListener(new KeyListener(){
@@ -737,110 +508,7 @@ public class PreviousDataWindow extends JFrame
         });
         
         
-        textFieldInplayHideNum.addKeyListener(new KeyListener(){
-            public void keyPressed(KeyEvent e) {  
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {  
-                    String value = textFieldInplayHideNum.getText();  
-                    
-                    if(!Common.isNum(value)){
-                    	return;
-                    }else{
-                    	p0hInplayhideNum = Double.parseDouble(value);
-                    	updateShowItem();
-                    	
-                    	//tableMode.updateTable();
-                    }
-                    
-                }  
-                // System.out.println("Text " + value);  
-            }  
-            public void keyReleased(KeyEvent e) {  
-            }  
-            public void keyTyped(KeyEvent e) {  
-            }  
-
-        });
-        
-        
-        textFieldp0oInplayHideNum.addKeyListener(new KeyListener(){
-            public void keyPressed(KeyEvent e) {  
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {  
-                    String value = textFieldp0oInplayHideNum.getText();  
-                    
-                    if(!Common.isNum(value)){
-                    	return;
-                    }else{
-                    	p0oInplayhideNum = Double.parseDouble(value);
-                    	updateShowItem();
-                    	
-                    	//tableMode.updateTable();
-                    }
-                    
-                }  
-                // System.out.println("Text " + value);  
-            }  
-            public void keyReleased(KeyEvent e) {  
-            }  
-            public void keyTyped(KeyEvent e) {  
-            }  
-
-        });        
-        
-        
-        
-        
-        textFieldInplayDirNum.addKeyListener(new KeyListener(){
-            public void keyPressed(KeyEvent e) {  
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {  
-                    String value = textFieldInplayDirNum.getText();  
-                    
-                    if(!Common.isNum(value)){
-                    	return;
-                    }else{
-                    	p0hInplayDirNum = Double.parseDouble(value);
-                    	updateShowItem();
-                    	
-                    	//tableMode.updateTable();
-                    }
-                    
-                }  
-                // System.out.println("Text " + value);  
-            }  
-            public void keyReleased(KeyEvent e) {  
-            }  
-            public void keyTyped(KeyEvent e) {  
-            }  
-
-        });
-        
-        textFieldInplayDirNum.setText(String.format("%.0f", p0hInplayDirNum));
-        
-        
-        textFieldp0oInplayDirNum.addKeyListener(new KeyListener(){
-            public void keyPressed(KeyEvent e) {  
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {  
-                    String value = textFieldp0oInplayDirNum.getText();  
-                    
-                    if(!Common.isNum(value)){
-                    	return;
-                    }else{
-                    	p0oInplayDirNum = Double.parseDouble(value);
-                    	updateShowItem();
-                    	
-                    	//tableMode.updateTable();
-                    }
-                    
-                }  
-                // System.out.println("Text " + value);  
-            }  
-            public void keyReleased(KeyEvent e) {  
-            }  
-            public void keyTyped(KeyEvent e) {  
-            }  
-
-        });        
-        
-        textFieldp0oInplayDirNum.setText(String.format("%.0f", p0oInplayDirNum));
+ 
         
         
         textFieldGrabStat.setEditable(false);
@@ -908,8 +576,9 @@ public class PreviousDataWindow extends JFrame
         });
         
         
+        
         panelNorth.add(labelInterval);
-        panelNorth.add(mp);
+        panelNorth.add(jcb);
 
         panelNorth.add(labelp0oHighlightNum);
         panelNorth.add(textFieldp0oHighlightNum);
@@ -919,23 +588,15 @@ public class PreviousDataWindow extends JFrame
         
         panelNorth.add(labelp0oHideNum);
         panelNorth.add(textFieldp0oHideNum);
+
         
         panelNorth.add(labelHideNum);
         panelNorth.add(textFieldHideNum);
+        
+        
 
-        panelNorth.add(labelp0oInplayHideNum);
-        panelNorth.add(textFieldp0oInplayHideNum);
         
-        panelNorth.add(labelInplayHideNum);
-        panelNorth.add(textFieldInplayHideNum);
-        
-        panelNorth.add(labelp0oInplayDirNum);
-        panelNorth.add(textFieldp0oInplayDirNum);
-        
-        panelNorth.add(labelInplayDirNum);
-        panelNorth.add(textFieldInplayDirNum);
-        
-        
+
         panelNorth.add(onlyShow5Big);
         panelNorth.add(onlyShowInplay);
         panelNorth.add(onlyShowNotInplay);
@@ -957,7 +618,9 @@ public class PreviousDataWindow extends JFrame
 		
 	    table = new JTable(tableMode);
 
-        JScrollPane scroll = new JScrollPane(table);  
+        JScrollPane scroll = new JScrollPane(table); 
+        
+
         
         
 	    table.getColumnModel().getColumn(2).setPreferredWidth(240);
@@ -1012,26 +675,20 @@ public class PreviousDataWindow extends JFrame
 				
 
 				
-				setText((value == null) ? "" : showStr);
+				setText((value == null) ? "" : str);
 
 				Double hideNum = 0.0;
 				
-				if(str.contains("g")){
-					hideNum = p0hInplayhideNum;
-				}else{
-					hideNum = p0hhideNum;
-				}
+				
+				hideNum = p0hhideNum;
+				
 				
 				if(Math.abs(betAmt) < hideNum){
 					setForeground(Color.black);
 					setText("0");
 				}
 				
-				if(str.contains("b")){
-					setBackground(new Color(179,232,255));
-				}else{
-					setBackground(Color.white);
-				}
+				
 					
 
 
@@ -1042,14 +699,9 @@ public class PreviousDataWindow extends JFrame
         DefaultTableCellRenderer p0oRender = new DefaultTableCellRenderer() {   
 
             public void setValue(Object value) { //重写setValue方法，从而可以动态设置列单元字体颜色   
-
-               
             	String str = value.toString();
             	
 				Double betAmt = 0.0;
-				
-				String showStr = str.replace("g", "");
-				showStr = showStr.replace("b", "");
 				
 				if(str.contains("=")){
 					String[] tmp = str.split("=");
@@ -1067,26 +719,20 @@ public class PreviousDataWindow extends JFrame
 					
 				}
 				
-				setText((value == null) ? "" : showStr);
+				setText((value == null) ? "" : str);
 				
 				Double hideNum = 0.0;
 				
-				if(str.contains("g")){
-					hideNum = p0oInplayhideNum;
-				}else{
-					hideNum = p0ohideNum;
-				}
+				
+				hideNum = p0ohideNum;
+				
 
 				if(Math.abs(betAmt) < hideNum){
 					setForeground(Color.black);
 					setText("0");
 				}
 
-				if(str.contains("b")){
-					setBackground(new Color(179,232,255));
-				}else{
-					setBackground(Color.white);
-				}
+				
 
             }   
 
@@ -1096,8 +742,6 @@ public class PreviousDataWindow extends JFrame
         p0oColumn.setCellRenderer(p0oRender);   
 
       //设置列单元格渲染模式  结束
-	    
-	    
 
 	    
         DefaultTableCellRenderer tcr = new DefaultTableCellRenderer();// 设置table内容居中
@@ -1181,11 +825,10 @@ public class PreviousDataWindow extends JFrame
         /* 
          * 这里和刚才一样，定义列名和每个数据的值 
          */  
-/*        String[] columnNames =  
-        { "联赛", "时间", "球队", "全场让球", "全场大小", "上半让球", "上半大小"};  */
-        
         String[] columnNames =  
         { "联赛", "时间", "球队", "全场让球", "全场大小"};  
+        
+
         
         //Object[][] data = new Object[2][5];  
         
@@ -1225,13 +868,10 @@ public class PreviousDataWindow extends JFrame
          */  
         @Override  
         public int getRowCount()  
-        {  
-        	
-        	
-        	if(null == detailsData){
-        		return 0;
-        	}
-        	
+        {         
+	        if(null == detailsData){
+	    		return 0;
+	    	}
             return detailsData.size();  
         }  
   
@@ -1280,4 +920,6 @@ public class PreviousDataWindow extends JFrame
         
   
     }  
+    
+    
 }

@@ -23,15 +23,15 @@ import javax.swing.*;
 
 
 
-public class AccountMgrWindow extends JFrame{
+public class EdithgAccountWindow extends JFrame{
 	private static final long serialVersionUID = 508685938515369549L;
 	
-    private JLabel labelAddress = new JLabel("网址:");
+/*    private JLabel labelAddress = new JLabel("网址:");
     //private JTextField textFieldAddress = new JTextField(15);  
     
-    String str1[] = {"https://www.p88agent.com", "http://www.ps38ag.com"};
+    String str1[] = {"http://www.p88agent.com", "http://www.ps38ag.com"};
     
-    private JComboBox jcb = new JComboBox(str1); 
+    private JComboBox jcb = new JComboBox(str1); */
 	
     private JLabel labelAccount = new JLabel("账号:");
     private JTextField textFieldAccount = new JTextField(15);  
@@ -48,16 +48,21 @@ public class AccountMgrWindow extends JFrame{
 
 	
 	
-    private Button addAccountBtn = new Button("确定");
+    private Button deleteAccountBtn = new Button("删除账户");
     private Button cancleBtn = new Button("取消");
     
-    private AccountManager accMgr = null;
+    private AccounthgManager acchgMgr = null;
+    
+    String oldAdd = "";
+    String oldAcc = "";
+    String oldPwd = "";
+    String oldScode = "";
     
     
     
-	public AccountMgrWindow()  
+	public EdithgAccountWindow()  
     {  
-		setTitle("增加账户");  
+		setTitle("删除账户");  
 		
 		//accMgr = acc;
 		
@@ -65,11 +70,42 @@ public class AccountMgrWindow extends JFrame{
         
     }  
 	
-	public void setAccountMgr(AccountManager acc){
-		accMgr = acc;
+	public void sethgAccountMgr(AccounthgManager acc){
+		acchgMgr = acc;
 	}
+	
+/*    public void setAddressText(String address){
+    	
+    	String aa = jcb.getItemAt(0).toString();
+    	
+    	oldAdd = address;
+    	
+    	if(address.contains(aa)){
+    		jcb.setSelectedIndex(0);
+    	}else{
+    		jcb.setSelectedIndex(1);
+    	}
+    	
+    	
+    }*/
+	
 
+    public void setAccountText(String account){
+    	oldAcc = account;
+    	textFieldAccount.setText(account);
+    }
     
+    public void setpwdText(String pwd){
+    	oldPwd = pwd;
+    	textFieldPassword.setText(pwd);
+    }
+	
+    
+    public void setsCodeText(String scode){
+    	oldScode = scode;
+    	textFieldSecurityCode.setText(scode);
+    }
+	
     
     /** 
      * 初始化窗体组件 
@@ -85,61 +121,17 @@ public class AccountMgrWindow extends JFrame{
 
         container.add(panelNorth, BorderLayout.NORTH);  
         
-        addAccountBtn.addActionListener(new ActionListener() {  
+        deleteAccountBtn.addActionListener(new ActionListener() {  
       	  
             @Override  
             public void actionPerformed(ActionEvent e) {  
-                String address = jcb.getSelectedItem().toString();
-                String account = textFieldAccount.getText();
-                String password = textFieldPassword.getText();
-                String secrityCode = textFieldSecurityCode.getText();
+            	String del = oldAcc;
                 
-                
-                Vector<String[]> details = accMgr.getAccountDetails();
-                
-                for(int i = 0; i < details.size(); i ++){
-                	if(address.contains(details.elementAt(i)[0]) && account.contains(details.elementAt(i)[1])){
-                		JOptionPane.showMessageDialog(null,"账号已存在");
-                		return;
-                	}                		
-                }
-                
-                P8Http p8tmp = new P8Http();
-                
-                
-                p8tmp.setLoginParams(address, account, password, secrityCode);
-                
-				int loginRes = 0;
-				loginRes = p8tmp.login();
-				
-				
-				
-				for(int j = 0; j < 2 && loginRes == 0; j++){
-					
-					try{
-						Thread.currentThread().sleep(5 * 1000);
-						
-					}catch(Exception exception){
-
-					}
-					
-					
-					loginRes = p8tmp.login();			
-				}      
-				
-				if(loginRes == 1 || loginRes == 0){
-					
-					String[] accountdetails = {address, account, password, secrityCode, Integer.toString(loginRes)};					
-					System.out.println("save to file");
-            		
-            		
-					if(accMgr.saveTofile(accountdetails)){
-						JOptionPane.showMessageDialog(null,"账号添加成功");
-						dispose();  
-					}
-				}else{
-					JOptionPane.showMessageDialog(null,"账号无法添加");
-				}
+            	acchgMgr.deleteAccount(del);
+            	
+            	JOptionPane.showMessageDialog(null,"删除账号成功");
+            	
+                dispose();  
                 
             }  
         });  
@@ -149,9 +141,8 @@ public class AccountMgrWindow extends JFrame{
         	  
             @Override  
             public void actionPerformed(ActionEvent e) {  
-                // TODO Auto-generated method stub  
-                // System.exit(0);  
-                dispose();  
+            	dispose();  
+
             }  
         });  
         
@@ -159,11 +150,7 @@ public class AccountMgrWindow extends JFrame{
 
         
         
-        
-        panelNorth.add(labelAddress);
-        panelNorth.add(jcb);
 
-        
         panelNorth.add(labelAccount);
         panelNorth.add(textFieldAccount);
 
@@ -173,7 +160,7 @@ public class AccountMgrWindow extends JFrame{
         panelNorth.add(labelSecurityCode);
         panelNorth.add(textFieldSecurityCode);
         
-        panelNorth.add(addAccountBtn);
+        panelNorth.add(deleteAccountBtn);
         
         panelNorth.add(cancleBtn);
 

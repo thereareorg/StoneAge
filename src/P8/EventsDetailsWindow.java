@@ -42,6 +42,9 @@ import java.awt.Color;
 
 
 
+
+
+
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;  
@@ -161,6 +164,12 @@ public class EventsDetailsWindow extends JFrame
     private JLabel labelp0oInplayHideNum = new JLabel("走地大小球隐藏金额:");
     private JTextField textFieldp0oInplayHideNum = new JTextField(15); 
     
+    private JLabel labelInplayDirNum = new JLabel("走地让球方向金额:");
+    private JTextField textFieldInplayDirNum = new JTextField(15); 
+    
+    private JLabel labelp0oInplayDirNum = new JLabel("走地大小球方向金额:");
+    private JTextField textFieldp0oInplayDirNum = new JTextField(15); 
+    
     private JCheckBox onlyShow5Big = new JCheckBox("只看五大联赛,欧冠");
     private JCheckBox onlyShowInplay = new JCheckBox("只看滚动盘");
     private JCheckBox onlyShowNotInplay = new JCheckBox("只看单式盘");
@@ -194,6 +203,10 @@ public class EventsDetailsWindow extends JFrame
     Double p0hInplayhideNum = 1.0;
     
     Double p0oInplayhideNum = 1.0;
+    
+    Double p0hInplayDirNum = 1000.0;
+    
+    Double p0oInplayDirNum = 1000.0;
    
     
 /*    private JLabel labeltime = new JLabel("距封盘:");
@@ -593,6 +606,56 @@ public class EventsDetailsWindow extends JFrame
 					}
 					
 				}
+				
+				
+				//deal direction
+				String p0hFlagStr = tmp[TYPEINDEX.PERIOD1HOME.ordinal()];
+				if(!p0hFlagStr.equals("0")){
+					String[] p0hFlags = p0hFlagStr.split("\\|");
+					int flag = (int) (p0hInplayDirNum/P8Http.flagNumber);
+					
+					if(flag < 100){
+						for(int k = 0; k < p0hFlags.length; k++){
+							if(flag <= Math.abs(Integer.parseInt(p0hFlags[k]))){
+								if(Integer.parseInt(p0hFlags[k]) < 0){
+									detailsData.elementAt(i)[TYPEINDEX.PERIOD0HOME.ordinal()] = "↓" + detailsData.elementAt(i)[TYPEINDEX.PERIOD0HOME.ordinal()];
+								}else{
+									detailsData.elementAt(i)[TYPEINDEX.PERIOD0HOME.ordinal()] = "↑" + detailsData.elementAt(i)[TYPEINDEX.PERIOD0HOME.ordinal()];
+								}
+								
+								break;
+							}
+						}
+					}
+					
+
+				}
+				
+				
+				String p0oFlagStr = tmp[TYPEINDEX.PERIOD1OVER.ordinal()];
+				if(!p0oFlagStr.equals("0")){
+					String[] p0oFlags = p0oFlagStr.split("\\|");
+					int flag = (int) (p0oInplayDirNum/P8Http.flagNumber);
+					
+					if(flag < 100){
+						for(int k = 0; k < p0oFlags.length; k++){
+							if(flag <= Math.abs(Integer.parseInt(p0oFlags[k]))){
+								if(Integer.parseInt(p0oFlags[k]) < 0){
+									detailsData.elementAt(i)[TYPEINDEX.PERIOD0OVER.ordinal()] = "↓" + detailsData.elementAt(i)[TYPEINDEX.PERIOD0OVER.ordinal()];
+								}else{
+									detailsData.elementAt(i)[TYPEINDEX.PERIOD0OVER.ordinal()] = "↑" + detailsData.elementAt(i)[TYPEINDEX.PERIOD0OVER.ordinal()];
+								}
+								break;
+							}
+						}
+					}
+					
+
+				}
+				
+				
+				
+				
 			}
 		}
 		
@@ -617,7 +680,7 @@ public class EventsDetailsWindow extends JFrame
 		
 		container.setLayout(new BorderLayout());
 		
-		JPanel panelNorth = new JPanel(new GridLayout(5, 4));
+		JPanel panelNorth = new JPanel(new GridLayout(6, 4));
 
         container.add(panelNorth, BorderLayout.NORTH);  
         
@@ -782,6 +845,60 @@ public class EventsDetailsWindow extends JFrame
         });    
         
         
+        textFieldInplayDirNum.addKeyListener(new KeyListener(){
+            public void keyPressed(KeyEvent e) {  
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {  
+                    String value = textFieldInplayDirNum.getText();  
+                    
+                    if(!Common.isNum(value)){
+                    	return;
+                    }else{
+                    	p0hInplayDirNum = Double.parseDouble(value);
+                    	updateShowItem();
+                    	
+                    	//tableMode.updateTable();
+                    }
+                    
+                }  
+                // System.out.println("Text " + value);  
+            }  
+            public void keyReleased(KeyEvent e) {  
+            }  
+            public void keyTyped(KeyEvent e) {  
+            }  
+
+        });
+        
+        textFieldInplayDirNum.setText(String.format("%.0f", p0hInplayDirNum));
+        
+        
+        textFieldp0oInplayDirNum.addKeyListener(new KeyListener(){
+            public void keyPressed(KeyEvent e) {  
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {  
+                    String value = textFieldp0oInplayDirNum.getText();  
+                    
+                    if(!Common.isNum(value)){
+                    	return;
+                    }else{
+                    	p0oInplayDirNum = Double.parseDouble(value);
+                    	updateShowItem();
+                    	
+                    	//tableMode.updateTable();
+                    }
+                    
+                }  
+                // System.out.println("Text " + value);  
+            }  
+            public void keyReleased(KeyEvent e) {  
+            }  
+            public void keyTyped(KeyEvent e) {  
+            }  
+
+        });        
+        
+        textFieldp0oInplayDirNum.setText(String.format("%.0f", p0oInplayDirNum));
+        
+        
         textFieldGrabStat.setEditable(false);
         
         onlyShow5Big.setSelected(false);
@@ -870,6 +987,13 @@ public class EventsDetailsWindow extends JFrame
         
         panelNorth.add(labelInplayHideNum);
         panelNorth.add(textFieldInplayHideNum);
+        
+        panelNorth.add(labelp0oInplayDirNum);
+        panelNorth.add(textFieldp0oInplayDirNum);
+        
+        panelNorth.add(labelInplayDirNum);
+        panelNorth.add(textFieldInplayDirNum);
+
         
 
         panelNorth.add(onlyShow5Big);

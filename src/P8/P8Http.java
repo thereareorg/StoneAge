@@ -63,7 +63,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class P8Http {
 	
 	//debug
-	public boolean printEvents = true;
+	public boolean printEvents = false;
 	
 	
 	
@@ -78,6 +78,7 @@ public class P8Http {
     
     boolean bLogin = false;
     
+    public static double flagNumber = 1000;
     
     public static int P8p0hSendNumber = 1000000;
     public static int P8p0oSendNumber = 1000000;
@@ -759,7 +760,7 @@ public class P8Http {
     			playerStake = Math.abs(event.getDouble("playerStake"));
     			
     			
-    			if(eventName.contains("角球")){
+    			if(eventName.contains("角球") || eventName.contains("(Corners)")){
     				continue;
     			}
     			
@@ -969,7 +970,7 @@ public class P8Http {
     						
     					}else{
     						
-    						System.out.println(p0hStr + "=" + String.format("%.0f", playerStake));
+    						//System.out.println(p0hStr + "=" + String.format("%.0f", playerStake));
     						
     						
     						String[] tmp2 = p0hStr.split("\\-");
@@ -998,8 +999,8 @@ public class P8Http {
     					eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0HOME.ordinal()] = String.format("%.0f", d1);    	*/				
     				}
     				else{
-    					Double d1= Double.parseDouble(eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD1HOME.ordinal()]) + playerStake;    					
-    					eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD1HOME.ordinal()] = String.format("%.0f", d1);
+    					//Double d1= Double.parseDouble(eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD1HOME.ordinal()]) + playerStake;    					
+    					//eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD1HOME.ordinal()] = String.format("%.0f", d1);
     				}
     				
     				find = false;
@@ -1137,9 +1138,9 @@ public class P8Http {
     					eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0OVER.ordinal()] = String.format("%.0f", d1);*/
     				}
     				else{
-    					Double d1= Double.parseDouble(eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD1OVER.ordinal()]) + playerStake;
+    					//Double d1= Double.parseDouble(eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD1OVER.ordinal()]) + playerStake;
     					
-    					eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD1OVER.ordinal()] = String.format("%.0f", d1);
+    					//eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD1OVER.ordinal()] = String.format("%.0f", d1);
     				}
     				
     				find = false;
@@ -1876,6 +1877,150 @@ public class P8Http {
 	}
 	
 	
+	public static void parseDirection(){
+		
+		try{
+			
+			
+			
+			lockeFinalEventsDetails.readLock().lock();
+			
+			for(int i = 0; i < eventDetailsVec.size(); i++){
+				
+				//String[] tmp =  eventDetailsVec.elementAt(i).clone();
+				
+				long eventTime = Long.parseLong(eventDetailsVec.elementAt(i)[TYPEINDEX.TIME.ordinal()]);
+				
+				String eventName = eventDetailsVec.elementAt(i)[TYPEINDEX.EVENTNAMNE.ordinal()];
+				
+				String[] finalItem = null;
+				
+				for(int k = 0; k < finalEventDetailsVec.size(); k++){
+					if(eventName.equals(finalEventDetailsVec.elementAt(k)[TYPEINDEX.EVENTNAMNE.ordinal()])){
+						finalItem = finalEventDetailsVec.elementAt(k).clone();
+						break;
+					}
+				}
+
+				
+				long currentTime = System.currentTimeMillis();
+				
+				long passMinutes = 108*60*1000;
+				
+				if(eventName.contains("滚动盘")){
+
+					//30W begin
+					String[] item = (String[])eventDetailsVec.elementAt(i).clone();
+					
+					String p0hFlagStr = "";
+					String p0oFlagStr = "";
+					
+					if(null != finalItem){
+						p0hFlagStr = finalItem[TYPEINDEX.PERIOD1HOME.ordinal()];
+						p0oFlagStr = finalItem[TYPEINDEX.PERIOD1OVER.ordinal()];
+					}else{
+						p0hFlagStr = item[TYPEINDEX.PERIOD1HOME.ordinal()];
+						p0oFlagStr = item[TYPEINDEX.PERIOD1OVER.ordinal()];
+					}
+					
+					String p0hStr = item[TYPEINDEX.PERIOD0HOME.ordinal()];
+					String p0oStr = item[TYPEINDEX.PERIOD0OVER.ordinal()];
+					
+					double p0h = 0;
+					double p0o = 0;
+					
+					if(p0hStr.contains("=")){
+						p0h = Double.parseDouble(p0hStr.split("=")[1]);
+					}
+					
+					if(p0oStr.contains("=")){
+						p0o = Double.parseDouble(p0oStr.split("=")[1]);
+					}
+
+					
+					int p0hflag = (int) (p0h/flagNumber);
+					int p0oflag = (int) (p0o/flagNumber);
+					
+
+					
+					if(p0hflag != 0){
+						boolean find = false;
+						if(!p0hFlagStr.equals("0")){
+							String[] p0hFlags = p0hFlagStr.split("\\|");
+							
+							for(int j =0; j < p0hFlags.length; j++){
+								if(Integer.parseInt(p0hFlags[j]) == p0hflag){
+									find = true;
+									break;
+								}
+							}
+							
+							if(find == false){
+								eventDetailsVec.elementAt(i)[TYPEINDEX.PERIOD1HOME.ordinal()] = p0hFlagStr + "|" + Integer.toString(p0hflag);
+							}else{
+								eventDetailsVec.elementAt(i)[TYPEINDEX.PERIOD1HOME.ordinal()] = p0hFlagStr;
+							}
+							
+						}else{
+							eventDetailsVec.elementAt(i)[TYPEINDEX.PERIOD1HOME.ordinal()] = Integer.toString(p0hflag);
+						}
+						
+						//System.out.println(eventDetailsVec.elementAt(i)[TYPEINDEX.PERIOD1HOME.ordinal()]);
+					}
+					
+					
+					
+					if(p0oflag != 0){
+						boolean find = false;
+						
+						
+						if(!p0oFlagStr.equals("0")){
+							String[] p0oFlags = p0oFlagStr.split("\\|");
+							
+							for(int j =0; j < p0oFlags.length; j++){
+								if(Integer.parseInt(p0oFlags[j]) == p0oflag){
+									find = true;
+									break;
+								}
+							}
+							
+							if(find == false){
+								eventDetailsVec.elementAt(i)[TYPEINDEX.PERIOD1OVER.ordinal()] = p0oFlagStr + "|" + Integer.toString(p0oflag);
+							}else{
+								eventDetailsVec.elementAt(i)[TYPEINDEX.PERIOD1OVER.ordinal()] = p0oFlagStr;
+							}
+							
+						}else{
+							eventDetailsVec.elementAt(i)[TYPEINDEX.PERIOD1OVER.ordinal()] = Integer.toString(p0oflag);
+						}
+						
+						//System.out.println(eventDetailsVec.elementAt(i)[TYPEINDEX.PERIOD1OVER.ordinal()]);
+					}
+					
+					
+					
+
+					//30W end
+				}
+			}
+			
+			for(int i = 0; i< eventDetailsVec.size(); i++){
+				String eventName = eventDetailsVec.elementAt(i)[TYPEINDEX.EVENTNAMNE.ordinal()];
+				if(eventName.contains("滚动盘")){
+					System.out.println(Arrays.toString(eventDetailsVec.elementAt(i)));
+					}
+				}
+			
+			
+			lockeFinalEventsDetails.readLock().unlock();
+			
+		}catch(Exception e){
+			lockeFinalEventsDetails.readLock().unlock();
+			e.printStackTrace();
+		}
+	}
+	
+	
 	public static void saveEvents(){
 		
 		try{
@@ -1903,6 +2048,7 @@ public class P8Http {
 				long passMinutes = 108*60*1000;
 				
 				if(eventName.contains("滚动盘")){
+
 					if(currentTime - eventTime > passMinutes){
 						
 						String eventTimestr = df.format(eventTime);
@@ -1917,7 +2063,7 @@ public class P8Http {
 							System.out.println("p8 save success:" + Arrays.toString(saveItem));
 						}
 					}
-				}else if(eventName.contains("角球")){
+				}else if(eventName.contains("角球") || eventName.contains("(Corners)")){
 					continue;
 				}else{
 					if(currentTime - eventTime > 0){
