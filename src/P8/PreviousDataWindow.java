@@ -165,9 +165,9 @@ public class PreviousDataWindow extends JFrame
     
     Double p0oInplayhideNum = 1.0;
     
-    Double p0hInplayDirNum = 1000.0;
+    Double p0hInplayDirNum = 300000.0;
     
-    Double p0oInplayDirNum = 1000.0;
+    Double p0oInplayDirNum = 300000.0;
     
     
     

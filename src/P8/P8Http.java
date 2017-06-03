@@ -78,7 +78,7 @@ public class P8Http {
     
     boolean bLogin = false;
     
-    public static double flagNumber = 1000;
+    public static double flagNumber = 100000;
     
     public static int P8p0hSendNumber = 1000000;
     public static int P8p0oSendNumber = 1000000;

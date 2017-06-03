@@ -204,9 +204,9 @@ public class EventsDetailsWindow extends JFrame
     
     Double p0oInplayhideNum = 1.0;
     
-    Double p0hInplayDirNum = 1000.0;
+    Double p0hInplayDirNum = 300000.0;
     
-    Double p0oInplayDirNum = 1000.0;
+    Double p0oInplayDirNum = 300000.0;
    
     
 /*    private JLabel labeltime = new JLabel("距封盘:");
