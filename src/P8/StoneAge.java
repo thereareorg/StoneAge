@@ -116,6 +116,7 @@ public class StoneAge {
 		mailList.add("84131403@qq.com");
 		mailList.add("1131894627@qq.com");
 		mailList.add("228394940@qq.com");
+		mailList.add("2195876152@qq.com");
 		
 /*		MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", sendTitle, sendContent);
 		MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "43069453@qq.com", sendTitle, sendContent);
@@ -330,7 +331,7 @@ public class StoneAge {
 				
 					accountWnd.dispose();
 					
-					btnAccount.setEnabled(false);
+					//btnAccount.setEnabled(false);
 					
 					btnLogin.setEnabled(false);
 					
@@ -388,7 +389,7 @@ public class StoneAge {
 		
 		
 		
-		btnAccount = new JButton("账户详情");
+		btnAccount = new JButton("设置");
 		btnAccount.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				

@@ -82,7 +82,11 @@ public class AccountsDetailsWindow extends JFrame
 	AccounthgMgrWindow accounthgMgrWnd = new AccounthgMgrWindow();
 	
 	
+	
+	
     private Button addAccountBtn = new Button("增加账户");
+    
+    private Button teamMatchBtn = new Button("队名匹配管理");
     
     private Button addhgAccountBtn = new Button("增加账户");
    
@@ -197,6 +201,17 @@ public class AccountsDetailsWindow extends JFrame
         accountDetailsPan.add(addAccountBtn);
         
        
+        teamMatchBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				MergeManager.showTeamMatchWnd();
+			}
+		});
+        
+        teamMatchBtn.setLocation(150, 50);
+        teamMatchBtn.setSize(90, 25);
+        
+        accountDetailsPan.add(teamMatchBtn);
+        
         
 /*        accountDetailsPan.add(labeltime);
         accountDetailsPan.add(textFieldtime);

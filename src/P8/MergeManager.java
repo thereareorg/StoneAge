@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -25,7 +26,7 @@ public class MergeManager {
 	static BufferedWriter fw = null;  //写	
 	static BufferedReader reader = null; //读
 	
-	public static Map<String,String> checkList = new HashMap<String,String>();
+	public static Map<String,String> checkList = new LinkedHashMap<String,String>();
 	
 	private static ReadWriteLock lockeFinalMergeEventsDetails = new ReentrantReadWriteLock();
 	
@@ -39,6 +40,8 @@ public class MergeManager {
 	
 	
 	public static int mergeHideNumber = 5000;
+	
+	public static TeamMatchWindow teamMatchWnd = new TeamMatchWindow();
 	
 	
 	
@@ -77,6 +80,10 @@ public class MergeManager {
 
     public static Vector<String[]> getpSubMergeevents(){
     	return pDataManager.getpSubevents();
+    }
+    
+    public static void showTeamMatchWnd(){
+    	teamMatchWnd.setVisible(true);
     }
     
 	
@@ -164,6 +171,8 @@ public class MergeManager {
 			
 			}
 			
+			
+			teamMatchWnd.updateEventsDetails(checkList);
 			
 			//pdataWnd.updateEventsDetails(pEventsDetails);
 			
@@ -436,6 +445,8 @@ public class MergeManager {
 			
 			//updatepEventsDetails();
 			
+			teamMatchWnd.updateEventsDetails(checkList);
+			
 			return true;
 			
 		}catch(Exception e){
@@ -444,6 +455,65 @@ public class MergeManager {
 		
 		return false;
 	}
+	
+	
+	
+	public static boolean deleteateammatch(String p8Name){
+		
+		try{
+			
+
+				
+				String find = checkList.get(p8Name);
+				
+				if(null != find){
+					
+					checkList.remove(p8Name);
+					
+					File file = new File("data/" + "checkList"
+							+ ".data");
+					
+					BufferedWriter fwlocal = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, false), "UTF-8"));
+					
+					
+					for (String key : checkList.keySet()) {  
+						  
+					    String value = (String)checkList.get(key);
+					    
+					    String[] tmp = {key, value};
+					    
+						fwlocal.append(key + "," + value);
+						fwlocal.newLine();
+						fwlocal.flush();
+					  
+					}  
+
+					
+					fwlocal.close();
+					
+					//checkList.put(p8Name, zhiboName);
+					
+					teamMatchWnd.updateEventsDetails(checkList);
+
+					
+					return true;
+						
+				}else{
+					return false;
+				}
+
+			
+			
+
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return false;
+	}
+	
+	
 	
 	
 	public static void clearMergeData(){
