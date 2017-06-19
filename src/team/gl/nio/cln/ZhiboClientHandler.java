@@ -63,6 +63,8 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
                
                ZhiboManager.sendMails();
                
+               ZhiboManager.sortEventDetails();
+               
                ZhiboManager.updateEventsDetailsData();
                
                if(StoneAge.showZhibo == true){
@@ -74,6 +76,8 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
                MergeManager.copyTofinalEventsDetails();
                
                ZhiboManager.saveEvents();
+               
+               
                
                MergeManager.saveEvents();
                
@@ -182,6 +186,8 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
              ZhiboManager.clearEventsVec();
              
              ZhiboManager.constructEventsVec(res);
+             
+             ZhiboManager.sortEventDetails();
              
              ZhiboManager.sendMails();
              

@@ -5,6 +5,8 @@ import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
@@ -444,6 +446,179 @@ public class ZhiboManager {
     }
     
     
+    
+    
+    public static  void sortEventDetails(){
+    	
+    	try{
+    		
+/*    		System.out.println("before sort");
+    		
+    		for(int k = 0; k<eventDetailsVec.size(); k++ ){
+    			
+    			String[] outRow = eventDetailsVec.elementAt(k);
+    			
+    			System.out.println(outRow[0] + "," +outRow[1] + "," + outRow[2] + "," +outRow[3] + "," +outRow[4] + "," +outRow[5] + "," +
+    					outRow[6] + "," + outRow[7]);
+    		}*/
+    		
+    		System.setProperty("java.util.Arrays.useLegacyMergeSort", "true"); 
+
+    		
+    		
+    		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");// 设置日期格式
+    		
+    		String currentTime = df.format(System.currentTimeMillis());
+    		String todayStr = currentTime.split(" ")[0];
+    		
+    		for(int i = 0; i < eventDetailsVec.size(); i++){
+    			String timeStr = eventDetailsVec.elementAt(i)[ZHIBOINDEX.TIME.ordinal()];
+    			if(!timeStr.contains("-")){
+    				timeStr = todayStr + " " + timeStr;
+    				timeStr = Long.toString(df.parse(timeStr).getTime());
+    				eventDetailsVec.elementAt(i)[ZHIBOINDEX.TIME.ordinal()] = timeStr;
+    			}else{
+    				timeStr = Long.toString(df.parse(timeStr).getTime());
+    				eventDetailsVec.elementAt(i)[ZHIBOINDEX.TIME.ordinal()] = timeStr;
+    			}
+    		}
+    		
+        	if(eventDetailsVec.size() != 0){
+        		
+        		Vector<String[]> highShowVec = new Vector<String[]>();
+        		
+        		for(int i = 0; i < eventDetailsVec.size(); i++){
+        			String leagueName = eventDetailsVec.elementAt(i)[TYPEINDEX.LEAGUENAME.ordinal()];
+        			
+        			if(isInShowLeagueName(leagueName)){        				
+        				highShowVec.add(eventDetailsVec.elementAt(i));        				
+        				
+        			}
+        				
+        			
+        			
+        		}        
+        		
+        		for(int i = 0; i < eventDetailsVec.size(); ){
+        			String leagueName = eventDetailsVec.elementAt(i)[TYPEINDEX.LEAGUENAME.ordinal()];
+        			
+        			if(isInShowLeagueName(leagueName)){        				
+        				
+        				eventDetailsVec.remove(i);        			
+        			}
+        			else{
+        				i++;
+        			}
+        				
+        			
+        			
+        		}   
+        		
+        		
+/*        		System.out.println("after remove event details:");
+        		
+        		for(int k = 0; k<eventDetailsVec.size(); k++ ){
+        			
+        			String[] outRow = eventDetailsVec.elementAt(k);
+        			
+        			System.out.println(outRow[0] + "," +outRow[1] + "," + outRow[2] + "," +outRow[3] + "," +outRow[4] + "," +outRow[5] + "," +
+        					outRow[6] + "," + outRow[7]);
+        		}
+        		
+        		
+        		System.out.println("after remove highshow details:");
+        		
+        		for(int k = 0; k<highShowVec.size(); k++ ){
+        			
+        			String[] outRow = highShowVec.elementAt(k);
+        			
+        			System.out.println(outRow[0] + "," +outRow[1] + "," + outRow[2] + "," +outRow[3] + "," +outRow[4] + "," +outRow[5] + "," +
+        					outRow[6] + "," + outRow[7]);
+        		}
+        		
+        		System.out.println("------------------------");*/
+        		
+        		
+            	Comparator ct = new MyCompare();  
+            	
+            	Comparator cn = new EventNameCompare(); 
+            	
+
+            	
+            	
+            	if(eventDetailsVec.size() != 0){
+            		
+            		Collections.sort(eventDetailsVec, cn);
+            		
+            		Collections.sort(eventDetailsVec, ct);
+            	}
+            	
+        		
+            	if(highShowVec.size() != 0){
+            		
+            		Collections.sort(highShowVec, cn);
+            		
+            		Collections.sort(highShowVec, ct);
+            		
+/*            		System.out.println("after sort event details:");
+            		
+            		for(int k = 0; k<eventDetailsVec.size(); k++ ){
+            			
+            			String[] outRow = eventDetailsVec.elementAt(k);
+            			
+            			System.out.println(outRow[0] + "," +outRow[1] + "," + outRow[2] + "," +outRow[3] + "," +outRow[4] + "," +outRow[5] + "," +
+            					outRow[6] + "," + outRow[7]);
+            		}
+            		
+            		
+            		System.out.println("after sort highshow details:");
+            		
+            		for(int k = 0; k<highShowVec.size(); k++ ){
+            			
+            			String[] outRow = highShowVec.elementAt(k);
+            			
+            			System.out.println(outRow[0] + "," +outRow[1] + "," + outRow[2] + "," +outRow[3] + "," +outRow[4] + "," +outRow[5] + "," +
+            					outRow[6] + "," + outRow[7]);
+            		}*/
+            		
+            		for(int k = 0; k < highShowVec.size(); k++){
+            			//eventDetailsVec.add( highShowVec.elementAt(k));
+            			eventDetailsVec.insertElementAt(highShowVec.elementAt(k), k);
+            			//highShowVec.remove(k);
+            		}
+            	}
+            	
+
+            	
+            	
+            	for(int i = 0; i < eventDetailsVec.size(); i++){
+        			String currentTimeArray[] = currentTime.split(" ");
+        			
+        			long time = Long.parseLong(eventDetailsVec.elementAt(i)[TYPEINDEX.TIME.ordinal()]);
+        			
+        			String eventTimeArray[] = df.format(time).split(" ");
+        			
+        			String timeStr = "";
+        			
+        			if(currentTimeArray[0].contains(eventTimeArray[0])){
+        				timeStr = eventTimeArray[1];
+        			}else{
+        				timeStr = df.format(time);
+        			}
+        			
+        			
+        			eventDetailsVec.elementAt(i)[TYPEINDEX.TIME.ordinal()] = timeStr;
+            	}
+            	
+
+        	}
+    	}catch(Exception e){
+    		e.printStackTrace();
+    	}
+    	
+
+    	
+    }
     
     public static void saveEvents(){
     	
