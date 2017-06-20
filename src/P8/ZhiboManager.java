@@ -730,7 +730,7 @@ public class ZhiboManager {
 							sendContent = "全场让球: " + String.format("%.0f\n", p0h);
 						}*/
 						
-						if(Math.abs(p0o) >= Zhibop0oSendNumber && p0o < 0){
+						if(Math.abs(p0o) >= Zhibop0oSendNumber){
 							sendMail = true;
 							sendContent += "全场大小: " + String.format("%.0f\n", p0o);
 						}

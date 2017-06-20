@@ -83,6 +83,10 @@ public class P8Http {
     public static int P8p0hSendNumber = 1000000;
     public static int P8p0oSendNumber = 1000000;
     
+    public static int p8p0oInplaySendNumber = 600000;
+    
+    public static Vector<String> inplaySendAlraedy = new Vector<String>();
+    
     
     static PreviousDataWindow pDataWindow = new PreviousDataWindow();
     
@@ -2063,6 +2067,54 @@ public class P8Http {
 							System.out.println("p8 save success:" + Arrays.toString(saveItem));
 						}
 					}
+					
+					
+					//
+					String[] item = (String[])eventDetailsVec.elementAt(i).clone();
+					String eventNameStr = item[TYPEINDEX.EVENTNAMNE.ordinal()];
+					String eventTimestr = item[TYPEINDEX.TIME.ordinal()];
+					String p0oStr = item[TYPEINDEX.PERIOD0OVER.ordinal()];
+					double p0o = 0.0;
+
+	    			
+	    			if(p0oStr.contains("=")){
+	    				String[] tmp = p0oStr.split("=");
+	    				p0o = Double.parseDouble(tmp[1]);
+	    			}
+
+	    			
+	    			String sendTitle = "PP " + eventNameStr + " " + eventTimestr;
+	    			String sendContent = "";
+					
+					boolean sendMail = false;
+					
+					if(Math.abs(p0o) >= p8p0oInplaySendNumber && p0o <0){
+						sendMail = true;
+						sendContent += "全场大小: " + String.format("%.0f\n", p0o);
+					}
+					
+					
+					if(sendMail == true && !inplaySendAlraedy.contains(sendTitle) ){
+						
+						Vector<String> mails = StoneAge.getMailList();
+						
+						for(int k = 0; k < mails.size(); k++){
+							String mail = mails.elementAt(k);
+							MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", mail, sendTitle, sendContent);
+						}
+						
+						inplaySendAlraedy.add(sendTitle);
+						
+/*								MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", sendTitle, sendContent);
+						MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "43069453@qq.com", sendTitle, sendContent);
+						MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "490207143@qq.com", sendTitle, sendContent);
+						MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "2503706418@qq.com", sendTitle, sendContent);
+						MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "281426295@qq.com", sendTitle, sendContent);
+						MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "84131403@qq.com", sendTitle, sendContent);*/														
+					}
+					
+					
+					
 				}else if(eventName.contains("角球") || eventName.contains("(Corners)")){
 					continue;
 				}else{
