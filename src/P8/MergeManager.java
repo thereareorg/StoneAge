@@ -597,8 +597,8 @@ public class MergeManager {
 								SimpleDateFormat dfDay = new SimpleDateFormat("yyyy-MM-dd");// 设置日期格式
 								String dayStr = dfDay.format(System.currentTimeMillis());
 								
-								if(saveItem[TYPEINDEX.TIME.ordinal()].contains(dayStr)){
-									saveItem[TYPEINDEX.TIME.ordinal()] = saveItem[TYPEINDEX.TIME.ordinal()].replace(dayStr + " ", "");
+								if(saveItem[MERGEINDEX.TIME.ordinal()].contains(dayStr)){
+									saveItem[MERGEINDEX.TIME.ordinal()] = saveItem[MERGEINDEX.TIME.ordinal()].replace(dayStr + " ", "");
 								}
 								
 								mergeEventDetailsVec.add(saveItem);
@@ -780,7 +780,48 @@ public class MergeManager {
 												item[ZHIBOINDEX.SAVED.ordinal()] = "1";
 											}
 											
-											mergeEventDetailsVec.add(item);
+											//merge格式有变化，需要重新组织
+											String[] mergeItem = new String[13];
+											mergeItem[MERGEINDEX.EVENTID.ordinal()] = 		item[ZHIBOINDEX.SAVED.ordinal()];
+											mergeItem[MERGEINDEX.LEAGUENAME.ordinal()] = 	item[TYPEINDEX.LEAGUENAME.ordinal()];
+											mergeItem[MERGEINDEX.TIME.ordinal()] = 			item[TYPEINDEX.TIME.ordinal()];
+											mergeItem[MERGEINDEX.EVENTNAMNE.ordinal()] = 	item[TYPEINDEX.EVENTNAMNE.ordinal()];
+											mergeItem[MERGEINDEX.SCORE.ordinal()] = 		"0:0";
+											
+											if(item[TYPEINDEX.PERIOD0HOME.ordinal()].equals("0")){
+												mergeItem[MERGEINDEX.P8HRES.ordinal()] = 		"0";
+												mergeItem[MERGEINDEX.INP8HRES.ordinal()] = 		"0";
+												mergeItem[MERGEINDEX.ZHIBOHRES.ordinal()] = 	"0";
+												mergeItem[MERGEINDEX.PERIOD0HOME.ordinal()] = 		"0";
+											}else{
+												mergeItem[MERGEINDEX.P8HRES.ordinal()] = 		p8danshibet1Str;
+												mergeItem[MERGEINDEX.INP8HRES.ordinal()] = 		p80homeInplayValStr;
+												mergeItem[MERGEINDEX.ZHIBOHRES.ordinal()] = 	String.format("(%.0f)", zhibo0homenow);
+												mergeItem[MERGEINDEX.ZHIBOHRES.ordinal()] = mergeItem[MERGEINDEX.ZHIBOHRES.ordinal()].replace("(", "");
+												mergeItem[MERGEINDEX.ZHIBOHRES.ordinal()] = mergeItem[MERGEINDEX.ZHIBOHRES.ordinal()].replace(")", "");
+												mergeItem[MERGEINDEX.PERIOD0HOME.ordinal()] = 		item[TYPEINDEX.PERIOD0HOME.ordinal()];
+											}
+											
+
+											if(item[TYPEINDEX.PERIOD0OVER.ordinal()].equals("0")){
+												mergeItem[MERGEINDEX.P8ORES.ordinal()] = 		"0";
+												mergeItem[MERGEINDEX.INP8ORES.ordinal()] = 		"0";
+												mergeItem[MERGEINDEX.ZHIBOORES.ordinal()] = 	"0";
+												mergeItem[MERGEINDEX.PERIOD0OVER.ordinal()] = 	"0";
+											}else{
+												mergeItem[MERGEINDEX.P8ORES.ordinal()] = 		p8danshibet2Str;
+												mergeItem[MERGEINDEX.INP8ORES.ordinal()] = 		p80overInplayValStr;
+												mergeItem[MERGEINDEX.ZHIBOORES.ordinal()] = 		String.format("(%.0f)", zhibo0overnow);
+												mergeItem[MERGEINDEX.ZHIBOORES.ordinal()] = mergeItem[MERGEINDEX.ZHIBOORES.ordinal()].replace("(", "");
+												mergeItem[MERGEINDEX.ZHIBOORES.ordinal()] = mergeItem[MERGEINDEX.ZHIBOORES.ordinal()].replace(")", "");
+												mergeItem[MERGEINDEX.PERIOD0OVER.ordinal()] = 		item[TYPEINDEX.PERIOD0OVER.ordinal()];
+											}
+
+
+											//merge格式处理结束
+											
+											//mergeEventDetailsVec.add(item);
+											mergeEventDetailsVec.add(mergeItem);
 										}else{
 											if(isZhibohasGoals == true){
 												
@@ -910,7 +951,52 @@ public class MergeManager {
 								}*/
 								
 								if(addTomerge == true){
-									mergeEventDetailsVec.add(item);
+									
+									//merge格式有变化，需要重新组织
+									String[] mergeItem = new String[13];
+									mergeItem[MERGEINDEX.EVENTID.ordinal()] = 		item[TYPEINDEX.EVENTID.ordinal()];
+									mergeItem[MERGEINDEX.LEAGUENAME.ordinal()] = 	item[TYPEINDEX.LEAGUENAME.ordinal()];
+									mergeItem[MERGEINDEX.TIME.ordinal()] = 			item[TYPEINDEX.TIME.ordinal()];
+									mergeItem[MERGEINDEX.EVENTNAMNE.ordinal()] = 	item[TYPEINDEX.EVENTNAMNE.ordinal()];
+									mergeItem[MERGEINDEX.SCORE.ordinal()] = 		"0:0";
+									
+									
+									if(item[TYPEINDEX.PERIOD0HOME.ordinal()].equals("0")){
+										mergeItem[MERGEINDEX.P8HRES.ordinal()] = 		"0";
+										mergeItem[MERGEINDEX.INP8HRES.ordinal()] = 		"0";
+										mergeItem[MERGEINDEX.ZHIBOHRES.ordinal()] = 	"0";
+										mergeItem[MERGEINDEX.PERIOD0HOME.ordinal()] = 		"0";
+									}else{
+										mergeItem[MERGEINDEX.P8HRES.ordinal()] = 		p80homeStr;
+										mergeItem[MERGEINDEX.INP8HRES.ordinal()] = 		"0";
+										mergeItem[MERGEINDEX.ZHIBOHRES.ordinal()] = 	String.format("(%.0f)", zhibo0home);
+										mergeItem[MERGEINDEX.ZHIBOHRES.ordinal()] = 	mergeItem[MERGEINDEX.ZHIBOHRES.ordinal()].replace("(", "");
+										mergeItem[MERGEINDEX.ZHIBOHRES.ordinal()] = 	mergeItem[MERGEINDEX.ZHIBOHRES.ordinal()].replace(")", "");
+										mergeItem[MERGEINDEX.PERIOD0HOME.ordinal()] = 		item[TYPEINDEX.PERIOD0HOME.ordinal()];
+									}
+									
+
+									if(item[TYPEINDEX.PERIOD0OVER.ordinal()].equals("0")){
+										mergeItem[MERGEINDEX.P8ORES.ordinal()] = 		"0";
+										mergeItem[MERGEINDEX.INP8ORES.ordinal()] = 		"0";
+										mergeItem[MERGEINDEX.ZHIBOORES.ordinal()] = 		"0";
+										mergeItem[MERGEINDEX.PERIOD0OVER.ordinal()] = 		"0";
+									}else{
+										mergeItem[MERGEINDEX.P8ORES.ordinal()] = 		p80overStr;
+										mergeItem[MERGEINDEX.INP8ORES.ordinal()] = 		"0";
+										mergeItem[MERGEINDEX.ZHIBOORES.ordinal()] = 		String.format("(%.0f)", zhibo0over);
+										mergeItem[MERGEINDEX.ZHIBOORES.ordinal()] = 		mergeItem[MERGEINDEX.ZHIBOORES.ordinal()].replace("(", "");
+										mergeItem[MERGEINDEX.ZHIBOORES.ordinal()] = 		mergeItem[MERGEINDEX.ZHIBOORES.ordinal()].replace(")", "");
+										mergeItem[MERGEINDEX.PERIOD0OVER.ordinal()] = 		item[TYPEINDEX.PERIOD0OVER.ordinal()];
+									}
+
+
+									//merge格式处理结束
+									
+									//mergeEventDetailsVec.add(item);
+									mergeEventDetailsVec.add(mergeItem);
+									
+									//mergeEventDetailsVec.add(item);
 								}
 								
 								break;

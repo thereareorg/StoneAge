@@ -1,5 +1,9 @@
 package P8;
 
+import javax.swing.table.JTableHeader;
+
+import CTable.*;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -10,6 +14,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Arrays;
@@ -118,7 +124,9 @@ public class MergeDetailsWindow extends JFrame{
 	    MyTableModel tableMode = new MyTableModel();
 	    
 	    
-	    JTable table = null;
+	    CTable table = null;
+	    
+	    CMap m = new CMap1();
 
 	    
 	    
@@ -287,7 +295,7 @@ public class MergeDetailsWindow extends JFrame{
 			//只显示走地盘
 			if(bonlyShowInplay == true){
 				for(int i = 0; i < originalDetailsData.size(); i++){
-					if(originalDetailsData.elementAt(i)[TYPEINDEX.EVENTNAMNE.ordinal()].contains("滚动盘")){
+					if(originalDetailsData.elementAt(i)[MERGEINDEX.EVENTNAMNE.ordinal()].contains("滚动盘")){
 						DetailsDatatmp.add(originalDetailsData.elementAt(i));
 					}
 				}
@@ -296,7 +304,7 @@ public class MergeDetailsWindow extends JFrame{
 			//只显示单式盘
 			if(bonlyShowNotInplay == true){
 				for(int i = 0; i < originalDetailsData.size(); i++){
-					if(!originalDetailsData.elementAt(i)[TYPEINDEX.EVENTNAMNE.ordinal()].contains("滚动盘")){
+					if(!originalDetailsData.elementAt(i)[MERGEINDEX.EVENTNAMNE.ordinal()].contains("滚动盘")){
 						DetailsDatatmp.add(originalDetailsData.elementAt(i));
 					}
 				}
@@ -313,7 +321,7 @@ public class MergeDetailsWindow extends JFrame{
 			//只看五大联赛
 			if(bonlyShow5Big == true){
 				for(int i = 0; i < DetailsDatatmp.size(); i++){
-					if(P8Http.isInShowLeagueName(DetailsDatatmp.elementAt(i)[TYPEINDEX.LEAGUENAME.ordinal()])){
+					if(P8Http.isInShowLeagueName(DetailsDatatmp.elementAt(i)[MERGEINDEX.LEAGUENAME.ordinal()])){
 						DetailsDatatmp1.add(DetailsDatatmp.elementAt(i));
 					}
 				}
@@ -329,10 +337,10 @@ public class MergeDetailsWindow extends JFrame{
 			
 			//隐藏数额
 			for(int i = 0; i< DetailsDatatmp1.size(); i++){
-				String leagueName = DetailsDatatmp1.elementAt(i)[TYPEINDEX.LEAGUENAME.ordinal()];
+				String leagueName = DetailsDatatmp1.elementAt(i)[MERGEINDEX.LEAGUENAME.ordinal()];
 				
 				
-				String eventName = DetailsDatatmp1.elementAt(i)[TYPEINDEX.EVENTNAMNE.ordinal()];
+				String eventName = DetailsDatatmp1.elementAt(i)[MERGEINDEX.EVENTNAMNE.ordinal()];
 				
 
 				
@@ -357,7 +365,7 @@ public class MergeDetailsWindow extends JFrame{
 					double betzhibo4 = 0.0;
 					double betp8inplay4 = 0.0;
 					
-					String str1 = DetailsDatatmp1.elementAt(i)[TYPEINDEX.PERIOD0HOME.ordinal()];
+					String str1 = DetailsDatatmp1.elementAt(i)[MERGEINDEX.PERIOD0HOME.ordinal()];
 					
 					if(str1.contains("=")){
 						String[] tmp = str1.split("=");
@@ -386,7 +394,7 @@ public class MergeDetailsWindow extends JFrame{
 					}
 					
 					
-					String str2 = DetailsDatatmp1.elementAt(i)[TYPEINDEX.PERIOD0OVER.ordinal()];
+					String str2 = DetailsDatatmp1.elementAt(i)[MERGEINDEX.PERIOD0OVER.ordinal()];
 					
 					if(str2.contains("=")){
 						String[] tmp = str2.split("=");
@@ -414,7 +422,7 @@ public class MergeDetailsWindow extends JFrame{
 					}
 					
 					
-					String str3 = DetailsDatatmp1.elementAt(i)[TYPEINDEX.PERIOD1HOME.ordinal()];
+/*					String str3 = DetailsDatatmp1.elementAt(i)[MERGEINDEX.PERIOD1HOME.ordinal()];
 					
 					if(str3.contains("=")){
 						String[] tmp = str3.split("=");
@@ -441,7 +449,7 @@ public class MergeDetailsWindow extends JFrame{
 						betAmt3 = Double.parseDouble(str3);
 					}
 					
-					String str4 = DetailsDatatmp1.elementAt(i)[TYPEINDEX.PERIOD1OVER.ordinal()];
+					String str4 = DetailsDatatmp1.elementAt(i)[MERGEINDEX.PERIOD1OVER.ordinal()];
 					
 					if(str4.contains("=")){
 						String[] tmp = str4.split("=");
@@ -466,7 +474,7 @@ public class MergeDetailsWindow extends JFrame{
 						
 					}else{
 						betAmt4 = Double.parseDouble(str4);
-					}
+					}*/
 					
 					if(Math.abs(betAmt1) < p0hhiglightBigNum && Math.abs(betAmt2) < p0ohiglightBigNum){
 						continue;
@@ -508,6 +516,8 @@ public class MergeDetailsWindow extends JFrame{
 			
 			tableMode.updateTable();
 			
+			//setOneRowBackgroundColor();
+			
 		}
 
 		
@@ -542,7 +552,7 @@ public class MergeDetailsWindow extends JFrame{
 	               // int index = jcb.getSelectedIndex();
 	                String content = jcb.getSelectedItem().toString();
 	                
-	                StoneAge.setSleepTime(Integer.parseInt(content));
+	              //  StoneAge.setSleepTime(Integer.parseInt(content));
 				}
 	        });
 	        
@@ -772,19 +782,39 @@ public class MergeDetailsWindow extends JFrame{
 
 		    
 			
-		    table = new JTable(tableMode);
+	        table = new CTable(m,tableMode);
 
 	        JScrollPane scroll = new JScrollPane(table); 
 	        
 	        
-/*	        table.addMouseListener(new java.awt.event.MouseAdapter() {  
-	            public void mouseClicked(java.awt.event.MouseEvent evt) {  
-	                jTable1MouseClicked(evt);  
-	            }  
-	        });  */
+	        //设置选中行
+	        table.addMouseListener(new MouseAdapter() {
+	            @Override
+	            public void mouseClicked(MouseEvent e) {
+	                int sr;
+	                if ((sr = table.getSelectedRow()) == -1) {
+	                    return;
+	                }else{
+	                	int block = ((int)(sr/2))%2;
+	                	int nRowblock = ((int)((sr+1)/2))%2;
+	                	if(nRowblock== block){
+	                		table.setRowSelectionInterval(sr, sr + 1);
+	                	}else{
+	                		table.setRowSelectionInterval(sr-1, sr);
+	                	}
+	                	
+	                }
+	                
+	            }
+	        });
+
 	        
-	        
-		    table.getColumnModel().getColumn(2).setPreferredWidth(240);
+	        table.getColumnModel().getColumn(0).setPreferredWidth(20);//序号
+	        table.getColumnModel().getColumn(1).setPreferredWidth(120);//联赛
+	        table.getColumnModel().getColumn(2).setPreferredWidth(120);//时间	        
+	        table.getColumnModel().getColumn(3).setPreferredWidth(150);	//队名        
+		    table.getColumnModel().getColumn(8).setPreferredWidth(280);//合并让球
+		    table.getColumnModel().getColumn(12).setPreferredWidth(280);//合并大小
 		    
 		    table.setRowHeight(30);
 		    
@@ -1015,12 +1045,9 @@ public class MergeDetailsWindow extends JFrame{
 	    
 	    
 	    
-	    public void setOneRowBackgroundColor(JTable table, int rowIndex1,  
-	            Color color1) {
+	    public void setOneRowBackgroundColor() {
 	    	
-	    	final int rowIndex = rowIndex1;
-	    	
-	    	final Color color = color1;
+
 	    	
 	        try {  
 	            DefaultTableCellRenderer tcr = new DefaultTableCellRenderer() {  
@@ -1028,12 +1055,12 @@ public class MergeDetailsWindow extends JFrame{
 	                public Component getTableCellRendererComponent(JTable table,  
 	                        Object value, boolean isSelected, boolean hasFocus,  
 	                        int row, int column) {  
-	                    if (isInhighlightrows(row)) {  
-	                        setBackground(color);  
-	                        setForeground(Color.BLACK);  
+	                    if (((int)(row/2))%2 == 0) {  
+	                    	setBackground(new Color(246,246,246));  
+	                        //setForeground(Color.BLACK);  
 	                    }else{  
-	                        setBackground(Color.WHITE);  
-	                        setForeground(Color.BLACK);  
+	                        setBackground(new Color(222,222,243));  
+	                      //  setForeground(Color.BLACK);  
 	                    }  
 	  
 	                    return super.getTableCellRendererComponent(table, value,  
@@ -1047,7 +1074,7 @@ public class MergeDetailsWindow extends JFrame{
 	        } catch (Exception ex) {  
 	            ex.printStackTrace();  
 	        }  
-	    }  
+	    } 
 	    
 	    
 
@@ -1063,7 +1090,7 @@ public class MergeDetailsWindow extends JFrame{
 	         * 这里和刚才一样，定义列名和每个数据的值 
 	         */  
 	        String[] columnNames =  
-	        { "联赛", "时间", "球队", "全场让球", "全场大小"};  
+	        	{ "序号", "联赛", "时间", "球队", "比分", "平博" , "平博滚动盘", "智博", "全场让球", "平博 ", "平博滚动盘 ", "智博 ", "全场大小"};  
 	        
 
 	        
@@ -1109,7 +1136,7 @@ public class MergeDetailsWindow extends JFrame{
 	        	if(null == detailsData){
 	        		return 0;
 	        	}
-	            return detailsData.size();  
+	        	return detailsData.size()*2;  
 	        }  
 	  
 	        /** 
@@ -1119,7 +1146,103 @@ public class MergeDetailsWindow extends JFrame{
 	        public Object getValueAt(int rowIndex, int columnIndex)  
 	        {  
 	            //return data[rowIndex][columnIndex];
-	        	return detailsData.elementAt(rowIndex)[columnIndex+1];
+	        	//return detailsData.elementAt(rowIndex)[columnIndex+1];
+	        	if(columnIndex == 0){
+	        		return Integer.toString(rowIndex/2 + 1);
+	        	}
+	        	
+	        	if(columnIndex == 3){
+	        		int newRow = 0;
+	        		newRow = (int)(rowIndex/2);
+	        		String res = detailsData.elementAt(newRow)[columnIndex];
+	        		String[] resA = res.split(" vs ");
+	        		return resA[rowIndex%2];
+	        	}else if(columnIndex == 4){
+	        		int newRow = 0;
+	        		newRow = (int)(rowIndex/2);
+	        		String res = detailsData.elementAt(newRow)[columnIndex];
+	        		String[] resA = res.split(":");
+	        		return resA[rowIndex%2];
+	        		
+	        	}else if(columnIndex == 5){
+	        		int newRow = 0;
+	        		newRow = (int)(rowIndex/2);
+	        		String res = detailsData.elementAt(newRow)[columnIndex];
+	        		if(res.contains("=")){
+	            		String[] resA = res.split("=");
+	            		res = resA[0];
+	            		resA = res.split("-");
+	            		res = resA[rowIndex%2];
+	            		res = res.replace("(", "");
+	            		res = res.replace(")", "");
+	            		if(rowIndex%2 == 1)
+	            			res = "-" + res;
+	            		return res;
+	        		}else{
+	        			return res;
+	        		}
+
+	        		
+	        	}else if(columnIndex == 6){
+	        		int newRow = 0;
+	        		newRow = (int)(rowIndex/2);
+	        		String res = detailsData.elementAt(newRow)[columnIndex];
+	        		if(res.contains("=")){
+	            		String[] resA = res.split("=");
+	            		res = resA[0];
+	            		resA = res.split("-");
+	            		res = resA[rowIndex%2];
+	            		res = res.replace("(", "");
+	            		res = res.replace(")", "");
+	            		if(rowIndex%2 == 1)
+	            			res = "-" + res;
+	            		return res;
+	        		}else{
+	        			return res;
+	        		}
+
+	        		
+	        	}else if(columnIndex == 9){
+	        		int newRow = 0;
+	        		newRow = (int)(rowIndex/2);
+	        		String res = detailsData.elementAt(newRow)[columnIndex];
+	        		if(res.contains("=")){
+	            		String[] resA = res.split("=");
+	            		res = resA[0];
+	            		resA = res.split("-");
+	            		res = resA[rowIndex%2];
+	            		res = res.replace("(", "");
+	            		res = res.replace(")", "");
+	            		if(rowIndex%2 == 1)
+	            			res = "-" + res;
+	            		return res;
+	        		}else{
+	        			return res;
+	        		}
+
+	        		
+	        	}else if(columnIndex == 10){
+	        		int newRow = 0;
+	        		newRow = (int)(rowIndex/2);
+	        		String res = detailsData.elementAt(newRow)[columnIndex];
+	        		if(res.contains("=")){
+	            		String[] resA = res.split("=");
+	            		res = resA[0];
+	            		resA = res.split("-");
+	            		res = resA[rowIndex%2];
+	            		res = res.replace("(", "");
+	            		res = res.replace(")", "");
+	            		if(rowIndex%2 == 1)
+	            			res = "-" + res;
+	            		return res;
+	        		}else{
+	        			return res;
+	        		}
+
+	        		
+	        	}else{
+	        		return detailsData.elementAt(rowIndex/2)[columnIndex];
+	        	}
 	        }  
 	  
 	        /** 
