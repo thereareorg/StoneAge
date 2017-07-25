@@ -1,4 +1,4 @@
-package P8;
+package MergeNew;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -14,7 +14,8 @@ import java.util.Vector;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-public class MergePreviousDataManager {
+
+public class MergeNewPreviousDataManager {
 	BufferedWriter fw = null;  //写	
 	BufferedReader reader = null; //读
 	
@@ -27,9 +28,9 @@ public class MergePreviousDataManager {
 	
 	
 	
-	MergePreviousDataWindow pdataWnd = null; 
+	MergeNewPreviousDataWindow pdataWnd = null; 
 	
-	MergePreviousDataManager(MergePreviousDataWindow wnd) {
+	MergeNewPreviousDataManager(MergeNewPreviousDataWindow wnd) {
 		pdataWnd = wnd;
 	}
 	
@@ -43,7 +44,7 @@ public class MergePreviousDataManager {
 				dir.mkdirs();
 			}
 			
-			File file = new File("data/" + "mergeevents"
+			File file = new File("data/" + "newmergeevents"
 					+ ".data");
 			
 			
@@ -93,23 +94,30 @@ public class MergePreviousDataManager {
 		try{
 			
 			for(int i = 0; i < pEventsDetails.size(); i++){
-				if(pEventsDetails.elementAt(i)[ZHIBOINDEX.EVENTNAMNE.ordinal()].contains(item[ZHIBOINDEX.EVENTNAMNE.ordinal()]) && 
-						pEventsDetails.elementAt(i)[ZHIBOINDEX.TIME.ordinal()].contains(item[ZHIBOINDEX.TIME.ordinal()])){
+				if(pEventsDetails.elementAt(i)[NEWMERGEINDEX.EVENTNAMNE.ordinal()].contains(item[NEWMERGEINDEX.EVENTNAMNE.ordinal()]) && 
+						pEventsDetails.elementAt(i)[NEWMERGEINDEX.TIME.ordinal()].contains(item[NEWMERGEINDEX.TIME.ordinal()])){
 					return false;
 				}
 			}
 			
 			
-			File file = new File("data/" + "mergeevents"
+			File file = new File("data/" + "newmergeevents"
 					+ ".data");
 			
 			BufferedWriter fwlocal = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, true), "UTF-8"));
 			
 			
-			fwlocal.append(item[0] + "," + item[1] +  "," + item[2] + "," + 
-					item[3] + "," + item[4] + "," + item[5] + "," + item[6] + "," + 
-					item[7] + "," + item[8] + "," + item[9] + "," + item[10] + ","
-					+ item[11] + "," + item[12] + "," + item[13]+ "," + item[14]+ "," + item[15]+ "," + item[16]+ "," + item[17]+ "," + item[18]);
+			String str = "";
+			for(int i = 0; i < item.length; i++){
+				if(i == 0){
+					str = item[i];
+				}else{
+					str = str + "," + item[i];
+				}
+			}
+			
+			
+			fwlocal.append(str);
 			fwlocal.newLine();
 			fwlocal.flush();
 			
@@ -134,25 +142,7 @@ public class MergePreviousDataManager {
 		
 		try{
 			
-/*			File file = new File("data/" + "mergeevents"
-					+ ".data");
-			
-			BufferedReader reader1 = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8")); // 指定读取文件的编码格式，要和写入的格式一致，以免出现中文乱码,
-			
-			String str = null;
-			
-			String lastLine = null;
-			
-			pEventsDetails.clear();
-			
-			while ((str = reader1.readLine()) != null) {
-				//System.out.println(str);
-				String[] event = str.split(",");
-				
-				pEventsDetails.add(event);
 
-				
-				}*/
 
 			
 			pdataWnd.updateEventsDetails(pEventsDetails);
@@ -212,7 +202,7 @@ public class MergePreviousDataManager {
 
 			
 			for(int i = 0; i < pEventsDetails.size(); i++){
-				String timeStr = pEventsDetails.elementAt(i)[TYPEINDEX.TIME.ordinal()];
+				String timeStr = pEventsDetails.elementAt(i)[NEWMERGEINDEX.TIME.ordinal()];
 				java.util.Date timeDate = dfMin.parse(timeStr);
 				
 				Calendar time = Calendar.getInstance();  
@@ -282,8 +272,8 @@ public class MergePreviousDataManager {
 			
 			for(int i = 0; i < pEventsDetails.size(); i++){
 				item = pEventsDetails.elementAt(i).clone();
-				if(item[MERGEINDEX.EVENTNAMNE.ordinal()].contains(eventName)){
-					java.util.Date Mintime = dfMin.parse(item[MERGEINDEX.TIME.ordinal()]);
+				if(item[NEWMERGEINDEX.EVENTNAMNE.ordinal()].contains(eventName)){
+					java.util.Date Mintime = dfMin.parse(item[NEWMERGEINDEX.TIME.ordinal()]);
 					
 					Calendar eventTime = Calendar.getInstance();  
 					eventTime.setTime(Mintime);

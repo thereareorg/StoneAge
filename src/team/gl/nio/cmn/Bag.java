@@ -9,12 +9,20 @@ public class Bag implements Serializable{
     private Vector<String[]> datas;
     private Vector<String[]> mergeDatas;
     private Vector<String[]> mergepSubDatas;
+    private Vector<String[]> newMergeDatas;
+    private Vector<String[]> newMergepSubDatas;
     private Vector<String[]> p8pSubDatas;
     private Vector<String[]> zhibopSubDatas;
     private String successTime = "";
     
+    private Vector<String[]> hgdatas;
+    private Vector<String[]> hgpSubDatas;
+    private String hgsuccessTime = "";
+    
     private boolean P8GrabStat = false;
     private boolean MergeGrabStat = false;
+    
+    private boolean hgGrabStat = false;
 
 
     public Bag(String req){
@@ -29,13 +37,25 @@ public class Bag implements Serializable{
         return mergeDatas;
     }
     
+    public Vector<String[]> getNewMergeDatas() {
+        return newMergeDatas;
+    }
+    
     public Vector<String[]> getMergepSubDatas() {
         return mergepSubDatas;
     }
 
     
+    public Vector<String[]> getNewMergepSubDatas() {
+        return newMergepSubDatas;
+    }
+    
     public Vector<String[]> getP8pSubDatas() {
         return p8pSubDatas;
+    }
+    
+    public Vector<String[]> gethgpSubDatas() {
+        return hgpSubDatas;
     }
     
     public Vector<String[]> getZhibopSubDatas() {
@@ -55,6 +75,29 @@ public class Bag implements Serializable{
     }
     
     
+    public Vector<String[]> gethgDatas() {
+        return hgdatas;
+    } 
+    
+    public String gethgSuccessTime(){
+    	return hgsuccessTime;
+    } 
+    
+    
+    public boolean gethgGrabStat(){
+    	return hgGrabStat;
+    }
+    
+    
+    public void sethgDatas(Vector<String[]> datas) {
+        this.hgdatas = datas;
+    }
+    
+    public void sethgSuccessTime(String time){
+    	hgsuccessTime = time;
+    }
+    
+    
     public void setSuccessTime(String time){
     	successTime = time;
     }
@@ -67,12 +110,24 @@ public class Bag implements Serializable{
         this.mergeDatas = datas;
     }
     
+    public void setNewMergeDatas(Vector<String[]> datas) {
+        this.newMergeDatas = datas;
+    }
+    
     public void setMergepSubDatas(Vector<String[]> datas) {
         this.mergepSubDatas = datas;
     }
     
+    public void setNewMergepSubDatas(Vector<String[]> datas) {
+        this.newMergepSubDatas = datas;
+    }
+    
     public void setP8pSubDatas(Vector<String[]> datas) {
         this.p8pSubDatas = datas;
+    }
+    
+    public void sethgpSubDatas(Vector<String[]> datas) {
+        this.hgpSubDatas = datas;
     }
     
     public void setZhibopSubDatas(Vector<String[]> datas) {
@@ -81,6 +136,10 @@ public class Bag implements Serializable{
     
     public void setP8GrabStat(boolean val){
     	P8GrabStat = val;
+    }
+    
+    public void sethgGrabStat(boolean val){
+    	hgGrabStat = val;
     }
     
     public void setMergeGrabStat(boolean val){

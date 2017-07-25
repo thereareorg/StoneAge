@@ -46,10 +46,13 @@ import java.io.PrintStream;
 
 import org.json.*;
 
+import Mail.MailManager;
 import P8.EventNameCompare;
 import P8.EventsDetailsWindow;
 import P8.MyCompare;
-import P8.TYPEINDEX;
+import P8.PreviousDataManager;
+import P8.PreviousDataWindow;
+import P8.StoneAge;
 
 import java.util.Vector;
 import java.util.Comparator;
@@ -59,6 +62,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import javax.xml.parsers.DocumentBuilder;  
 import javax.xml.parsers.DocumentBuilderFactory;  
   
+
+
+
 
 
 
@@ -99,6 +105,14 @@ public class HGhttp {
 	        httpclient = HttpClients.custom().setDefaultRequestConfig(requestConfig).build();
 	   }
 	
+	 
+	 
+	 
+    static HGPreviousDataWindow pDataWindow = new HGPreviousDataWindow();
+    
+    static HGPreviousDataManager pDataManager = new HGPreviousDataManager(pDataWindow);
+	 
+	 
 	
 	static int defaultTimeout = 15000;
 	
@@ -155,7 +169,7 @@ public class HGhttp {
 		showLeagueName.add("英格兰 - 超级联赛");
 		showLeagueName.add("欧足联 - 欧罗巴联赛");
 		
-		//pDataManager.init();
+		pDataManager.init();
 	}
 	
 	
@@ -309,6 +323,9 @@ public class HGhttp {
 	
 	
 	
+	
+	
+	
 	public String getAccount(){
 		return ACCOUNT;
 	}
@@ -407,6 +424,23 @@ public class HGhttp {
     	
     	return false;
     }
+    
+    
+    public static void geteventsfromesavedata(){
+    	try{
+    		
+    		Vector<String[]> tmp = pDataManager.getpLatestevents();
+    		
+    		for(int i = 0; i < tmp.size(); i++){
+    			eventDetailsVec.add(tmp.elementAt(i).clone());
+    		}
+    		
+    		
+    	}catch(Exception e){
+    		e.printStackTrace();
+    	}
+    }
+    
     
     public boolean getTotalBet(){
     	
@@ -517,342 +551,64 @@ public class HGhttp {
     }
     
     
-    public static void  testXML(){
-    	
-    	try{
-/*        	DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        	
-    		DocumentBuilder db = dbf.newDocumentBuilder();*/
-    		
-    		String text = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?><serverresponse id='s36'><game id='FT'><league_name>欧洲冠军杯</league_name><league_count>39</league_count><league_gold>44817</league_gold><team_h>马德里体育会</team_h><team_c>皇家马德里</team_c><concede_w3></concede_w3><midfield>N</midfield><live>Y</live><session><date>2017-05-10</date><time>14:45:00</time></session><wtype id='M'><wtype_count>1</wtype_count><wtype_gold>116</wtype_gold><gid id='2713950'><ptype></ptype><rtype id='MN'><count>1</count><gold>116</gold></rtype></gid></wtype><wtype id='OU'><wtype_count>10</wtype_count><wtype_gold>18046</wtype_gold><gid id='2713950'><ptype></ptype><rtype id='OUH'><count>9</count><gold>16046</gold></rtype></gid><gid id='2713954'><ptype></ptype><rtype id='OUH'><count>1</count><gold>2000</gold></rtype></gid></wtype><wtype id='PD'><wtype_count>8</wtype_count><wtype_gold>1120</wtype_gold><gid id='2713950'><ptype></ptype><rtype id='H1C0'><count>1</count><gold>100</gold></rtype><rtype id='H1C1'><count>3</count><gold>420</gold></rtype><rtype id='H1C2'><count>2</count><gold>300</gold></rtype><rtype id='H2C1'><count>1</count><gold>100</gold></rtype><rtype id='H2C2'><count>1</count><gold>200</gold></rtype></gid></wtype><wtype id='R'><wtype_count>20</wtype_count><wtype_gold>25535</wtype_gold><gid id='2713950'><ptype></ptype><rtype id='RC'><count>11</count><gold>16935</gold></rtype><rtype id='RH'><count>8</count><gold>6800</gold></rtype></gid><gid id='2713952'><ptype></ptype><rtype id='RH'><count>1</count><gold>1800</gold></rtype></gid></wtype></game></serverresponse>";
-    		
-    		String text1 = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?><serverresponse id='s50'><game id='FT'><league_name>法国乙组联赛</league_name><league_count>2</league_count><league_gold>400</league_gold><team_h>爱米恩斯</team_h><team_c>拉华尔</team_c><concede_w3></concede_w3><midfield>N</midfield><live>Y</live><session><date>2017-05-12</date><time>14:30:00</time></session><wtype id='R'><wtype_count>2</wtype_count><wtype_gold>400</wtype_gold><gid id='2738106'><ptype></ptype><rtype id='RH'><count>2</count><gold>400</gold></rtype></gid></wtype></game></serverresponse>";
-    		//String txt = new String(text, "UTF-8");
-    		
-    		String[] txtArry = {text, text1};
-    		
-    		for(int p = 0; p < txtArry.length; p++){
-        		InputStream is = new ByteArrayInputStream(txtArry[p].getBytes("UTF-8"));
-        		
-            	DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-            	
-    			DocumentBuilder db = dbf.newDocumentBuilder();
-    	        Document document = db.parse(is);  
-    	        
-    	        
-    	        
-    	        
-                NodeList list = document.getElementsByTagName("serverresponse");        
-    	        Element element = (Element)list.item(0);  
-    	        
-    	      
-    	        
-                String league_name = element.getElementsByTagName("league_name").item(0).getFirstChild().getNodeValue();
+    
+	public static void saveEvents(){
+		
+		try{
+			
+/*			String[] test = {"993839509", "西班牙 - 西甲", "1491413400000", "【滚动盘】巴萨-vs-西维尔", "100000", "200000", "-100000", "-100000"};
+			eventDetailsVec.add(test);*/
+			
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+			
 
-                String team_h = element.getElementsByTagName("team_h").item(0).getFirstChild().getNodeValue();
+			
+			
+			for(int i = 0; i < eventDetailsVec.size(); i++){
+				
+				//String[] tmp =  eventDetailsVec.elementAt(i).clone();
+				
+				long eventTime = Long.parseLong(eventDetailsVec.elementAt(i)[HGINDEX.TIME.ordinal()]);
+				
+				String eventName = eventDetailsVec.elementAt(i)[HGINDEX.EVENTNAMNE.ordinal()];
+				
 
-                String team_c = element.getElementsByTagName("team_c").item(0).getFirstChild().getNodeValue();
+				
+				long currentTime = System.currentTimeMillis();
+				
+				long passMinutes = 108*60*1000;
+				
+				
+				if(eventTime - currentTime < 6*60*1000){
+					
+					String eventTimestr = df.format(eventTime);
+					
+					String[] saveItem = (String[])eventDetailsVec.elementAt(i).clone();
+					
+					saveItem[HGINDEX.TIME.ordinal()] = eventTimestr;
+					
+					boolean saveRes = pDataManager.saveTofile(saveItem);
+					
+					if(saveRes == true){
+						System.out.println("hg save success:" + Arrays.toString(saveItem));
 
-                String live = element.getElementsByTagName("live").item(0).getFirstChild().getNodeValue();
+					}
+				}
+						
+				
 
-                
-                list = element.getElementsByTagName("session");
-                
-                Element sessionelement = (Element)list.item(0);  
-                
-                String date = sessionelement.getElementsByTagName("date").item(0).getFirstChild().getNodeValue();
-
-                
-                String time = sessionelement.getElementsByTagName("time").item(0).getFirstChild().getNodeValue();
-
-                
-                
-                list = element.getElementsByTagName("wtype");    
-
-            	
-                String eventIdStr = team_h + team_c + date + time;
-                
-                String eventId = Integer.toString(eventIdStr.hashCode());
-                
-            	
-    			int index = 0;
-    			
-    			boolean eventIDexist = false;
-    			
-    			for(index = 0; index < eventDetailsVec.size(); index++){
-    				if(eventDetailsVec.elementAt(index)[TYPEINDEX.EVENTID.ordinal()].equals(eventId)){	//todo gidm是否唯一
-    					eventIDexist = true;
-    					break;
-    				}
-    			}
-            	
-    			
-    			if(eventIDexist == false){
-    				
-        			String[] row = new String[8];
-
-        			
-        			row[TYPEINDEX.EVENTID.ordinal()] = eventId;
-        			row[TYPEINDEX.LEAGUENAME.ordinal()] = league_name;
-
-        			row[TYPEINDEX.TIME.ordinal()] = date + " " + time;            			            			            			
-        			row[TYPEINDEX.EVENTNAMNE.ordinal()] = team_h + "-vs-" + team_c;
-        			
-        			row[TYPEINDEX.PERIOD0HOME.ordinal()] = "0";
-        			row[TYPEINDEX.PERIOD0OVER.ordinal()] = "0";
-        			row[TYPEINDEX.PERIOD1HOME.ordinal()] = "0";
-        			row[TYPEINDEX.PERIOD1OVER.ordinal()] = "0";
-    				eventDetailsVec.add(row);
-    			}
-    			
-    			
-                for(int i = 0; i < list.getLength(); i++){
-                	Element wtypeelement = (Element)list.item(i);
-                	String wtypeId = wtypeelement.getAttributes().getNamedItem("id").getNodeValue();
-                	if(wtypeId.toUpperCase().equals("OU")){
-                		
-                		NodeList rtypeList = wtypeelement.getElementsByTagName("rtype");
-                		
-                		for(int j = 0; j < rtypeList.getLength(); j++){
-                			Element rtypeElement = (Element)rtypeList.item(j);
-                			
-                			String rtypeId = rtypeElement.getAttributes().getNamedItem("id").getNodeValue();
-                			
-                			System.out.println(rtypeId);
-                			
-                			
-                    		if(rtypeId.toUpperCase().equals("OUH")){       //客场  
-                    			
-                    			String goldStr = rtypeElement.getElementsByTagName("gold").item(0).getFirstChild().getNodeValue();                        			
-        						String countStr = rtypeElement.getElementsByTagName("count").item(0).getFirstChild().getNodeValue();            						
-        						String allp0hStr = eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0OVER.ordinal()];
-        						
-        						if(allp0hStr.contains("=")){
-        							String[] tmp = allp0hStr.split("=");
-        							String[] tmp1 = tmp[0].split("-");
-        							String hgoldStr = tmp1[0];
-        							String cgoldStr = tmp1[1];
-        							String oldhgoldStr = tmp1[0];
-        							hgoldStr = hgoldStr.replace("(", "");
-        							hgoldStr = hgoldStr.replace(")", "");
-        							
-        							cgoldStr = cgoldStr.replace("(", "");
-        							cgoldStr = cgoldStr.replace(")", "");
-        							
-        							int hgold = 0;
-        							int cgold = 0;
-        							int hcount = 0;
-        							int ccount = 0;
-        							
-        							if(hgoldStr.contains("|")){
-        								tmp = hgoldStr.split("\\|");
-        								hgold = Integer.parseInt(tmp[0]);
-        								hcount = Integer.parseInt(tmp[1]);
-        							}
-        							
-        							if(cgoldStr.contains("|")){
-        								tmp = cgoldStr.split("\\|");
-        								cgold = Integer.parseInt(tmp[0]);
-        								ccount = Integer.parseInt(tmp[1]);
-        							}
-        							
-        							goldStr = Integer.toString(Integer.parseInt(goldStr) + cgold);
-        							countStr = Integer.toString(Integer.parseInt(countStr) + ccount);
-        							
-        							int dvalue = hgold - Integer.parseInt(goldStr);
-        							
-        							
-        							eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0OVER.ordinal()] = oldhgoldStr + "-" + "(" + goldStr + "|" + countStr + ")" + "=" + Integer.toString(dvalue);
-        							
-        						}else{
-        							eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0OVER.ordinal()] = "(0|0)" + "-" + "(" + goldStr + "|" + countStr + ")" + "=" + "-" + goldStr;
-        						}
-        						
-
-                    		}else if(rtypeId.toUpperCase().equals("OUC")){//OUC是主队
-        						
-                    			String goldStr = rtypeElement.getElementsByTagName("gold").item(0).getFirstChild().getNodeValue();                        			
-        						String countStr = rtypeElement.getElementsByTagName("count").item(0).getFirstChild().getNodeValue();            						
-        						String allp0hStr = eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0OVER.ordinal()];
-        						
-        						if(allp0hStr.contains("=")){
-        							String[] tmp = allp0hStr.split("=");
-        							String[] tmp1 = tmp[0].split("-");
-        							String hgoldStr = tmp1[0];
-        							String cgoldStr = tmp1[1];
-        							String oldcgoldStr = tmp1[1];
-        							hgoldStr = hgoldStr.replace("(", "");
-        							hgoldStr = hgoldStr.replace(")", "");
-        							
-        							cgoldStr = cgoldStr.replace("(", "");
-        							cgoldStr = cgoldStr.replace(")", "");
-        							
-        							int hgold = 0;
-        							int cgold = 0;
-        							int hcount = 0;
-        							int ccount = 0;
-        							
-        							if(hgoldStr.contains("|")){
-        								tmp = hgoldStr.split("\\|");
-        								hgold = Integer.parseInt(tmp[0]);
-        								hcount = Integer.parseInt(tmp[1]);
-        							}
-        							
-        							if(cgoldStr.contains("|")){
-        								tmp = cgoldStr.split("\\|");
-        								cgold = Integer.parseInt(tmp[0]);
-        							}
-        							
-        							goldStr = Integer.toString(Integer.parseInt(goldStr) + hgold);
-        							countStr = Integer.toString(Integer.parseInt(countStr) + hcount);
-        							
-        							int dvalue = Integer.parseInt(goldStr) - cgold;
-        							
-        							
-        							eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0OVER.ordinal()] = "(" + goldStr + "|" + countStr + ")" + "-" + oldcgoldStr + "=" + Integer.toString(dvalue);
-        							
-        						}else{
-        							eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0OVER.ordinal()] = "(" + goldStr + "|" + countStr + ")"  + "-" + "(0|0)" + "=" + goldStr;
-        						}
-                    			
-                    		}
-                			
-                		}
-
-                		
-
-                		
-                		
-                	}else if(wtypeId.toUpperCase().equals("R")){
-                		NodeList rtypeList = wtypeelement.getElementsByTagName("rtype");
-                		
-                		for(int j = 0; j < rtypeList.getLength(); j++){
-                			Element rtypeElement = (Element)rtypeList.item(j);
-                			
-                			String rtypeId = rtypeElement.getAttributes().getNamedItem("id").getNodeValue();
-                			
-                			System.out.println(rtypeId);
-                			
-                			
-                    		if(rtypeId.toUpperCase().equals("RH")){
-                    			String goldStr = rtypeElement.getElementsByTagName("gold").item(0).getFirstChild().getNodeValue();                        			
-        						String countStr = rtypeElement.getElementsByTagName("count").item(0).getFirstChild().getNodeValue();            						
-        						String allp0hStr = eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0HOME.ordinal()];
-        						
-        						if(allp0hStr.contains("=")){
-        							String[] tmp = allp0hStr.split("=");
-        							String[] tmp1 = tmp[0].split("-");
-        							String hgoldStr = tmp1[0];
-        							String cgoldStr = tmp1[1];
-        							String oldcgoldStr = tmp1[1];
-        							hgoldStr = hgoldStr.replace("(", "");
-        							hgoldStr = hgoldStr.replace(")", "");
-        							
-        							cgoldStr = cgoldStr.replace("(", "");
-        							cgoldStr = cgoldStr.replace(")", "");
-        							
-        							int hgold = 0;
-        							int cgold = 0;
-        							int hcount = 0;
-        							int ccount = 0;
-        							
-        							if(hgoldStr.contains("|")){
-        								tmp = hgoldStr.split("\\|");
-        								hgold = Integer.parseInt(tmp[0]);
-        								hcount = Integer.parseInt(tmp[1]);
-        							}
-        							
-        							if(cgoldStr.contains("|")){
-        								tmp = cgoldStr.split("\\|");
-        								cgold = Integer.parseInt(tmp[0]);
-        							}
-        							
-        							goldStr = Integer.toString(Integer.parseInt(goldStr) + hgold);
-        							countStr = Integer.toString(Integer.parseInt(countStr) + hcount);
-        							
-        							int dvalue = Integer.parseInt(goldStr) - cgold;
-        							
-        							
-        							eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0HOME.ordinal()] = "(" + goldStr + "|" + countStr + ")" + "-" + oldcgoldStr + "=" + Integer.toString(dvalue);
-        							
-        						}else{
-        							eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0HOME.ordinal()] = "(" + goldStr + "|" + countStr + ")"  + "-" + "(0|0)" + "=" + goldStr;
-        						}
-                    		
-                    			 
-                    		}else if(rtypeId.toUpperCase().equals("RC")){
-                    			String goldStr = rtypeElement.getElementsByTagName("gold").item(0).getFirstChild().getNodeValue();                        			
-        						String countStr = rtypeElement.getElementsByTagName("count").item(0).getFirstChild().getNodeValue();            						
-        						String allp0hStr = eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0HOME.ordinal()];
-        						
-        						if(allp0hStr.contains("=")){
-        							String[] tmp = allp0hStr.split("=");
-        							String[] tmp1 = tmp[0].split("-");
-        							String hgoldStr = tmp1[0];
-        							String cgoldStr = tmp1[1];
-        							String oldhgoldStr = tmp1[0];
-        							hgoldStr = hgoldStr.replace("(", "");
-        							hgoldStr = hgoldStr.replace(")", "");
-        							
-        							cgoldStr = cgoldStr.replace("(", "");
-        							cgoldStr = cgoldStr.replace(")", "");
-        							
-        							int hgold = 0;
-        							int cgold = 0;
-        							int hcount = 0;
-        							int ccount = 0;
-        							
-        							if(hgoldStr.contains("|")){
-        								tmp = hgoldStr.split("\\|");
-        								hgold = Integer.parseInt(tmp[0]);
-        								hcount = Integer.parseInt(tmp[1]);
-        							}
-        							
-        							if(cgoldStr.contains("|")){
-        								tmp = cgoldStr.split("\\|");
-        								cgold = Integer.parseInt(tmp[0]);
-        								ccount = Integer.parseInt(tmp[1]);
-        							}
-        							
-        							goldStr = Integer.toString(Integer.parseInt(goldStr) + cgold);
-        							countStr = Integer.toString(Integer.parseInt(countStr) + ccount);
-        							
-        							int dvalue = hgold - Integer.parseInt(goldStr);
-        							
-        							
-        							eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0HOME.ordinal()] = oldhgoldStr + "-" + "(" + goldStr + "|" + countStr + ")" + "=" + Integer.toString(dvalue);
-        							
-        						}else{
-        							eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0HOME.ordinal()] = "(0|0)" + "-" + "(" + goldStr + "|" + countStr + ")" + "=" + "-" + goldStr;
-        						}
-                    		}
-                			
-                		}
-                }
-                
-                }
-    		}
-    		
-
-            
-            
-
-        	for(int i  = 0; i < eventDetailsVec.size(); i++){
-        		System.out.println(Arrays.toString(eventDetailsVec.elementAt(i)));
-
+				
 			}
-            
-            
-            
-    	}catch(Exception e){
-    		e.printStackTrace();
-    	}
-    	
+			
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
 
-    }
+	}
     
-    
-    
+  
     public boolean parseBet(String res){
     	
     	try{
@@ -942,7 +698,7 @@ public class HGhttp {
         			boolean eventIDexist = false;
         			
         			for(index = 0; index < eventDetailsVec.size(); index++){
-        				if(eventDetailsVec.elementAt(index)[TYPEINDEX.EVENTID.ordinal()].equals(eventId)){	//todo gidm是否唯一
+        				if(eventDetailsVec.elementAt(index)[HGINDEX.EVENTID.ordinal()].equals(eventId)){	//todo gidm是否唯一
         					eventIDexist = true;
         					break;
         				}
@@ -951,11 +707,11 @@ public class HGhttp {
         			
         			if(eventIDexist == false){
         				
-            			String[] row = new String[8];
+            			String[] row = new String[HGINDEX.SIZE.ordinal()];
 
             			
-            			row[TYPEINDEX.EVENTID.ordinal()] = eventId;
-            			row[TYPEINDEX.LEAGUENAME.ordinal()] = league_name;
+            			row[HGINDEX.EVENTID.ordinal()] = eventId;
+            			row[HGINDEX.LEAGUENAME.ordinal()] = league_name;
             			
             			//change to local time
             			
@@ -971,16 +727,16 @@ public class HGhttp {
             			
             			//timeStr = dfMin.format(calTime.getTimeInMillis());
 
-            			row[TYPEINDEX.TIME.ordinal()] = Long.toString(calTime.getTimeInMillis());
+            			row[HGINDEX.TIME.ordinal()] = Long.toString(calTime.getTimeInMillis());
             			
             			//
             			
-            			row[TYPEINDEX.EVENTNAMNE.ordinal()] = team_h + "-vs-" + team_c;
+            			row[HGINDEX.EVENTNAMNE.ordinal()] = team_h + "-vs-" + team_c;
             			
-            			row[TYPEINDEX.PERIOD0HOME.ordinal()] = "0";
-            			row[TYPEINDEX.PERIOD0OVER.ordinal()] = "0";
-            			row[TYPEINDEX.PERIOD1HOME.ordinal()] = "0";
-            			row[TYPEINDEX.PERIOD1OVER.ordinal()] = "0";
+            			row[HGINDEX.PERIOD0HOME.ordinal()] = "0";
+            			row[HGINDEX.PERIOD0OVER.ordinal()] = "0";
+            			row[HGINDEX.PERIOD1HOME.ordinal()] = "0";
+            			row[HGINDEX.PERIOD1OVER.ordinal()] = "0";
         				eventDetailsVec.add(row);
         			}
         			
@@ -1004,7 +760,7 @@ public class HGhttp {
                         			
                         			String goldStr = rtypeElement.getElementsByTagName("gold").item(0).getFirstChild().getNodeValue();                        			
             						String countStr = rtypeElement.getElementsByTagName("count").item(0).getFirstChild().getNodeValue();            						
-            						String allp0hStr = eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0OVER.ordinal()];
+            						String allp0hStr = eventDetailsVec.elementAt(index)[HGINDEX.PERIOD0OVER.ordinal()];
             						
             						if(allp0hStr.contains("=")){
             							String[] tmp = allp0hStr.split("=");
@@ -1041,10 +797,10 @@ public class HGhttp {
             							int dvalue = hgold - Integer.parseInt(goldStr);
             							
             							
-            							eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0OVER.ordinal()] = oldhgoldStr + "-" + "(" + goldStr + "|" + countStr + ")" + "=" + Integer.toString(dvalue);
+            							eventDetailsVec.elementAt(index)[HGINDEX.PERIOD0OVER.ordinal()] = oldhgoldStr + "-" + "(" + goldStr + "|" + countStr + ")" + "=" + Integer.toString(dvalue);
             							
             						}else{
-            							eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0OVER.ordinal()] = "(0|0)" + "-" + "(" + goldStr + "|" + countStr + ")" + "=" + "-" + goldStr;
+            							eventDetailsVec.elementAt(index)[HGINDEX.PERIOD0OVER.ordinal()] = "(0|0)" + "-" + "(" + goldStr + "|" + countStr + ")" + "=" + "-" + goldStr;
             						}
             						
 
@@ -1052,7 +808,7 @@ public class HGhttp {
             						
                         			String goldStr = rtypeElement.getElementsByTagName("gold").item(0).getFirstChild().getNodeValue();                        			
             						String countStr = rtypeElement.getElementsByTagName("count").item(0).getFirstChild().getNodeValue();            						
-            						String allp0hStr = eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0OVER.ordinal()];
+            						String allp0hStr = eventDetailsVec.elementAt(index)[HGINDEX.PERIOD0OVER.ordinal()];
             						
             						if(allp0hStr.contains("=")){
             							String[] tmp = allp0hStr.split("=");
@@ -1088,10 +844,10 @@ public class HGhttp {
             							int dvalue = Integer.parseInt(goldStr) - cgold;
             							
             							
-            							eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0OVER.ordinal()] = "(" + goldStr + "|" + countStr + ")" + "-" + oldcgoldStr + "=" + Integer.toString(dvalue);
+            							eventDetailsVec.elementAt(index)[HGINDEX.PERIOD0OVER.ordinal()] = "(" + goldStr + "|" + countStr + ")" + "-" + oldcgoldStr + "=" + Integer.toString(dvalue);
             							
             						}else{
-            							eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0OVER.ordinal()] = "(" + goldStr + "|" + countStr + ")"  + "-" + "(0|0)" + "=" + goldStr;
+            							eventDetailsVec.elementAt(index)[HGINDEX.PERIOD0OVER.ordinal()] = "(" + goldStr + "|" + countStr + ")"  + "-" + "(0|0)" + "=" + goldStr;
             						}
                         			
                         		}
@@ -1116,7 +872,7 @@ public class HGhttp {
                         		if(rtypeId.toUpperCase().equals("RH")){
                         			String goldStr = rtypeElement.getElementsByTagName("gold").item(0).getFirstChild().getNodeValue();                        			
             						String countStr = rtypeElement.getElementsByTagName("count").item(0).getFirstChild().getNodeValue();            						
-            						String allp0hStr = eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0HOME.ordinal()];
+            						String allp0hStr = eventDetailsVec.elementAt(index)[HGINDEX.PERIOD0HOME.ordinal()];
             						
             						if(allp0hStr.contains("=")){
             							String[] tmp = allp0hStr.split("=");
@@ -1152,17 +908,17 @@ public class HGhttp {
             							int dvalue = Integer.parseInt(goldStr) - cgold;
             							
             							
-            							eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0HOME.ordinal()] = "(" + goldStr + "|" + countStr + ")" + "-" + oldcgoldStr + "=" + Integer.toString(dvalue);
+            							eventDetailsVec.elementAt(index)[HGINDEX.PERIOD0HOME.ordinal()] = "(" + goldStr + "|" + countStr + ")" + "-" + oldcgoldStr + "=" + Integer.toString(dvalue);
             							
             						}else{
-            							eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0HOME.ordinal()] = "(" + goldStr + "|" + countStr + ")"  + "-" + "(0|0)" + "=" + goldStr;
+            							eventDetailsVec.elementAt(index)[HGINDEX.PERIOD0HOME.ordinal()] = "(" + goldStr + "|" + countStr + ")"  + "-" + "(0|0)" + "=" + goldStr;
             						}
                         		
                         			 
                         		}else if(rtypeId.toUpperCase().equals("RC")){
                         			String goldStr = rtypeElement.getElementsByTagName("gold").item(0).getFirstChild().getNodeValue();                        			
             						String countStr = rtypeElement.getElementsByTagName("count").item(0).getFirstChild().getNodeValue();            						
-            						String allp0hStr = eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0HOME.ordinal()];
+            						String allp0hStr = eventDetailsVec.elementAt(index)[HGINDEX.PERIOD0HOME.ordinal()];
             						
             						if(allp0hStr.contains("=")){
             							String[] tmp = allp0hStr.split("=");
@@ -1199,10 +955,10 @@ public class HGhttp {
             							int dvalue = hgold - Integer.parseInt(goldStr);
             							
             							
-            							eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0HOME.ordinal()] = oldhgoldStr + "-" + "(" + goldStr + "|" + countStr + ")" + "=" + Integer.toString(dvalue);
+            							eventDetailsVec.elementAt(index)[HGINDEX.PERIOD0HOME.ordinal()] = oldhgoldStr + "-" + "(" + goldStr + "|" + countStr + ")" + "=" + Integer.toString(dvalue);
             							
             						}else{
-            							eventDetailsVec.elementAt(index)[TYPEINDEX.PERIOD0HOME.ordinal()] = "(0|0)" + "-" + "(" + goldStr + "|" + countStr + ")" + "=" + "-" + goldStr;
+            							eventDetailsVec.elementAt(index)[HGINDEX.PERIOD0HOME.ordinal()] = "(0|0)" + "-" + "(" + goldStr + "|" + countStr + ")" + "=" + "-" + goldStr;
             						}
                         		}
                     			
@@ -1269,7 +1025,7 @@ public class HGhttp {
         		Vector<String[]> highShowVec = new Vector<String[]>();
         		
         		for(int i = 0; i < eventDetailsVec.size(); i++){
-        			String leagueName = eventDetailsVec.elementAt(i)[TYPEINDEX.LEAGUENAME.ordinal()];
+        			String leagueName = eventDetailsVec.elementAt(i)[HGINDEX.LEAGUENAME.ordinal()];
         			
         			if(isInShowLeagueName(leagueName)){        				
         				highShowVec.add(eventDetailsVec.elementAt(i));        				
@@ -1281,7 +1037,7 @@ public class HGhttp {
         		}        
         		
         		for(int i = 0; i < eventDetailsVec.size(); ){
-        			String leagueName = eventDetailsVec.elementAt(i)[TYPEINDEX.LEAGUENAME.ordinal()];
+        			String leagueName = eventDetailsVec.elementAt(i)[HGINDEX.LEAGUENAME.ordinal()];
         			
         			if(isInShowLeagueName(leagueName)){        				
         				
@@ -1373,7 +1129,9 @@ public class HGhttp {
             	for(int i = 0; i < eventDetailsVec.size(); i++){
         			String currentTimeArray[] = currentTime.split(" ");
         			
-        			long time = Long.parseLong(eventDetailsVec.elementAt(i)[TYPEINDEX.TIME.ordinal()]);
+        			
+        			
+        			long time = Long.parseLong(eventDetailsVec.elementAt(i)[HGINDEX.TIME.ordinal()]);
         			
         			String eventTimeArray[] = df.format(time).split(" ");
         			
@@ -1386,7 +1144,7 @@ public class HGhttp {
         			}
         			
         			
-        			eventDetailsVec.elementAt(i)[TYPEINDEX.TIME.ordinal()] = timeStr;
+        			eventDetailsVec.elementAt(i)[HGINDEX.TIME.ordinal()] = timeStr;
             	}
             	
 
@@ -1685,6 +1443,21 @@ public class HGhttp {
 		}
     }
     
+    
+    
+	public static void showpDataWnd(){
+		pDataWindow.setVisible(true);
+	}
+    
+	
+	public static void updatepDataDetails(){
+		pDataManager.updatepEventsDetails();
+	}
+	
+	
+    public static Vector<String[]> getpSubevents(){
+    	return pDataManager.getpSubevents();
+    }
     
     
 }

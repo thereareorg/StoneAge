@@ -33,6 +33,9 @@ import java.awt.Color;
 
 
 
+
+
+
 import javax.swing.JFrame;  
 import javax.swing.JLabel;  
 import javax.swing.JPanel;  
@@ -56,10 +59,15 @@ import javax.swing.Timer;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import HG.HGMergeManager;
+
 import java.text.SimpleDateFormat;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.Stack;
 import java.awt.Button;
+
+
+
 
 
 import javax.swing.JTabbedPane;  
@@ -84,9 +92,16 @@ public class AccountsDetailsWindow extends JFrame
 	
 	
 	
+	
+	
     private Button addAccountBtn = new Button("增加账户");
     
     private Button teamMatchBtn = new Button("队名匹配管理");
+    private Button hgteamMatchBtn = new Button("HG队名匹配管理");
+    private Button scoreteamMatchBtn = new Button("比分队名匹配管理");
+    
+    
+    
     
     private Button addhgAccountBtn = new Button("增加账户");
    
@@ -207,11 +222,45 @@ public class AccountsDetailsWindow extends JFrame
 			}
 		});
         
-        teamMatchBtn.setLocation(150, 50);
-        teamMatchBtn.setSize(90, 25);
+        teamMatchBtn.setLocation(250, 0);
+        teamMatchBtn.setSize(120, 25);
         
         accountDetailsPan.add(teamMatchBtn);
         
+        
+        
+        hgteamMatchBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				HGMergeManager.showTeamMatchWnd();
+			}
+		});
+        
+        hgteamMatchBtn.setLocation(250, 30);
+        hgteamMatchBtn.setSize(120, 25);
+        
+        accountDetailsPan.add(hgteamMatchBtn);
+        
+        
+        
+        
+        scoreteamMatchBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ScoreMergeManager.showTeamMatchWnd();
+			}
+		});
+        
+        scoreteamMatchBtn.setLocation(250, 60);
+        scoreteamMatchBtn.setSize(120, 25);
+        
+        accountDetailsPan.add(scoreteamMatchBtn);
+        
+        
+        
+        
+        
+        
+        
+
         
 /*        accountDetailsPan.add(labeltime);
         accountDetailsPan.add(textFieldtime);

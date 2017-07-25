@@ -187,7 +187,8 @@ public class ZhiboManager {
     					,eventTmp[ZHIBOINDEX.PERIOD0HOME.ordinal()-1], eventTmp[ZHIBOINDEX.PERIOD0OVER.ordinal()-1], eventTmp[ZHIBOINDEX.PERIOD1HOME.ordinal()-1]
     							,eventTmp[ZHIBOINDEX.PERIOD1OVER.ordinal()-1]};*/
     			
-    			if(event[ZHIBOINDEX.TIME.ordinal()].contains("(") || event[ZHIBOINDEX.TIME.ordinal()].contains(",")){
+    			if((event[ZHIBOINDEX.TIME.ordinal()].contains("(") || event[ZHIBOINDEX.TIME.ordinal()].contains(",")) &&
+    					!event[ZHIBOINDEX.TIME.ordinal()].equals("(0 - 0)")){
     				
     				boolean alreadyIn = false;
     				for(int i = 0; i < inPlayeventDetailsVec.size(); i++){
@@ -234,32 +235,33 @@ public class ZhiboManager {
     				
     				String todayStr = dfDay.format(americaTime.getTimeInMillis());
     				
-    				//eventTime.add(Calendar.HOUR_OF_DAY, 12);
-    				
-    				
-    				//String[] timeA = dfMin.format(currentTimeL).split(" ");
-    				
-    				if(!timeStr.contains("-")){
-    					
-    					timeStr = todayStr + " " + timeStr;
-    				}
-    				
-    				java.util.Date time = dfMin.parse(timeStr);
-    				
-    				
-    				Calendar eventTime = Calendar.getInstance();  
-    				eventTime.setTime(time);
-    				
-    				
-    				eventTime.add(Calendar.HOUR_OF_DAY, 12);
-    				
-    				timeStr = dfMin.format(eventTime.getTimeInMillis());
-    				
-    				if(timeStr.contains(LocaltodayStr)){
-    					timeStr = timeStr.replace(LocaltodayStr + " ", "");
-    				}
+    				if(timeStr.contains("(")){
+    					event[ZHIBOINDEX.TIME.ordinal()] = timeStr;
+    				}else{
+        				if(!timeStr.contains("-")){
+        					
+        					timeStr = todayStr + " " + timeStr;
+        				}
+        				
+        				java.util.Date time = dfMin.parse(timeStr);
+        				
+        				
+        				Calendar eventTime = Calendar.getInstance();  
+        				eventTime.setTime(time);
+        				
+        				
+        				eventTime.add(Calendar.HOUR_OF_DAY, 12);
+        				
+        				timeStr = dfMin.format(eventTime.getTimeInMillis());
+        				
+        				if(timeStr.contains(LocaltodayStr)){
+        					timeStr = timeStr.replace(LocaltodayStr + " ", "");
+        				}
 
-    				event[ZHIBOINDEX.TIME.ordinal()] = timeStr;
+        				event[ZHIBOINDEX.TIME.ordinal()] = timeStr;
+    				}
+    				
+
     				
     				boolean alreadyIn = false;
     				
@@ -477,6 +479,8 @@ public class ZhiboManager {
     				timeStr = todayStr + " " + timeStr;
     				timeStr = Long.toString(df.parse(timeStr).getTime());
     				eventDetailsVec.elementAt(i)[ZHIBOINDEX.TIME.ordinal()] = timeStr;
+    			}else if(timeStr.contains("(")){
+    				eventDetailsVec.elementAt(i)[ZHIBOINDEX.TIME.ordinal()] = timeStr;
     			}else{
     				timeStr = Long.toString(df.parse(timeStr).getTime());
     				eventDetailsVec.elementAt(i)[ZHIBOINDEX.TIME.ordinal()] = timeStr;
@@ -592,22 +596,29 @@ public class ZhiboManager {
             	
             	
             	for(int i = 0; i < eventDetailsVec.size(); i++){
-        			String currentTimeArray[] = currentTime.split(" ");
-        			
-        			long time = Long.parseLong(eventDetailsVec.elementAt(i)[TYPEINDEX.TIME.ordinal()]);
-        			
-        			String eventTimeArray[] = df.format(time).split(" ");
-        			
-        			String timeStr = "";
-        			
-        			if(currentTimeArray[0].contains(eventTimeArray[0])){
-        				timeStr = eventTimeArray[1];
-        			}else{
-        				timeStr = df.format(time);
-        			}
-        			
-        			
-        			eventDetailsVec.elementAt(i)[TYPEINDEX.TIME.ordinal()] = timeStr;
+            		
+            		if(eventDetailsVec.elementAt(i)[TYPEINDEX.TIME.ordinal()].contains("(")){
+            			
+            		}else{
+            			String currentTimeArray[] = currentTime.split(" ");
+            			
+            			long time = Long.parseLong(eventDetailsVec.elementAt(i)[TYPEINDEX.TIME.ordinal()]);
+            			
+            			String eventTimeArray[] = df.format(time).split(" ");
+            			
+            			String timeStr = "";
+            			
+            			if(currentTimeArray[0].contains(eventTimeArray[0])){
+            				timeStr = eventTimeArray[1];
+            			}else{
+            				timeStr = df.format(time);
+            			}
+            			
+            			
+            			eventDetailsVec.elementAt(i)[TYPEINDEX.TIME.ordinal()] = timeStr;
+            		}
+            		
+
             	}
             	
 
@@ -642,16 +653,74 @@ public class ZhiboManager {
 				
 				String timeStr = eventDetailsVec.elementAt(i)[ZHIBOINDEX.TIME.ordinal()];
 				
+				if(timeStr.contains("(")){
+					
+					String[] item = eventDetailsVec.elementAt(i).clone();
+					item[ZHIBOINDEX.TIME.ordinal()] = timeStr;
+					//boolean res = pDataManager.saveTofile(item);	
+					
+					
+					
+					//System.out.println("(0 - 0)zhibo save success:" + Arrays.toString(item));
+					
+					boolean sendMail = false;
+					
+					String eventName = item[ZHIBOINDEX.EVENTNAMNE.ordinal()];
+	    			double p0h = Double.parseDouble(item[ZHIBOINDEX.PERIOD0HOME.ordinal()]);
+	    			double p0o = Double.parseDouble(item[ZHIBOINDEX.PERIOD0OVER.ordinal()]);
+	    			
+	    			String sendTitle = "LL " + eventName + " " + timeStr;
+	    			String sendContent = "";
+					
+/*						if(Math.abs(p0h) >= Zhibop0hSendNumber){
+						sendMail = true;
+						sendContent = "全场让球: " + String.format("%.0f\n", p0h);
+					}*/
+					
+					if(Math.abs(p0o) >= Zhibop0oSendNumber){
+						sendMail = true;
+						sendContent += "全场大小: " + String.format("%.0f\n", p0o);
+					}
+					
+					boolean sendalready = false;
+					for(int j = 0; j < alreadSendmailEvents.size(); j++){
+						if(alreadSendmailEvents.elementAt(j).equals(item[ZHIBOINDEX.EVENTNAMNE.ordinal()])){
+							sendalready = true;
+						}
+					}
+					
+					
+					if(sendMail == true && false == sendalready){
+						
+						Vector<String> mails = StoneAge.getMailList();
+						
+						for(int k = 0; k < mails.size(); k++){
+							String mail = mails.elementAt(k);
+							MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", mail, sendTitle, sendContent);
+						}
+					
+						alreadSendmailEvents.add(item[ZHIBOINDEX.EVENTNAMNE.ordinal()]);
+						
+						
+					}
+					
+					eventDetailsVec.elementAt(i)[ZHIBOINDEX.SAVED.ordinal()] = "1";	
+					
+					continue;
+				}
+				
 				if(!timeStr.contains("-")){
 					timeStr = todayStr + " " + timeStr;
 				}
 				
 				long currentTime = System.currentTimeMillis();
 				
-				long passMinutes = 108*60*1000;
+				long passMinutes = 120*60*1000;
 				
 				long twoMinutes = 2*60*1000;
 				
+				
+
 				
 				java.util.Date time = dfMin.parse(timeStr);
 				
@@ -677,37 +746,7 @@ public class ZhiboManager {
 					boolean res = pDataManager.saveTofile(item);	
 					
 					
-/*					boolean sendMail = false;
-					
-					String eventName = item[ZHIBOINDEX.EVENTNAMNE.ordinal()];
-	    			double p0h = Double.parseDouble(item[ZHIBOINDEX.PERIOD0HOME.ordinal()]);
-	    			double p0o = Double.parseDouble(item[ZHIBOINDEX.PERIOD0OVER.ordinal()]);
-	    			
-	    			String sendTitle = "LL " + eventName + " " + timeStr;
-	    			String sendContent = "";
-					
-						if(Math.abs(p0h) >= Zhibop0hSendNumber){
-						sendMail = true;
-						sendContent = "全场让球: " + String.format("%.0f\n", p0h);
-					}
-					
-					if(Math.abs(p0o) >= Zhibop0oSendNumber && p0o < 0){
-	    			//if(Math.abs(p0o) >= 1000){
-						sendMail = true;
-						sendContent += "全场大小: " + String.format("%.0f\n", p0o);
-					}
-					
-					if(sendMail == true && !alreadSendmailEvents.contains(sendTitle)){
-						MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", sendTitle, sendContent);
-						MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "43069453@qq.com", sendTitle, sendContent);
-						MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "490207143@qq.com", sendTitle, sendContent);
-						MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "2503706418@qq.com", sendTitle, sendContent);
-						MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "281426295@qq.com", sendTitle, sendContent);
-						MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "84131403@qq.com", sendTitle, sendContent);	
-					
-						alreadSendmailEvents.add(sendTitle);
-						
-					}*/
+
 					
 					
 					
@@ -743,13 +782,7 @@ public class ZhiboManager {
 								String mail = mails.elementAt(k);
 								MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", mail, sendTitle, sendContent);
 							}
-							
-/*							MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", sendTitle, sendContent);
-							MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "43069453@qq.com", sendTitle, sendContent);
-							MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "490207143@qq.com", sendTitle, sendContent);
-							MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "2503706418@qq.com", sendTitle, sendContent);
-							MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "281426295@qq.com", sendTitle, sendContent);
-							MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "84131403@qq.com", sendTitle, sendContent);*/							
+						
 							
 						}
 						

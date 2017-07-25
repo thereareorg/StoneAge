@@ -3,6 +3,7 @@ package team.gl.nio.cln;
 import java.awt.Color;
 import java.text.SimpleDateFormat;
 
+import MergeNew.MergeNewManager;
 import P8.MergeManager;
 import P8.StoneAge;
 import P8.ZhiboManager;
@@ -42,6 +43,8 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
        
        
        time1 = System.currentTimeMillis();
+       
+       //System.out.println(res);
            
        
        //ZhiboManager.setStateText("		连接成功");
@@ -61,7 +64,7 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
                
                ZhiboManager.constructEventsVec((String)msg);
                
-               ZhiboManager.sendMails();
+               
                
                ZhiboManager.sortEventDetails();
                
@@ -72,14 +75,28 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
                }
                
                MergeManager.constructMergeRes();
+               MergeManager.saveEvents();
+               
+               //可以做一些改变显示的事情
                MergeManager.updateEventsDetails();
+               
+               
                MergeManager.copyTofinalEventsDetails();
+               
+               
+               MergeNewManager.constructMergeRes();
+               MergeNewManager.saveEvents();
+             //可以做一些改变显示的事情
+               MergeNewManager.updateEventsDetails();
+               
+               MergeNewManager.copyTofinalEventsDetails();
+               
                
                ZhiboManager.saveEvents();
                
                
                
-               MergeManager.saveEvents();
+               
                
                ZhiboManager.setStateText("		连接成功");
                
@@ -92,7 +109,7 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
        if(!lastRes.contains(res)){
     	   
     	   if(System.currentTimeMillis() - printTime > 300*1000){
-    		   System.out.println(res);
+    		   //System.out.println(res);
     		   printTime =  System.currentTimeMillis();
     	   }
     	   
@@ -189,7 +206,7 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
              
              ZhiboManager.sortEventDetails();
              
-             ZhiboManager.sendMails();
+             
              
              ZhiboManager.updateEventsDetailsData();
              
@@ -212,11 +229,24 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
              
              MergeManager.clearMergeData();
              MergeManager.constructMergeRes();
-             MergeManager.copyTofinalEventsDetails();
-             MergeManager.updateEventsDetails();
-           
              
              MergeManager.saveEvents();
+             
+             MergeManager.updateEventsDetails();
+             MergeManager.copyTofinalEventsDetails();
+             
+             
+             
+             MergeNewManager.clearMergeData();
+             MergeNewManager.constructMergeRes();
+             MergeNewManager.saveEvents();
+           //可以做一些改变显示的事情
+             MergeNewManager.updateEventsDetails();
+             
+             MergeNewManager.copyTofinalEventsDetails();
+           
+             
+             
     		
     	}catch(Exception e){
     		e.printStackTrace();

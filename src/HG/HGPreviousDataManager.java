@@ -1,11 +1,10 @@
-package P8;
+package HG;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
@@ -14,11 +13,18 @@ import java.util.Vector;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-public class MergePreviousDataManager {
+import P8.PreviousDataWindow;
+
+import P8.ZHIBOINDEX;
+
+public class HGPreviousDataManager {
+	
 	BufferedWriter fw = null;  //写	
 	BufferedReader reader = null; //读
 	
 	Vector<String[]> pEventsDetails = new Vector<String[]>();
+	
+	HGPreviousDataWindow pdataWnd = null; 
 	
 	
 	private ReadWriteLock lockepSubeventsDetails = new ReentrantReadWriteLock();
@@ -26,14 +32,14 @@ public class MergePreviousDataManager {
 	Vector<String[]> pSubEventsDetails = new Vector<String[]>();
 	
 	
+	Vector<String[]> pLatestEventsDetails = new Vector<String[]>();
 	
-	MergePreviousDataWindow pdataWnd = null; 
 	
-	MergePreviousDataManager(MergePreviousDataWindow wnd) {
+	HGPreviousDataManager(HGPreviousDataWindow wnd) {
 		pdataWnd = wnd;
 	}
 	
-	public void init() throws IOException{
+	public void init(){
 		
 		try{
 			
@@ -43,7 +49,7 @@ public class MergePreviousDataManager {
 				dir.mkdirs();
 			}
 			
-			File file = new File("data/" + "mergeevents"
+			File file = new File("data/" + "hgevents"
 					+ ".data");
 			
 			
@@ -74,13 +80,12 @@ public class MergePreviousDataManager {
 			
 			constructPmergeData();
 			
+			constructLatestevents();
 			
 			
 			
 		}catch(Exception e){
 			e.printStackTrace();
-		}finally{
-			reader.close();
 		}
 		
 
@@ -88,38 +93,38 @@ public class MergePreviousDataManager {
 	}
 	
 	
-	public boolean saveTofile(String[] item){
+	public boolean saveTofile(String[] pEventDeatils){
 		
 		try{
 			
 			for(int i = 0; i < pEventsDetails.size(); i++){
-				if(pEventsDetails.elementAt(i)[ZHIBOINDEX.EVENTNAMNE.ordinal()].contains(item[ZHIBOINDEX.EVENTNAMNE.ordinal()]) && 
-						pEventsDetails.elementAt(i)[ZHIBOINDEX.TIME.ordinal()].contains(item[ZHIBOINDEX.TIME.ordinal()])){
+				if(pEventsDetails.elementAt(i)[HGINDEX.EVENTID.ordinal()].contains(pEventDeatils[HGINDEX.EVENTID.ordinal()])){
 					return false;
 				}
 			}
 			
 			
-			File file = new File("data/" + "mergeevents"
+			File file = new File("data/" + "hgevents"
 					+ ".data");
 			
 			BufferedWriter fwlocal = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, true), "UTF-8"));
 			
 			
-			fwlocal.append(item[0] + "," + item[1] +  "," + item[2] + "," + 
-					item[3] + "," + item[4] + "," + item[5] + "," + item[6] + "," + 
-					item[7] + "," + item[8] + "," + item[9] + "," + item[10] + ","
-					+ item[11] + "," + item[12] + "," + item[13]+ "," + item[14]+ "," + item[15]+ "," + item[16]+ "," + item[17]+ "," + item[18]);
+			fwlocal.append(pEventDeatils[0] + "," + pEventDeatils[1] +  "," + pEventDeatils[2] + "," + 
+					pEventDeatils[3] + "," + pEventDeatils[4] + "," + pEventDeatils[5] + "," + pEventDeatils[6] + "," + 
+					pEventDeatils[7]);
 			fwlocal.newLine();
 			fwlocal.flush();
 			
 			fwlocal.close();
 			
-			pEventsDetails.add(item);
+			pEventsDetails.add(pEventDeatils);
 			
 			updatepEventsDetails();
 			
 			constructPmergeData();
+			
+			constructLatestevents();
 			
 			return true;
 			
@@ -134,7 +139,7 @@ public class MergePreviousDataManager {
 		
 		try{
 			
-/*			File file = new File("data/" + "mergeevents"
+/*			File file = new File("data/" + "events"
 					+ ".data");
 			
 			BufferedReader reader1 = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8")); // 指定读取文件的编码格式，要和写入的格式一致，以免出现中文乱码,
@@ -150,7 +155,8 @@ public class MergePreviousDataManager {
 				String[] event = str.split(",");
 				
 				pEventsDetails.add(event);
-
+				
+				
 				
 				}*/
 
@@ -169,19 +175,93 @@ public class MergePreviousDataManager {
 
 	}
 	
-	
-	public void constructPmergeData(){
-		
+	//皇冠单式盘开赛就消失，所以从保存的数据里面提取
+	public void constructLatestevents(){
 		
 		
 		try{
 			
+			
+			if(pLatestEventsDetails.size() != 0){
+				pLatestEventsDetails.clear();
+			}
+			
+			SimpleDateFormat dfMin = new SimpleDateFormat("yyyy-MM-dd HH:mm");// 设置日期格式
+			
+			SimpleDateFormat dfDay = new SimpleDateFormat("yyyy-MM-dd");// 设置日期格式
+
+
+			long currentTimeL = System.currentTimeMillis();
+			
+
+			
+			
+			
+
+			
+			for(int i = 0; i < pEventsDetails.size(); i++){
+				String timeStr = pEventsDetails.elementAt(i)[HGINDEX.TIME.ordinal()];
+				java.util.Date timeDate = dfMin.parse(timeStr);
+				
+				Calendar time = Calendar.getInstance();  
+				time.setTime(timeDate);
+				
+				String[] tmp = pEventsDetails.elementAt(i).clone();
+				tmp[HGINDEX.TIME.ordinal()] = Long.toString(time.getTimeInMillis());
+				
+				
+				if(currentTimeL - time.getTimeInMillis()  < 2*60*60*1000){
+					pLatestEventsDetails.add(tmp);
+				}
+				
+							
+			}
+
+			
+			
+			
+			
+			
+		}catch(Exception e){
+			
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
+	public Vector<String[]> getpLatestevents(){
+		try{
+			
+			
+			
+			Vector<String[]> tmp = (Vector<String[]>) pLatestEventsDetails.clone();
+			
+			
+			
+			
+			return tmp;
+			
+			
+		}catch(Exception e){
+			
+			
+			e.printStackTrace();
+			
+			return null;
+		}
+	}
+	
+	
+	
+	public void constructPmergeData(){
+		
+		try{
 			lockepSubeventsDetails.writeLock().lock();
 			
 			if(pSubEventsDetails.size() != 0){
 				pSubEventsDetails.clear();
 			}
-			
 			
 			SimpleDateFormat dfMin = new SimpleDateFormat("yyyy-MM-dd HH:mm");// 设置日期格式
 			
@@ -212,7 +292,7 @@ public class MergePreviousDataManager {
 
 			
 			for(int i = 0; i < pEventsDetails.size(); i++){
-				String timeStr = pEventsDetails.elementAt(i)[TYPEINDEX.TIME.ordinal()];
+				String timeStr = pEventsDetails.elementAt(i)[HGINDEX.TIME.ordinal()];
 				java.util.Date timeDate = dfMin.parse(timeStr);
 				
 				Calendar time = Calendar.getInstance();  
@@ -224,6 +304,9 @@ public class MergePreviousDataManager {
 				}
 							
 			}
+
+			
+			
 			
 			lockepSubeventsDetails.writeLock().unlock();
 			
@@ -261,6 +344,8 @@ public class MergePreviousDataManager {
 	
 	
 	
+	
+	
 	public String[] findLatestEvents(String eventName){
 		
 		
@@ -282,8 +367,8 @@ public class MergePreviousDataManager {
 			
 			for(int i = 0; i < pEventsDetails.size(); i++){
 				item = pEventsDetails.elementAt(i).clone();
-				if(item[MERGEINDEX.EVENTNAMNE.ordinal()].contains(eventName)){
-					java.util.Date Mintime = dfMin.parse(item[MERGEINDEX.TIME.ordinal()]);
+				if(item[HGINDEX.EVENTNAMNE.ordinal()].contains(eventName)){
+					java.util.Date Mintime = dfMin.parse(item[ZHIBOINDEX.TIME.ordinal()]);
 					
 					Calendar eventTime = Calendar.getInstance();  
 					eventTime.setTime(Mintime);
@@ -310,6 +395,7 @@ public class MergePreviousDataManager {
 		return null;
 
 	}
+	
 	
 	
 	

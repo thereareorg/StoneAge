@@ -46,6 +46,7 @@ import java.awt.Color;
 
 
 
+
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;  
@@ -72,9 +73,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import P8.Common;
-import P8.MergeManager;
 import P8.StoneAge;
-import P8.TYPEINDEX;
 
 import java.text.SimpleDateFormat;
 import java.util.concurrent.atomic.AtomicLong;
@@ -231,7 +230,118 @@ public class HGEventsDetailsWindow extends JFrame
         
     }  
 	
+	private void createPopupMenu() {  
+        m_popupMenu = new JPopupMenu();  
+          
+        chooseMenItem = new JMenuItem();  
+        chooseMenItem.setText("选择");  
+        
+        
+        mergeMenItem = new JMenuItem();
+        mergeMenItem.setText("合并");
+        
+        
+        mergeMenItem.addActionListener(new java.awt.event.ActionListener() {  
+            public void actionPerformed(java.awt.event.ActionEvent evt) {  
+                //该操作需要做的事  
+            	
+            	try{
+            		
+	            	if(focusedRowIndex != -1 && focusedRowIndex < detailsData.size()){
+	            		
 
+	            			
+	            			HGMergeManager.hgSelectedRow = detailsData.elementAt(focusedRowIndex);
+	            			System.out.println(Arrays.toString(HGMergeManager.hgSelectedRow));
+
+	            			HGMergeManager.showMergeWnd(true);
+	            			
+	            			HGMergeManager.hgSelectedRow = null;
+	            			HGMergeManager.p8SelectedRow = null;
+
+	            	}
+
+	    	        
+            	}catch(Exception e){
+            		e.printStackTrace();
+            	}
+            	
+
+            	
+
+            	
+            }  
+        });  
+        
+        chooseMenItem.addActionListener(new java.awt.event.ActionListener() {  
+            public void actionPerformed(java.awt.event.ActionEvent evt) {  
+                //该操作需要做的事  
+            	
+            	try{
+            		
+	            	if(focusedRowIndex != -1 && focusedRowIndex < detailsData.size()){
+
+	            			HGMergeManager.hgSelectedRow = detailsData.elementAt(focusedRowIndex);
+	            			System.out.println(Arrays.toString(HGMergeManager.hgSelectedRow));
+
+	            	}
+
+	    	        
+            	}catch(Exception e){
+            		e.printStackTrace();
+            	}
+            	
+
+            	
+
+            	
+            }  
+        });  
+        m_popupMenu.add(chooseMenItem);  
+        m_popupMenu.add(mergeMenItem);  
+    }  
+	
+	
+	
+	//鼠标右键点击事件  
+	   private void mouseRightButtonClick(java.awt.event.MouseEvent evt) {  
+	       //判断是否为鼠标的BUTTON3按钮，BUTTON3为鼠标右键  
+	       if (evt.getButton() == java.awt.event.MouseEvent.BUTTON3) {  
+	           //通过点击位置找到点击为表格中的行  
+	           focusedRowIndex = table.rowAtPoint(evt.getPoint());  
+	           if (focusedRowIndex == -1) {  
+	               return;  
+	           }  
+	           //将表格所选项设为当前右键点击的行  
+	           table.setRowSelectionInterval(focusedRowIndex, focusedRowIndex);  
+	           
+	           System.out.println(focusedRowIndex);
+	           //弹出菜单  
+	           
+	           if(HGMergeManager.p8SelectedRow == null){
+	        	   //chooseMenItem.setText("选择");
+	        	   
+	        	   mergeMenItem.setEnabled(false);
+	        	   
+	        	   //selectedOrMerge = 0;
+	        	   
+	           }else{
+	        	   mergeMenItem.setEnabled(true);
+	           }
+	           
+	           
+	           m_popupMenu.show(table, evt.getX(), evt.getY());  
+	       }  
+	  
+	   }  
+	
+	
+	
+	
+	private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {  
+		  
+	       mouseRightButtonClick(evt);  
+	}  
 	
 	
 	
@@ -285,7 +395,7 @@ public class HGEventsDetailsWindow extends JFrame
 		//只显示走地盘
 		if(bonlyShowInplay == true){
 			for(int i = 0; i < originalDetailsData.size(); i++){
-				if(originalDetailsData.elementAt(i)[TYPEINDEX.EVENTNAMNE.ordinal()].contains("滚动盘")){
+				if(originalDetailsData.elementAt(i)[HGINDEX.EVENTNAMNE.ordinal()].contains("滚动盘")){
 					DetailsDatatmp.add(originalDetailsData.elementAt(i));
 				}
 			}
@@ -294,7 +404,7 @@ public class HGEventsDetailsWindow extends JFrame
 		//只显示单式盘
 		if(bonlyShowNotInplay == true){
 			for(int i = 0; i < originalDetailsData.size(); i++){
-				if(!originalDetailsData.elementAt(i)[TYPEINDEX.EVENTNAMNE.ordinal()].contains("滚动盘")){
+				if(!originalDetailsData.elementAt(i)[HGINDEX.EVENTNAMNE.ordinal()].contains("滚动盘")){
 					DetailsDatatmp.add(originalDetailsData.elementAt(i));
 				}
 			}
@@ -311,7 +421,7 @@ public class HGEventsDetailsWindow extends JFrame
 		//只看五大联赛
 		if(bonlyShow5Big == true){
 			for(int i = 0; i < DetailsDatatmp.size(); i++){
-				if(HGhttp.isInShowLeagueName(DetailsDatatmp.elementAt(i)[TYPEINDEX.LEAGUENAME.ordinal()])){
+				if(HGhttp.isInShowLeagueName(DetailsDatatmp.elementAt(i)[HGINDEX.LEAGUENAME.ordinal()])){
 					DetailsDatatmp1.add(DetailsDatatmp.elementAt(i));
 				}
 			}
@@ -327,7 +437,7 @@ public class HGEventsDetailsWindow extends JFrame
 		
 		//隐藏数额
 		for(int i = 0; i< DetailsDatatmp1.size(); i++){
-			String eventName = DetailsDatatmp1.elementAt(i)[TYPEINDEX.EVENTNAMNE.ordinal()];
+			String eventName = DetailsDatatmp1.elementAt(i)[HGINDEX.EVENTNAMNE.ordinal()];
 
 			
 			
@@ -335,8 +445,8 @@ public class HGEventsDetailsWindow extends JFrame
 			double betAmt2 = 0.0;
 
 			
-			String bet1Str = DetailsDatatmp1.elementAt(i)[TYPEINDEX.PERIOD0HOME.ordinal()];
-			String bet2Str = DetailsDatatmp1.elementAt(i)[TYPEINDEX.PERIOD0OVER.ordinal()];
+			String bet1Str = DetailsDatatmp1.elementAt(i)[HGINDEX.PERIOD0HOME.ordinal()];
+			String bet2Str = DetailsDatatmp1.elementAt(i)[HGINDEX.PERIOD0OVER.ordinal()];
 
 			if(bet1Str.contains("=")){
 				String[] tmp = bet1Str.split("=");
@@ -575,6 +685,8 @@ public class HGEventsDetailsWindow extends JFrame
 			}
         });
         
+        createPopupMenu();
+        
         
         
         panelNorth.add(labelInterval);
@@ -619,6 +731,13 @@ public class HGEventsDetailsWindow extends JFrame
 	    table = new JTable(tableMode);
 
         JScrollPane scroll = new JScrollPane(table); 
+        
+        
+        table.addMouseListener(new java.awt.event.MouseAdapter() {  
+            public void mouseClicked(java.awt.event.MouseEvent evt) {  
+                jTable1MouseClicked(evt);  
+            }  
+        });  
         
 
         

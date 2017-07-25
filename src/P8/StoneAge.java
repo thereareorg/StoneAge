@@ -2,6 +2,7 @@
 
 
 
+import java.awt.Button;
 import java.awt.Container; 
 import java.awt.Frame;
 import java.awt.Panel;
@@ -34,8 +35,10 @@ import java.util.Vector;
 import javax.swing.ImageIcon;
 
 import HG.GrabHGEventsThread;
+import HG.HGMergeManager;
 import HG.HGhttp;
 import Mail.MailManager;
+import MergeNew.MergeNewManager;
 import team.gl.nio.cln.ZhiboClient;
 import team.gl.nio.svr.NettyServer;
 
@@ -45,7 +48,11 @@ import team.gl.nio.svr.NettyServer;
 public class StoneAge {
 	
 	
+	public static JButton btnHGpData;
+	
 	public static JButton btnMergepData;
+	
+	public static JButton btnNewMergepData;
 	
 	public static JButton btnZhibopData;
 	
@@ -61,6 +68,8 @@ public class StoneAge {
 	
 	public static boolean bHGLogin = false;
 	
+	public static boolean bScoreLogin = false;
+	
 	public static GrabEventsThread grabThead;
 	
 	public static GrabHGEventsThread grabhgThead;
@@ -71,6 +80,8 @@ public class StoneAge {
 	
 	public static JButton btnMergeWnd;
 	
+	public static JButton btnNewMergeWnd;
+	
 	public static Vector<String> mailList = new Vector<String>();
 	
 	
@@ -78,12 +89,21 @@ public class StoneAge {
 	
 	static ZhiboThread zhiboThread = null;
 	
+	private JButton scoreBtn = new JButton("比分网");
+	
+	
+	public static Score score = new Score();
+	
+	public static ScoreThread scorethread = null;
+	
+	
 	
 	
 	//public static boolean showMergeWnd = false;
 	public static boolean showP8 = false;
 	public static boolean showHG = false;
 	public static boolean showZhibo = false;
+	public static boolean showScore = false;
 
 	
 	public JTextField textFieldZhiboProxyAddress;
@@ -113,17 +133,13 @@ public class StoneAge {
 		mailList.add("2503706418@qq.com");
 		mailList.add("281426295@qq.com");
 		mailList.add("84131403@qq.com");
-		mailList.add("84131403@qq.com");
 		mailList.add("1131894627@qq.com");
 		mailList.add("228394940@qq.com");
 		mailList.add("2195876152@qq.com");
-		
-/*		MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", sendTitle, sendContent);
-		MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "43069453@qq.com", sendTitle, sendContent);
-		MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "490207143@qq.com", sendTitle, sendContent);
-		MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "2503706418@qq.com", sendTitle, sendContent);
-		MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "281426295@qq.com", sendTitle, sendContent);
-		MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "84131403@qq.com", sendTitle, sendContent);	*/
+		mailList.add("3215676858@qq.com");
+		mailList.add("573306035@qq.com");
+		mailList.add("45517203@qq.com");
+
 	}
 	
 	public static Vector<String> getMailList(){
@@ -151,6 +167,11 @@ public class StoneAge {
 		}
 */		
 		
+
+		scorethread = new ScoreThread();
+		scorethread.start();
+		
+		
 		initMailList();
 		
 		accMgr = new AccountManager(accountWnd);
@@ -167,7 +188,15 @@ public class StoneAge {
 		
 		MergeManager.init();
 		
+		MergeNewManager.init();
+		
+		ScoreMergeManager.init();
+		
+		HGMergeManager.init();
+		
 		P8Http.initShowLeagueName();
+		
+		HGhttp.initShowLeagueName();
 		
 		ZhiboManager.initShowLeagueName();
 
@@ -267,59 +296,11 @@ public class StoneAge {
         
         
         
-        int Xposition = 100;
+        int Xposition = 0;
         int Yposition = 140;
         
         
-		btnMergepData = new JButton("合并历史注单");
-		btnMergepData.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				MergeManager.updatepDataDetails();
-				MergeManager.showpDataWnd();
-			}
-		});
-		
-		
-		btnMergepData.setSize(100, 25);
-		btnMergepData.setLocation(Xposition, Yposition - 80);
-		
-		
-		contain.add(btnMergepData);
-        
-		btnZhibopData = new JButton("LL历史注单");
-		btnZhibopData.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				ZhiboManager.updatepDataDetails();
-				ZhiboManager.showpDataWnd();
-			}
-		});
-		
-		
-		btnZhibopData.setSize(100, 25);
-		btnZhibopData.setLocation(Xposition, Yposition - 40);
-		
-		
-		contain.add(btnZhibopData);
-        
-        
-        
-		btnpData = new JButton("历史注单");
-		btnpData.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				P8Http.updatepDataDetails();
-				P8Http.showpDataWnd();
-			}
-		});
-		
-		
-		btnpData.setSize(100, 25);
-		btnpData.setLocation(Xposition, Yposition);
-		
-		
-		contain.add(btnpData);
-		
-		
-		btnLogin = new JButton("即时注单");
+		btnLogin = new JButton("P8即时注单");
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -330,9 +311,7 @@ public class StoneAge {
 					}
 				
 					accountWnd.dispose();
-					
-					//btnAccount.setEnabled(false);
-					
+
 					btnLogin.setEnabled(false);
 					
 					grabThead = new GrabEventsThread(sa);
@@ -344,96 +323,31 @@ public class StoneAge {
 		});
 		
 		
-		btnLogin.setSize(100, 25);
-		btnLogin.setLocation(Xposition, Yposition + 40);
+		btnLogin.setSize(120, 25);
+		btnLogin.setLocation(Xposition, Yposition - 120);
 		
 		
 		contain.add(btnLogin);
 		
 		
-		
-		
-		
-		btnhgLogin = new JButton("HG注单");
-		btnhgLogin.addActionListener(new ActionListener() {
+		btnpData = new JButton("P8历史注单");
+		btnpData.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				
-				if(bHGLogin == true){
-					HGhttp.showEventsDeatilsTable();
-					return;
-				}
-				
-					
-					
-				grabhgThead = new GrabHGEventsThread(sa);
-				
-				grabhgThead.start();
-				
-				showHG = true;
-					
-					
+				P8Http.updatepDataDetails();
+				P8Http.showpDataWnd();
 			}
 		});
 		
 		
-		btnhgLogin.setSize(100, 25);
-		btnhgLogin.setLocation(Xposition, Yposition + 80);
+		btnpData.setSize(120, 25);
+		btnpData.setLocation(Xposition + 150, Yposition - 120);
 		
 		
-		contain.add(btnhgLogin);
+		contain.add(btnpData);
 		
-		
-		
-		
-		
-		
-		
-		btnAccount = new JButton("设置");
-		btnAccount.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				
-				accountWnd.setVisible(true);
-				
-
-			}
-		});
-		
-		
-		btnAccount.setSize(100, 25);
-		btnAccount.setLocation(Xposition, Yposition + 120);
-
-		
-		contain.add(btnAccount);
-		
-		
-		
-		
-		
-		
-		
-		JLabel labelZhiboProxyAddress = new JLabel("网址:");
-		labelZhiboProxyAddress.setSize(50, 25);
-		labelZhiboProxyAddress.setLocation(Xposition + 200, Yposition);
-
-		textFieldZhiboProxyAddress = new JTextField();
-		textFieldZhiboProxyAddress.setSize(100, 25);
-		textFieldZhiboProxyAddress.setLocation(Xposition + 50 + 200, Yposition);
-		textFieldZhiboProxyAddress.setText("110.165.46.85");
-
-		JLabel labelZhiboProxyAccount = new JLabel("端口:");
-		labelZhiboProxyAccount.setSize(50, 25);
-		labelZhiboProxyAccount.setLocation(Xposition + 200, Yposition + 30);
         
-        
-        
-		textFieldZhiboProxyAccount = new JTextField();
-		textFieldZhiboProxyAccount.setSize(100, 25);
-		textFieldZhiboProxyAccount.setLocation(Xposition + 50 + 200, Yposition + 30);
-		textFieldZhiboProxyAccount.setText("25836");
-        
-        
-		btnZhiboConnect = new JButton("显示智博");
+		
+		btnZhiboConnect = new JButton("LL即时注单");
 		btnZhiboConnect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -478,13 +392,80 @@ public class StoneAge {
 			}
 		});
 
-		btnZhiboConnect.setSize(90, 25);
-		btnZhiboConnect.setLocation(Xposition + 200, Yposition + 60);
+		btnZhiboConnect.setSize(120, 25);
+		btnZhiboConnect.setLocation(Xposition, Yposition - 80);
+		
+        
+		
+		btnZhibopData = new JButton("LL历史注单");
+		btnZhibopData.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ZhiboManager.updatepDataDetails();
+				ZhiboManager.showpDataWnd();
+			}
+		});
+		
+		
+		btnZhibopData.setSize(120, 25);
+		btnZhibopData.setLocation(Xposition + 150, Yposition - 80);
+		
+		
+		contain.add(btnZhibopData);
+		
+        
 		
 		
 		
+		btnhgLogin = new JButton("HG即时注单");
+		btnhgLogin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				
+				if(bHGLogin == true){
+					HGhttp.showEventsDeatilsTable();
+					return;
+				}
+				
+					
+					
+				grabhgThead = new GrabHGEventsThread(sa);
+				
+				grabhgThead.start();
+				
+				showHG = true;
+					
+					
+			}
+		});
 		
-		btnMergeWnd = new JButton("显示合并");
+		
+		btnhgLogin.setSize(120, 25);
+		btnhgLogin.setLocation(Xposition, Yposition - 40);
+		
+		
+		contain.add(btnhgLogin);
+		
+		
+		
+        
+		btnHGpData = new JButton("HG历史注单");
+		btnHGpData.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				HGhttp.updatepDataDetails();
+				HGhttp.showpDataWnd();
+			}
+		});
+		
+		
+		btnHGpData.setSize(120, 25);
+		btnHGpData.setLocation(Xposition+ 150, Yposition - 40);
+		
+		contain.add(btnHGpData);
+        
+        
+		
+		
+		btnMergeWnd = new JButton("合并即时注单");
 		
 		btnMergeWnd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -527,9 +508,175 @@ public class StoneAge {
 			}
 		});
 		
-		btnMergeWnd.setSize(90, 25);
-		btnMergeWnd.setLocation(Xposition + 200, Yposition + 120);
+		btnMergeWnd.setSize(120, 25);
+		btnMergeWnd.setLocation(Xposition, Yposition);
 		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+        
+		btnMergepData = new JButton("合并历史注单");
+		btnMergepData.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				MergeManager.updatepDataDetails();
+				MergeManager.showpDataWnd();
+			}
+		});
+		
+		
+		btnMergepData.setSize(120, 25);
+		btnMergepData.setLocation(Xposition + 150, Yposition);
+		
+		
+		contain.add(btnMergepData);
+		
+		
+		
+		btnNewMergeWnd = new JButton("新合并即时注单");
+		
+		btnNewMergeWnd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				try{
+					
+					if(bLogin == true && zhiboConnected == true){
+				        MergeNewManager.clearMergeData();
+				        MergeNewManager.constructMergeRes();
+				        MergeNewManager.updateEventsDetails();
+				        MergeNewManager.showMergeDetailsWnd(true);
+					}
+					
+					if(bLogin == false){
+						JOptionPane.showMessageDialog(null,"请先连接平博");
+						return;
+					}
+					
+					
+					if(zhiboConnected == false){
+						JOptionPane.showMessageDialog(null,"请先连接智博");
+						return;
+					}
+					
+
+					//showMergeWnd = true;
+					
+			        MergeNewManager.clearMergeData();
+			        MergeNewManager.constructMergeRes();
+			        MergeNewManager.updateEventsDetails();
+			        MergeNewManager.showMergeDetailsWnd(true);
+
+					
+				}catch(Exception ex){
+					ex.printStackTrace();
+				}
+				
+
+
+			}
+		});
+		
+		btnNewMergeWnd.setSize(120, 25);
+		btnNewMergeWnd.setLocation(Xposition, Yposition + 40);
+		
+		
+		
+		
+		
+		
+		btnNewMergepData = new JButton("新合并历史注单");
+		btnNewMergepData.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				MergeNewManager.updatepDataDetails();
+				MergeNewManager.showpDataWnd();
+			}
+		});
+		
+		
+		btnNewMergepData.setSize(120, 25);
+		btnNewMergepData.setLocation(Xposition + 150, Yposition + 40);
+		
+		
+		contain.add(btnNewMergepData);
+		
+		
+
+		
+        scoreBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				if(StoneAge.bScoreLogin == true){
+					StoneAge.score.showscoredetailswnd();
+					return;
+				}
+
+				StoneAge.showScore = true;
+				
+				
+				
+			}
+		});
+        
+        scoreBtn.setLocation(Xposition, Yposition + 80);
+        scoreBtn.setSize(90, 25);
+        
+        contain.add(scoreBtn);
+
+		
+		
+		
+		
+		
+		
+		
+		btnAccount = new JButton("设置");
+		btnAccount.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				accountWnd.setVisible(true);
+				
+
+			}
+		});
+		
+		
+		btnAccount.setSize(120, 25);
+		btnAccount.setLocation(Xposition, Yposition + 120);
+
+		
+		contain.add(btnAccount);
+		
+		
+		
+		
+		
+		
+		
+		JLabel labelZhiboProxyAddress = new JLabel("网址:");
+		labelZhiboProxyAddress.setSize(50, 25);
+		labelZhiboProxyAddress.setLocation(Xposition + 300, Yposition);
+
+		textFieldZhiboProxyAddress = new JTextField();
+		textFieldZhiboProxyAddress.setSize(120, 25);
+		textFieldZhiboProxyAddress.setLocation(Xposition + 50 + 300, Yposition);
+		textFieldZhiboProxyAddress.setText("110.165.46.85");
+
+		JLabel labelZhiboProxyAccount = new JLabel("端口:");
+		labelZhiboProxyAccount.setSize(50, 25);
+		labelZhiboProxyAccount.setLocation(Xposition + 300, Yposition + 30);
+        
+        
+        
+		textFieldZhiboProxyAccount = new JTextField();
+		textFieldZhiboProxyAccount.setSize(120, 25);
+		textFieldZhiboProxyAccount.setLocation(Xposition + 50 + 300, Yposition + 30);
+		textFieldZhiboProxyAccount.setText("25836");
+
 		
 		contain.add(labelZhiboProxyAddress);
 		contain.add(textFieldZhiboProxyAddress);
@@ -538,6 +685,7 @@ public class StoneAge {
 		contain.add(btnZhiboConnect);
 		
 		contain.add(btnMergeWnd);
+		contain.add(btnNewMergeWnd);
 		
 		
 

@@ -8,6 +8,9 @@ import io.netty.util.ReferenceCountUtil;
 
 import java.util.Vector;
 
+import HG.GrabHGEventsThread;
+import HG.HGhttp;
+import MergeNew.MergeNewManager;
 import P8.GrabEventsThread;
 import P8.MergeManager;
 import P8.P8Http;
@@ -25,11 +28,20 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         if(us.getReq().equals("request")) {
 	        Vector<String[]> datas = P8Http.getFinalEventsDetails();
 	        Vector<String[]> mergeDatas = MergeManager.getFinalEventsDetails();
+	        Vector<String[]> newMergeDatas = MergeNewManager.getFinalEventsDetails();
 	        Vector<String[]> mergepSubDatas = MergeManager.getpSubMergeevents();
+	        Vector<String[]> newMergepSubDatas = MergeNewManager.getpSubMergeevents();
 	        Vector<String[]> P8pSubDatas = P8Http.getpSubevents();
 	        Vector<String[]> ZhibopSubDatas = ZhiboManager.getpSubevents();
 	        
+	        Vector<String[]> hgpSubDatas = HGhttp.getpSubevents();
+	        
 	        String successTime = P8Http.getSuccessTime();
+	        
+	        
+	        Vector<String[]> hgdatas = HGhttp.getFinalEventsDetails();
+	        String hgsuccessTime = HGhttp.getSuccessTime();
+	        
 /*	        String [] strs1 = {"你好", "111","111","111","111","111","111", "111"};
 	    	String [] strs2 = {"222", "222","222","222","222","222","222", "222"};
 	    	
@@ -44,6 +56,14 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 	    	bag.setSuccessTime(successTime);
 	    	bag.setP8GrabStat(GrabEventsThread.grabStat);
 	    	bag.setMergeGrabStat(GrabEventsThread.grabStat&&ZhiboClientHandler.grabStat);
+	    	bag.sethgpSubDatas(hgpSubDatas);
+	    	bag.sethgDatas(hgdatas);
+	    	bag.sethgSuccessTime(hgsuccessTime);
+	    	bag.sethgGrabStat(GrabHGEventsThread.grabStat);
+	    	
+	    	bag.setNewMergeDatas(newMergeDatas);
+	    	bag.setNewMergepSubDatas(newMergepSubDatas);
+	    	
 	    	ctx.channel().writeAndFlush(bag);
         }
     }

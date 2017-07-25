@@ -78,6 +78,10 @@ public class GrabHGEventsThread  extends Thread{
 				HGhttp.clearEventsDetails();				
 				HGhttp.clearfailedCatchAccount();
 				
+				
+				HGhttp.geteventsfromesavedata();
+				
+				
 				int tryTimes = accounts.size() * 4;
 				
 				for(int i = 0, j= 0; i < accounts.size() && j < tryTimes; i++, j++){
@@ -139,7 +143,7 @@ public class GrabHGEventsThread  extends Thread{
 				
 				
 				if(HGhttp.isfailedAccountEmpty()){
-					//HGhttp.saveEvents();
+					HGhttp.saveEvents();
 					
 /*					sa.setConsoleout();
 					HGhttp.printEvents();

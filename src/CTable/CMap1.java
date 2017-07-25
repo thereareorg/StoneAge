@@ -1,15 +1,27 @@
 package CTable;
 import javax.swing.*;
 import javax.swing.table.*;
+
+import P8.MERGEINDEX;
 public class CMap1 implements CMap {
  public int span(int row, int column) {
-  if( column == 0 || column == 1 || column == 2 || column == 7 || column == 8|| column == 11|| column == 12)
-   return 2;
+	 if(column == MERGEINDEX.EVENTID.ordinal() || column == MERGEINDEX.LEAGUENAME.ordinal() || 
+			 column == MERGEINDEX.TIME.ordinal()  || column == MERGEINDEX.RQPK.ordinal()  || 
+			 column == MERGEINDEX.ZHIBOHRES.ordinal() || column == MERGEINDEX.PERIOD0HOME.ordinal() ||
+			 column == MERGEINDEX.DXQPK.ordinal() || column == MERGEINDEX.ZHIBOORES.ordinal() ||
+			 column == MERGEINDEX.PERIOD0OVER.ordinal()){
+		 return 2;
+	 }
+   
   return 1;
  }
  public int visibleCell(int row, int column) {
 	 
-	 if(column == 0 || column == 1 || column == 2 || column == 7 || column == 8|| column == 11|| column == 12){		
+	 if(column == MERGEINDEX.EVENTID.ordinal() || column == MERGEINDEX.LEAGUENAME.ordinal() || 
+			 column == MERGEINDEX.TIME.ordinal()  || column == MERGEINDEX.RQPK.ordinal()  || 
+			 column == MERGEINDEX.ZHIBOHRES.ordinal() || column == MERGEINDEX.PERIOD0HOME.ordinal() ||
+			 column == MERGEINDEX.DXQPK.ordinal() || column == MERGEINDEX.ZHIBOORES.ordinal() ||
+			 column == MERGEINDEX.PERIOD0OVER.ordinal()){		
 		 int res = 0;
 		 res = (int)(row/2);
 		 res = res*2;

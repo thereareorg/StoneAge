@@ -13,6 +13,17 @@ public int compare(Object o1, Object o2) {
 Object[] e1=(Object[])o1;
 Object[] e2=(Object[])o2;
 
+if((((String)e1[2]).contains("(") && ((String)e2[2]).contains("("))){
+	return 0;
+}else if((((String)e1[2]).contains("("))){
+	return -1;
+}else if(((String)e2[2]).contains("(")){
+	return 1;
+}
+
+
+
+
 if(Long.parseLong((String)e1[2]) > Long.parseLong((String)e2[2]))//����Ƚ��ǽ���,����-1�ĳ�1��������.
 {
    return 1;

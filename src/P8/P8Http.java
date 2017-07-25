@@ -2097,11 +2097,18 @@ public class P8Http {
 					if(sendMail == true && !inplaySendAlraedy.contains(sendTitle) ){
 						
 						Vector<String> mails = StoneAge.getMailList();
+
 						
-						for(int k = 0; k < mails.size(); k++){
+						for(int k = 0, b = 0; k < mails.size()&& b < 50; b++){
 							String mail = mails.elementAt(k);
-							MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", mail, sendTitle, sendContent);
+							if(true == MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", mail, sendTitle, sendContent)){
+								k++;
+							}else{
+								Thread.currentThread().sleep(2000);
+							}
+							
 						}
+						
 						
 						inplaySendAlraedy.add(sendTitle);
 						
@@ -2169,10 +2176,18 @@ public class P8Http {
 								
 								Vector<String> mails = StoneAge.getMailList();
 								
-								for(int k = 0; k < mails.size(); k++){
+
+								
+								for(int k = 0, b = 0; k < mails.size()&& b < 50; b++){
 									String mail = mails.elementAt(k);
-									MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", mail, sendTitle, sendContent);
+									if(true == MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", mail, sendTitle, sendContent)){
+										k++;
+									}else{
+										Thread.currentThread().sleep(2000);
+									}
+									
 								}
+								
 								
 /*								MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", sendTitle, sendContent);
 								MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "43069453@qq.com", sendTitle, sendContent);

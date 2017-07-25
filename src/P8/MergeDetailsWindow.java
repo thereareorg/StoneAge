@@ -84,6 +84,20 @@ public class MergeDetailsWindow extends JFrame{
 	    private JCheckBox onlyShowInplay = new JCheckBox("只看滚动盘");
 	    private JCheckBox onlyShowNotInplay = new JCheckBox("只看单式盘");
 	    
+	    
+	    private JLabel labeloneSide = new JLabel("占边设置:");
+	    private JCheckBox p8oneside = new JCheckBox("pp");
+	    private JCheckBox p8inplayoneside = new JCheckBox("PP走地");
+	    private JCheckBox zhibooneside = new JCheckBox("LL");
+	    private JCheckBox hgoneside = new JCheckBox("HG");
+	    
+	    
+	    private boolean bp8side = true;
+	    private boolean bzhiboside = true;
+	    private boolean bp8inplayside = false;
+	    private boolean bhgside = false;
+	    
+	    
 	    private boolean bonlyShow5Big = false;
 	    private boolean bonlyShowInplay = false;
 	    private boolean bonlyShowNotInplay = false;
@@ -346,158 +360,283 @@ public class MergeDetailsWindow extends JFrame{
 				
 				if(P8Http.isInShowLeagueName(leagueName) || true){
 					double betAmt1 =0.0;
-					double betp81 = 0.0;
-					double betzhibo1 = 0.0;
+					double betp81 = 0.0;					
 					double betp8inplay1 = 0.0;
+					double betzhibo1 = 0.0;
+					double bethg1 = 0.0;
 					
 					double betAmt2 = 0.0;
-					double betp82 = 0.0;
-					double betzhibo2 = 0.0;
+					double betp82 = 0.0;					
 					double betp8inplay2 = 0.0;
+					double betzhibo2 = 0.0;
+					double bethg2 = 0.0;
 					
-					double betAmt3 =0.0;
-					double betp83 = 0.0;
-					double betzhibo3 = 0.0;
-					double betp8inplay3 = 0.0;
-					
-					double betAmt4 = 0.0;
-					double betp84 = 0.0;
-					double betzhibo4 = 0.0;
-					double betp8inplay4 = 0.0;
+
+
 					
 					String str1 = DetailsDatatmp1.elementAt(i)[MERGEINDEX.PERIOD0HOME.ordinal()];
+					
+					
 					
 					if(str1.contains("=")){
 						String[] tmp = str1.split("=");
 						betAmt1 = Double.parseDouble(tmp[1]);
-						
-						String[] tmp1 = tmp[0].split("\\+");
-						tmp1[0] = tmp1[0].replace("(", "");
-						tmp1[0] = tmp1[0].replace(")", "");
-						
-					
-						tmp1[1] = tmp1[1].replace("(", "");
-						tmp1[1] = tmp1[1].replace(")", "");
-						
-						if(tmp1.length > 2){
-							tmp1[2] = tmp1[2].replace("(", "");
-							tmp1[2] = tmp1[2].replace(")", "");
-							betp8inplay1 = Double.parseDouble(tmp1[2]);
-						}
-						
-						betp81 = Double.parseDouble(tmp1[0]);
-						betzhibo1 = Double.parseDouble(tmp1[1]);
-						
-						
+
 					}else{
 						betAmt1 = Double.parseDouble(str1);
 					}
 					
 					
+					//全场让球
+					str1 = DetailsDatatmp1.elementAt(i)[MERGEINDEX.P8HRES.ordinal()];
+					
+					if(str1.contains("=")){
+						String[] tmp = str1.split("=");
+						betp81 = Double.parseDouble(tmp[1]);
+
+					}else{
+						betp81 = Double.parseDouble(str1);
+					}
+					
+					str1 = DetailsDatatmp1.elementAt(i)[MERGEINDEX.ZHIBOHRES.ordinal()];
+					
+					if(str1.contains("=")){
+						String[] tmp = str1.split("=");
+						betzhibo1 = Double.parseDouble(tmp[1]);
+
+					}else{
+						betzhibo1 = Double.parseDouble(str1);
+					}
+					
+					str1 = DetailsDatatmp1.elementAt(i)[MERGEINDEX.INP8HRES.ordinal()];
+					
+					if(str1.contains("=")){
+						String[] tmp = str1.split("=");
+						betp8inplay1 = Double.parseDouble(tmp[1]);
+
+					}else{
+						betp8inplay1 = Double.parseDouble(str1);
+					}
+					
+					str1 = DetailsDatatmp1.elementAt(i)[MERGEINDEX.HGHRES.ordinal()];
+					
+					
+					if(str1.contains("=")){
+						String[] tmp = str1.split("=");
+						bethg1 = Double.parseDouble(tmp[1]);
+
+					}else{
+						bethg1 = Double.parseDouble(str1);
+					}
+					
+					
+					
+					//全场大小
 					String str2 = DetailsDatatmp1.elementAt(i)[MERGEINDEX.PERIOD0OVER.ordinal()];
 					
 					if(str2.contains("=")){
 						String[] tmp = str2.split("=");
 						betAmt2 = Double.parseDouble(tmp[1]);
 						
-						String[] tmp1 = tmp[0].split("\\+");
-						tmp1[0] = tmp1[0].replace("(", "");
-						tmp1[0] = tmp1[0].replace(")", "");
-						
-					
-						tmp1[1] = tmp1[1].replace("(", "");
-						tmp1[1] = tmp1[1].replace(")", "");
-						
-						if(tmp1.length > 2){
-							tmp1[2] = tmp1[2].replace("(", "");
-							tmp1[2] = tmp1[2].replace(")", "");
-							betp8inplay2 = Double.parseDouble(tmp1[2]);
-						}
-						
-						betp82 = Double.parseDouble(tmp1[0]);
-						betzhibo2 = Double.parseDouble(tmp1[1]);
+
 						
 					}else{
 						betAmt2 = Double.parseDouble(str2);
 					}
 					
 					
-/*					String str3 = DetailsDatatmp1.elementAt(i)[MERGEINDEX.PERIOD1HOME.ordinal()];
+					str2 = DetailsDatatmp1.elementAt(i)[MERGEINDEX.P8ORES.ordinal()];
 					
-					if(str3.contains("=")){
-						String[] tmp = str3.split("=");
-						betAmt3 = Double.parseDouble(tmp[1]);
+					if(str2.contains("=")){
+						String[] tmp = str2.split("=");
+						betp82 = Double.parseDouble(tmp[1]);
 						
-						String[] tmp1 = tmp[0].split("\\+");
-						tmp1[0] = tmp1[0].replace("(", "");
-						tmp1[0] = tmp1[0].replace(")", "");
-						
-					
-						tmp1[1] = tmp1[1].replace("(", "");
-						tmp1[1] = tmp1[1].replace(")", "");
-						
-						betp83 = Double.parseDouble(tmp1[0]);
-						betzhibo3 = Double.parseDouble(tmp1[1]);
-						
-						if(tmp1.length > 3){
-							tmp1[2] = tmp1[2].replace("(", "");
-							tmp1[2] = tmp1[2].replace(")", "");
-							betp8inplay3 = Double.parseDouble(tmp1[2]);
-						}
+
 						
 					}else{
-						betAmt3 = Double.parseDouble(str3);
+						betp82 = Double.parseDouble(str2);
 					}
 					
-					String str4 = DetailsDatatmp1.elementAt(i)[MERGEINDEX.PERIOD1OVER.ordinal()];
+					str2 = DetailsDatatmp1.elementAt(i)[MERGEINDEX.ZHIBOORES.ordinal()];
 					
-					if(str4.contains("=")){
-						String[] tmp = str4.split("=");
-						betAmt4 = Double.parseDouble(tmp[1]);
+					if(str2.contains("=")){
+						String[] tmp = str2.split("=");
+						betzhibo2 = Double.parseDouble(tmp[1]);
 						
-						String[] tmp1 = tmp[0].split("\\+");
-						tmp1[0] = tmp1[0].replace("(", "");
-						tmp1[0] = tmp1[0].replace(")", "");
-						
-					
-						tmp1[1] = tmp1[1].replace("(", "");
-						tmp1[1] = tmp1[1].replace(")", "");
-						
-						betp84 = Double.parseDouble(tmp1[0]);
-						betzhibo4 = Double.parseDouble(tmp1[1]);
-						
-						if(tmp.length > 2){
-							tmp1[2] = tmp1[2].replace("(", "");
-							tmp1[2] = tmp1[2].replace(")", "");
-							betp8inplay4 = Double.parseDouble(tmp1[2]);
-						}
+
 						
 					}else{
-						betAmt4 = Double.parseDouble(str4);
-					}*/
-					
-					if(Math.abs(betAmt1) < p0hhiglightBigNum && Math.abs(betAmt2) < p0ohiglightBigNum){
-						continue;
+						betzhibo2 = Double.parseDouble(str2);
 					}
+					
+					str2 = DetailsDatatmp1.elementAt(i)[MERGEINDEX.INP8ORES.ordinal()];
+					
+					if(str2.contains("=")){
+						String[] tmp = str2.split("=");
+						betp8inplay2 = Double.parseDouble(tmp[1]);
+						
+
+						
+					}else{
+						betp8inplay2 = Double.parseDouble(str2);
+					}
+					
+					str2 = DetailsDatatmp1.elementAt(i)[MERGEINDEX.HGORES.ordinal()];
+					
+					if(str2.contains("=")){
+						String[] tmp = str2.split("=");
+						bethg2 = Double.parseDouble(tmp[1]);
+						
+
+						
+					}else{
+						bethg2 = Double.parseDouble(str2);
+					}
+					
+					
+					
+					
+					double[] rangqiuArry = {betp81, betp8inplay1, betzhibo1, bethg1};
+					double[] daxiaoqiuArray = {betp82, betp8inplay2, betzhibo2, bethg2};
+					
+					Vector<Integer> sideIndex = new Vector<Integer>();
+
+					if(bp8side&&bzhiboside&&bp8inplayside&&bhgside){
+						sideIndex.add(0);
+						sideIndex.add(1);
+						sideIndex.add(2);
+						sideIndex.add(3);
+						
+					}else if(bp8side&&bzhiboside&&bp8inplayside){
+						sideIndex.add(0);
+						sideIndex.add(1);
+						sideIndex.add(2);
+					}else if(bp8side&&bzhiboside&&bhgside){
+						sideIndex.add(0);
+						sideIndex.add(2);
+						sideIndex.add(3);
+					}else if(bp8side&&bp8inplayside&&bhgside){
+						sideIndex.add(0);
+						sideIndex.add(1);
+						sideIndex.add(3);
+					}else if(bzhiboside&&bp8inplayside&&bhgside){
+						sideIndex.add(2);
+						sideIndex.add(1);
+						sideIndex.add(3);
+					}else if(bp8side&&bzhiboside){
+						sideIndex.add(0);
+						sideIndex.add(2);
+					}else if(bp8side&&bp8inplayside){
+						sideIndex.add(0);
+						sideIndex.add(1);
+					}else if(bp8side&&bhgside){
+						sideIndex.add(0);
+						sideIndex.add(3);
+					}else if(bzhiboside&&bp8inplayside){
+						sideIndex.add(1);
+						sideIndex.add(2);
+					}else if(bp8inplayside&&bhgside){
+						sideIndex.add(1);
+						sideIndex.add(3);
+					}else if(bzhiboside&&bhgside){
+						sideIndex.add(2);
+						sideIndex.add(3);
+					}else if(bp8side){
+						sideIndex.add(0);
+
+					}else if(bp8inplayside){
+						sideIndex.add(1);
+
+					}else if(bzhiboside){
+						sideIndex.add(2);
+
+					}else if(bhgside){
+						sideIndex.add(3);
+
+					}
+					
 					
 
-					
-					if(eventName.contains("滚动盘")){
-						if( (Math.abs(betp81) > p0hhideNum && Math.abs(betzhibo1) > p0hhideNum   && Math.abs(betp8inplay1) > p0hhideNum)|| 
-								(Math.abs(betp82) > p0ohideNum && Math.abs(betzhibo2) > p0ohideNum && Math.abs(betp8inplay2) > p0ohideNum)){
-							//
+					if(sideIndex.size() != 0){
+						//让球处理
+						double res = 1.0;
+						double p0htmp1 = 0;
+						double p0htmp2 = 0;
+						for(int j = 0; j < sideIndex.size(); j++){
+							res = res * rangqiuArry[sideIndex.elementAt(j)];
+							p0htmp1 += rangqiuArry[sideIndex.elementAt(j)];
+							p0htmp2 += Math.abs(rangqiuArry[sideIndex.elementAt(j)]);
+						}
+						//p0htmp1 = Math.abs(p0htmp1);
+						boolean add = false;
+						String p0hStr = "0";
+						if(res != 0.0 && (Math.abs(Math.abs(p0htmp1) - p0htmp2) < 1.0)){
+							add = true;
+							for(int j = 0; j < sideIndex.size(); j++){
+								if(j == 0){
+									p0hStr = String.format("(%.0f)", rangqiuArry[sideIndex.elementAt(j)]);
+								}
+								else{
+									p0hStr = p0hStr + "+" + String.format("(%.0f)", rangqiuArry[sideIndex.elementAt(j)]);
+								}
+							}
 							
-							DetailsDatatmp2.add(DetailsDatatmp1.elementAt(i));
+							if(p0hStr.contains("+")){
+								p0hStr = p0hStr + "=" + String.format("%.0f", p0htmp1);
+							}else{
+								p0hStr = String.format("%.0f", p0htmp1);
+							}
+							
+							
+							
 							
 						}
-					}else{
-						if( (Math.abs(betp81) > p0hhideNum && Math.abs(betzhibo1) > p0hhideNum) || 
-								(Math.abs(betp82) > p0ohideNum && Math.abs(betzhibo2) > p0ohideNum)){
-							//
+						
+						DetailsDatatmp1.elementAt(i)[MERGEINDEX.PERIOD0HOME.ordinal()] = p0hStr;
+						
+						
+						
+						
+						res = 1.0;
+						double p0otmp1 = 0;
+						double p0otmp2 = 0;
+						for(int j = 0; j < sideIndex.size(); j++){
+							res = res * daxiaoqiuArray[sideIndex.elementAt(j)];
+							p0otmp1 += daxiaoqiuArray[sideIndex.elementAt(j)];
+							p0otmp2 += Math.abs(daxiaoqiuArray[sideIndex.elementAt(j)]);
+						}
+						//p0htmp1 = Math.abs(p0htmp1);
+						
+						String p0oStr = "0";
+						if(res != 0.0 && (Math.abs(Math.abs(p0otmp1) - p0otmp2) < 1.0)){
+							add = true;
+							for(int j = 0; j < sideIndex.size(); j++){
+								if(j == 0){
+									p0oStr = String.format("(%.0f)", daxiaoqiuArray[sideIndex.elementAt(j)]);
+								}
+								else{
+									p0oStr = p0oStr + "+" + String.format("(%.0f)", daxiaoqiuArray[sideIndex.elementAt(j)]);
+								}
+							}
 							
-							DetailsDatatmp2.add(DetailsDatatmp1.elementAt(i));
+							
+							if(p0oStr.contains("+")){
+								p0oStr = p0oStr + "=" + String.format("%.0f", p0otmp1);
+							}else{
+								p0oStr = String.format("%.0f", p0otmp1);
+							}
+							
 							
 						}
+						
+						DetailsDatatmp1.elementAt(i)[MERGEINDEX.PERIOD0OVER.ordinal()] = p0oStr;
+						
+						if(add == true &&(Math.abs(p0htmp1) > p0hhiglightBigNum || Math.abs(p0otmp1) > p0ohiglightBigNum)){
+							DetailsDatatmp2.add(DetailsDatatmp1.elementAt(i));
+						}
+						
+						
+						
 					}
 					
 
@@ -540,6 +679,19 @@ public class MergeDetailsWindow extends JFrame{
 			JPanel panelNorth = new JPanel(new GridLayout(5, 4));
 
 	        container.add(panelNorth, BorderLayout.NORTH);  
+	        
+	        
+	        
+	        JPanel panelCheckbox = new JPanel(new GridLayout(1, 4));
+	        
+
+	        panelCheckbox.add(labeloneSide);
+	        panelCheckbox.add(p8oneside);
+	        panelCheckbox.add(p8inplayoneside);
+	        panelCheckbox.add(zhibooneside);
+	        panelCheckbox.add(hgoneside);
+	        
+	        
 	        
 	        jcb.setSelectedIndex(0);
 	        
@@ -697,9 +849,9 @@ public class MergeDetailsWindow extends JFrame{
 				}
 	        });
 	        
-	        onlyShowInplay.setSelected(false);
+	        p8oneside.setSelected(true);
 	        
-	        onlyShowInplay.addItemListener(new ItemListener() {
+	        p8oneside.addItemListener(new ItemListener() {
 
 
 				@Override
@@ -707,21 +859,19 @@ public class MergeDetailsWindow extends JFrame{
 					// TODO Auto-generated method stub
 	               // int index = jcb.getSelectedIndex();
 					if(e.getStateChange() == ItemEvent.DESELECTED){
-						bonlyShowInplay = false;
+						bp8side = false;
 
 					}else{
-						bonlyShowInplay = true;
-						bonlyShowNotInplay = false;
-						onlyShowNotInplay.setSelected(false);
+						bp8side = true;
 					}
 					
 					updateShowItem();
 				}
 	        });
 	        
-	        onlyShowNotInplay.setSelected(false);
+	        p8inplayoneside.setSelected(false);
 	        
-	        onlyShowNotInplay.addItemListener(new ItemListener() {
+	        p8inplayoneside.addItemListener(new ItemListener() {
 
 
 				@Override
@@ -729,16 +879,58 @@ public class MergeDetailsWindow extends JFrame{
 					// TODO Auto-generated method stub
 	               // int index = jcb.getSelectedIndex();
 					if(e.getStateChange() == ItemEvent.DESELECTED){
-						bonlyShowNotInplay = false;
+						bp8inplayside = false;
+
 					}else{
-						bonlyShowNotInplay = true;
-						bonlyShowInplay = false;
-						onlyShowInplay.setSelected(false);
+						bp8inplayside = true;
 					}
 					
 					updateShowItem();
 				}
 	        });
+	        
+	        
+	        zhibooneside.setSelected(true);
+	        
+	        zhibooneside.addItemListener(new ItemListener() {
+
+
+				@Override
+				public void itemStateChanged(ItemEvent e) {
+					// TODO Auto-generated method stub
+	               // int index = jcb.getSelectedIndex();
+					if(e.getStateChange() == ItemEvent.DESELECTED){
+						bzhiboside = false;
+
+					}else{
+						bzhiboside = true;
+					}
+					
+					updateShowItem();
+				}
+	        });
+	        
+	        
+	        hgoneside.setSelected(false);
+	        
+	        hgoneside.addItemListener(new ItemListener() {
+
+
+				@Override
+				public void itemStateChanged(ItemEvent e) {
+					// TODO Auto-generated method stub
+	               // int index = jcb.getSelectedIndex();
+					if(e.getStateChange() == ItemEvent.DESELECTED){
+						bhgside = false;
+
+					}else{
+						bhgside = true;
+					}
+					
+					updateShowItem();
+				}
+	        });
+	        
 	        
 	        createPopupMenu();
 	        
@@ -761,8 +953,7 @@ public class MergeDetailsWindow extends JFrame{
 	        panelNorth.add(labelp0oHideNum);
 	        panelNorth.add(textFieldp0oHideNum);
 	        panelNorth.add(onlyShow5Big);
-	        panelNorth.add(onlyShowInplay);
-	        panelNorth.add(onlyShowNotInplay);
+	        panelNorth.add(panelCheckbox);
 
 	        //调整框位置
 	        panelNorth.add(labelGrabStatkong1);
@@ -810,11 +1001,22 @@ public class MergeDetailsWindow extends JFrame{
 
 	        
 	        table.getColumnModel().getColumn(0).setPreferredWidth(20);//序号
-	        table.getColumnModel().getColumn(1).setPreferredWidth(120);//联赛
-	        table.getColumnModel().getColumn(2).setPreferredWidth(120);//时间	        
-	        table.getColumnModel().getColumn(3).setPreferredWidth(150);	//队名        
-		    table.getColumnModel().getColumn(8).setPreferredWidth(280);//合并让球
-		    table.getColumnModel().getColumn(12).setPreferredWidth(280);//合并大小
+	        table.getColumnModel().getColumn(MERGEINDEX.LEAGUENAME.ordinal()).setPreferredWidth(60);//联赛
+	        table.getColumnModel().getColumn(MERGEINDEX.TIME.ordinal()).setPreferredWidth(60);//时间	        
+	        table.getColumnModel().getColumn(MERGEINDEX.EVENTNAMNE.ordinal()).setPreferredWidth(150);	//队名        
+	        table.getColumnModel().getColumn(MERGEINDEX.RQPK.ordinal()).setPreferredWidth(40);//合并让球
+	        table.getColumnModel().getColumn(MERGEINDEX.DXQPK.ordinal()).setPreferredWidth(40);//合并让球
+	        table.getColumnModel().getColumn(MERGEINDEX.P8HRES.ordinal()).setPreferredWidth(50);//合并让球
+	        table.getColumnModel().getColumn(MERGEINDEX.P8ORES.ordinal()).setPreferredWidth(50);//合并让球
+	        table.getColumnModel().getColumn(MERGEINDEX.INP8HRES.ordinal()).setPreferredWidth(50);//合并让球
+	        table.getColumnModel().getColumn(MERGEINDEX.INP8ORES.ordinal()).setPreferredWidth(50);//合并让球
+	        table.getColumnModel().getColumn(MERGEINDEX.ZHIBOHRES.ordinal()).setPreferredWidth(50);//合并让球
+	        table.getColumnModel().getColumn(MERGEINDEX.ZHIBOORES.ordinal()).setPreferredWidth(50);//合并让球
+	        table.getColumnModel().getColumn(MERGEINDEX.HGHRES.ordinal()).setPreferredWidth(50);//合并让球
+	        table.getColumnModel().getColumn(MERGEINDEX.HGORES.ordinal()).setPreferredWidth(50);//合并让球
+	        
+		    table.getColumnModel().getColumn(MERGEINDEX.PERIOD0HOME.ordinal()).setPreferredWidth(280);//合并让球
+		    table.getColumnModel().getColumn(MERGEINDEX.PERIOD0OVER.ordinal()).setPreferredWidth(280);//合并大小
 		    
 		    table.setRowHeight(30);
 		    
@@ -1090,15 +1292,9 @@ public class MergeDetailsWindow extends JFrame{
 	         * 这里和刚才一样，定义列名和每个数据的值 
 	         */  
 	        String[] columnNames =  
-	        	{ "序号", "联赛", "时间", "球队", "比分", "平博" , "平博滚动盘", "智博", "全场让球", "平博 ", "平博滚动盘 ", "智博 ", "全场大小"};  
+	        	{ "序号", "联赛", "时间", "球队", "让球盘", "平博" , "平博滚动盘", "智博","皇冠",  "全场让球", "大小盘", "平博 ", "平博滚动盘 ", "智博 ","皇冠 ", "全场大小"};  
 	        
 
-	        
-	        //Object[][] data = new Object[2][5];  
-	        
-	        
-
-	        
 	  
 	        /** 
 	         * 构造方法，初始化二维数组data对应的数据 
@@ -1147,24 +1343,23 @@ public class MergeDetailsWindow extends JFrame{
 	        {  
 	            //return data[rowIndex][columnIndex];
 	        	//return detailsData.elementAt(rowIndex)[columnIndex+1];
-	        	if(columnIndex == 0){
+	        	if(columnIndex == MERGEINDEX.EVENTID.ordinal()){
 	        		return Integer.toString(rowIndex/2 + 1);
 	        	}
 	        	
-	        	if(columnIndex == 3){
+	        	
+	        	if(columnIndex == MERGEINDEX.LEAGUENAME.ordinal()){
+	        		return detailsData.elementAt(rowIndex/2)[MERGEINDEX.LEAGUENAME.ordinal()] + "\r\n" + detailsData.elementAt(rowIndex/2)[MERGEINDEX.SCORE.ordinal()];
+	        	}
+	        	
+	        	
+	        	if(columnIndex == MERGEINDEX.EVENTNAMNE.ordinal()){
 	        		int newRow = 0;
 	        		newRow = (int)(rowIndex/2);
 	        		String res = detailsData.elementAt(newRow)[columnIndex];
 	        		String[] resA = res.split(" vs ");
 	        		return resA[rowIndex%2];
-	        	}else if(columnIndex == 4){
-	        		int newRow = 0;
-	        		newRow = (int)(rowIndex/2);
-	        		String res = detailsData.elementAt(newRow)[columnIndex];
-	        		String[] resA = res.split(":");
-	        		return resA[rowIndex%2];
-	        		
-	        	}else if(columnIndex == 5){
+	        	}else if(columnIndex == MERGEINDEX.P8HRES.ordinal()){
 	        		int newRow = 0;
 	        		newRow = (int)(rowIndex/2);
 	        		String res = detailsData.elementAt(newRow)[columnIndex];
@@ -1183,7 +1378,7 @@ public class MergeDetailsWindow extends JFrame{
 	        		}
 
 	        		
-	        	}else if(columnIndex == 6){
+	        	}else if(columnIndex == MERGEINDEX.INP8HRES.ordinal()){
 	        		int newRow = 0;
 	        		newRow = (int)(rowIndex/2);
 	        		String res = detailsData.elementAt(newRow)[columnIndex];
@@ -1202,7 +1397,7 @@ public class MergeDetailsWindow extends JFrame{
 	        		}
 
 	        		
-	        	}else if(columnIndex == 9){
+	        	}else if(columnIndex == MERGEINDEX.HGHRES.ordinal()){
 	        		int newRow = 0;
 	        		newRow = (int)(rowIndex/2);
 	        		String res = detailsData.elementAt(newRow)[columnIndex];
@@ -1221,7 +1416,45 @@ public class MergeDetailsWindow extends JFrame{
 	        		}
 
 	        		
-	        	}else if(columnIndex == 10){
+	        	}else if(columnIndex == MERGEINDEX.P8ORES.ordinal()){
+	        		int newRow = 0;
+	        		newRow = (int)(rowIndex/2);
+	        		String res = detailsData.elementAt(newRow)[columnIndex];
+	        		if(res.contains("=")){
+	            		String[] resA = res.split("=");
+	            		res = resA[0];
+	            		resA = res.split("-");
+	            		res = resA[rowIndex%2];
+	            		res = res.replace("(", "");
+	            		res = res.replace(")", "");
+	            		if(rowIndex%2 == 1)
+	            			res = "-" + res;
+	            		return res;
+	        		}else{
+	        			return res;
+	        		}
+
+	        		
+	        	}else if(columnIndex == MERGEINDEX.INP8ORES.ordinal()){
+	        		int newRow = 0;
+	        		newRow = (int)(rowIndex/2);
+	        		String res = detailsData.elementAt(newRow)[columnIndex];
+	        		if(res.contains("=")){
+	            		String[] resA = res.split("=");
+	            		res = resA[0];
+	            		resA = res.split("-");
+	            		res = resA[rowIndex%2];
+	            		res = res.replace("(", "");
+	            		res = res.replace(")", "");
+	            		if(rowIndex%2 == 1)
+	            			res = "-" + res;
+	            		return res;
+	        		}else{
+	        			return res;
+	        		}
+
+	        		
+	        	}else if(columnIndex == MERGEINDEX.HGORES.ordinal()){
 	        		int newRow = 0;
 	        		newRow = (int)(rowIndex/2);
 	        		String res = detailsData.elementAt(newRow)[columnIndex];

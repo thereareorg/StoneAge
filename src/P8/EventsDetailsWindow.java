@@ -45,6 +45,7 @@ import java.awt.Color;
 
 
 
+
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;  
@@ -69,6 +70,8 @@ import javax.swing.Timer;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import HG.HGMergeManager;
 
 import java.text.SimpleDateFormat;
 import java.util.concurrent.atomic.AtomicLong;
@@ -188,6 +191,10 @@ public class EventsDetailsWindow extends JFrame
     
     private JMenuItem mergeMenItem; 
     
+    private JMenuItem scoreMergeMenItem;
+    
+    private JMenuItem hgMergeMenItem;
+    
     private int focusedRowIndex = -1;
     
     private int selectedOrMerge = 0;
@@ -249,7 +256,13 @@ public class EventsDetailsWindow extends JFrame
         chooseMenItem.setText("选择");  
         
         mergeMenItem = new JMenuItem();
-        mergeMenItem.setText("合并");
+        mergeMenItem.setText("合并智博");
+        
+        scoreMergeMenItem = new JMenuItem();
+        scoreMergeMenItem.setText("合并比分网");
+        
+        hgMergeMenItem = new JMenuItem();
+        hgMergeMenItem.setText("合并皇冠");
         
         
         mergeMenItem.addActionListener(new java.awt.event.ActionListener() {  
@@ -274,7 +287,7 @@ public class EventsDetailsWindow extends JFrame
 
 	    	        
             	}catch(Exception e){
-            		
+            		e.printStackTrace();
             	}
             	
 
@@ -283,6 +296,76 @@ public class EventsDetailsWindow extends JFrame
             	
             }  
         });  
+        
+        
+        scoreMergeMenItem.addActionListener(new java.awt.event.ActionListener() {  
+            public void actionPerformed(java.awt.event.ActionEvent evt) {  
+                //该操作需要做的事  
+            	
+            	try{
+            		
+	            	if(focusedRowIndex != -1 && focusedRowIndex < detailsData.size()){
+	            		
+
+	            			
+	            			ScoreMergeManager.p8SelectedRow = detailsData.elementAt(focusedRowIndex);
+	            			System.out.println(Arrays.toString(ScoreMergeManager.p8SelectedRow));
+
+	            			ScoreMergeManager.showMergeWnd(true);
+	            			
+	            			ScoreMergeManager.scoreSelectedRow = null;
+	            			ScoreMergeManager.p8SelectedRow = null;
+
+	            	}
+
+	    	        
+            	}catch(Exception e){
+            		e.printStackTrace();
+            	}
+            	
+
+            	
+
+            	
+            }  
+        });  
+        
+        
+        
+        
+        hgMergeMenItem.addActionListener(new java.awt.event.ActionListener() {  
+            public void actionPerformed(java.awt.event.ActionEvent evt) {  
+                //该操作需要做的事  
+            	
+            	try{
+            		
+	            	if(focusedRowIndex != -1 && focusedRowIndex < detailsData.size()){
+	            		
+
+	            			
+	            			HGMergeManager.p8SelectedRow = detailsData.elementAt(focusedRowIndex);
+	            			System.out.println(Arrays.toString(ScoreMergeManager.p8SelectedRow));
+
+	            			HGMergeManager.showMergeWnd(true);
+	            			
+	            			HGMergeManager.hgSelectedRow = null;
+	            			HGMergeManager.p8SelectedRow = null;
+
+	            	}
+
+	    	        
+            	}catch(Exception e){
+            		e.printStackTrace();
+            	}
+            	
+
+            	
+
+            	
+            }  
+        });  
+        
+        
         
         
         chooseMenItem.addActionListener(new java.awt.event.ActionListener() {  
@@ -293,20 +376,24 @@ public class EventsDetailsWindow extends JFrame
             		
 	            	if(focusedRowIndex != -1 && focusedRowIndex < detailsData.size()){
 
+	            			ScoreMergeManager.p8SelectedRow = detailsData.elementAt(focusedRowIndex);
 	            			MergeManager.p8SelectedRow = detailsData.elementAt(focusedRowIndex);
+	            			HGMergeManager.p8SelectedRow = detailsData.elementAt(focusedRowIndex);
 	            			System.out.println(Arrays.toString(MergeManager.p8SelectedRow));
 	            		
 	            	}
 
 	    	        
             	}catch(Exception e){
-            		
+            		e.printStackTrace();
             	}
 
             }  
         });  
         m_popupMenu.add(chooseMenItem);  
         m_popupMenu.add(mergeMenItem);  
+        m_popupMenu.add(scoreMergeMenItem);  
+        m_popupMenu.add(hgMergeMenItem);  
     }  
 	
 	
@@ -332,6 +419,19 @@ public class EventsDetailsWindow extends JFrame
 	           }else{
 	        	   mergeMenItem.setEnabled(true);
 	        	   
+	           }
+	           
+	           if(HGMergeManager.hgSelectedRow == null){
+	        	   hgMergeMenItem.setEnabled(false);
+	           }else{
+	        	   hgMergeMenItem.setEnabled(true);
+	           }
+	           
+	           
+	           if(ScoreMergeManager.scoreSelectedRow == null){
+	        	   scoreMergeMenItem.setEnabled(false);
+	           }else{
+	        	   scoreMergeMenItem.setEnabled(true);
 	           }
 	           
 	           

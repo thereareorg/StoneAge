@@ -50,6 +50,7 @@ import java.awt.Color;
 
 
 
+
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;  
@@ -74,6 +75,8 @@ import javax.swing.Timer;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import HG.HGMergeManager;
 
 import java.text.SimpleDateFormat;
 import java.util.concurrent.atomic.AtomicLong;
@@ -106,6 +109,8 @@ public class TeamMatchWindow extends JFrame
     private JMenuItem mergeMenItem; 
     
     int focusedRowIndex = -1;
+    
+    private String name = "";
    
     
 /*    private JLabel labeltime = new JLabel("距封盘:");
@@ -124,13 +129,13 @@ public class TeamMatchWindow extends JFrame
     
 	
 
-	public TeamMatchWindow()  
+	public TeamMatchWindow(String n)  
     {  
-		setTitle("队名匹配");  
+		//setTitle("智博队名匹配");  
 		
         intiComponent();  
         
-        
+        name = n;
         
     }  
 	
@@ -155,9 +160,20 @@ public class TeamMatchWindow extends JFrame
             	try{
             		
 	            	if(detailsData != null){
-	            		String p8name = detailsData.elementAt(focusedRowIndex)[0];
-	            		MergeManager.deleteateammatch(p8name);
+	            		if(name.equals("zhibo")){
+		            		String p8name = detailsData.elementAt(focusedRowIndex)[0];
+		            		MergeManager.deleteateammatch(p8name);
+		            	}else if(name.equals("hg")){
+		            		String p8name = detailsData.elementAt(focusedRowIndex)[0];
+		            		HGMergeManager.deleteateammatch(p8name);
+		            	}else if(name.equals("score")){
+		            		String p8name = detailsData.elementAt(focusedRowIndex)[0];
+		            		ScoreMergeManager.deleteateammatch(p8name);
+		            	}
 	            	}
+	            	
+	            	
+	            	
 
 	    	        
             	}catch(Exception e){
@@ -361,7 +377,7 @@ public class TeamMatchWindow extends JFrame
          * 这里和刚才一样，定义列名和每个数据的值 
          */  
         String[] columnNames =  
-        { "P8", "智博"};  
+        { "P8", name};  
         
 
         
