@@ -37,14 +37,15 @@ import javax.swing.ImageIcon;
 import HG.GrabHGEventsThread;
 import HG.HGMergeManager;
 import HG.HGhttp;
-import Mail.MailManager;
+import HttpServer.HttpServer;
+import HttpServer.HttpServerThread;
 import MergeNew.MergeNewManager;
 import team.gl.nio.cln.ZhiboClient;
-import team.gl.nio.svr.NettyServer;
 
 
 
 
+@SuppressWarnings("unused")
 public class StoneAge {
 	
 	
@@ -121,6 +122,8 @@ public class StoneAge {
 	
 	static SeverThread serverThread = null;
 	
+	static HttpServerThread httpServerThread = null;
+	
 	
 	public PrintStream psFile = null;
 	public PrintStream psConsole = null;
@@ -167,6 +170,9 @@ public class StoneAge {
 		}
 */		
 		
+		
+
+		
 
 		scorethread = new ScoreThread();
 		scorethread.start();
@@ -205,6 +211,10 @@ public class StoneAge {
 		serverThread = new SeverThread();
 		
 		serverThread.start();
+		
+		httpServerThread = new HttpServerThread();
+		
+		httpServerThread.start();
 		
 		sa.launchFrame();
 	}

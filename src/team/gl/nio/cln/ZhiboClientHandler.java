@@ -34,12 +34,19 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
 	
 	public static ChannelHandlerContext ctx_s = null;
 	
+	
+	
+	public static String getRes(){
+		return res;
+	}
 
     @Override  
     public void channelRead(ChannelHandlerContext ctx, Object msg)  
             throws Exception {
        
        res = (String)msg;
+       
+       
        
        
        time1 = System.currentTimeMillis();
