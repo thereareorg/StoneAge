@@ -66,22 +66,43 @@ public class MergeNewDetailsWindow extends JFrame{
 	    private JCheckBox onlyShow5Big = new JCheckBox("只看五大联赛,欧冠");
 
 	    
+	    private JCheckBox showp8 = new JCheckBox("显示P8");
+	    private JCheckBox showp8inplay = new JCheckBox("显示P8走地");
+	    private JCheckBox showzhibo = new JCheckBox("显示LL");
+	    private JCheckBox showhg = new JCheckBox("显示HG");
+	    
+	    
+	    boolean bshowp8 = true;
+	    boolean bshowp8inplay = true;
+	    boolean bshowzhibo = true;
+	    boolean bshowhg = true;
+	    
+	    
+	    private JLabel rqhide = new JLabel("让球隐藏：");
+	    private JTextField rqnum = new JTextField(15);
+	    
+	    private JLabel dxqhide = new JLabel("大小球隐藏：");
+	    private JTextField dxqnum = new JTextField(15);
+
+	    double rqhidenum = 0;
+	    double dxqhidenum = 0;
+	    
+	    
 	    
 
-	    private JCheckBox hideDetailsData = new JCheckBox("隐藏数据");
+
 	    private JCheckBox ShowInplay = new JCheckBox("滚动盘");
 	    private JCheckBox ShowNotInplay = new JCheckBox("单式盘");
 	    
 
 	    
-	    
-	    private boolean bhideData = false;
+
 
 	    
 	    
 	    private boolean bonlyShow5Big = false;
-	    private boolean bShowInplay = false;
-	    private boolean bonlyShowNotInplay = false;
+	    private boolean bShowInplay = true;
+	    private boolean bShowNotInplay = true;
 	    
 	    private JLabel labelGrabStat= new JLabel("状态");
 	    
@@ -178,16 +199,17 @@ public class MergeNewDetailsWindow extends JFrame{
 			//只显示走地盘
 			if(bShowInplay == true){
 				for(int i = 0; i < originalDetailsData.size(); i++){
-					if(originalDetailsData.elementAt(i)[NEWMERGEINDEX.EVENTNAMNE.ordinal()].contains("滚动盘")){
+					if(originalDetailsData.elementAt(i)[NEWMERGEINDEX.TIME.ordinal()].contains("'")||
+							originalDetailsData.elementAt(i)[NEWMERGEINDEX.TIME.ordinal()].contains("中")){
 						DetailsDatatmp.add(originalDetailsData.elementAt(i));
 					}
 				}
 			}
 			
 			//只显示单式盘
-			if(bonlyShowNotInplay == true){
+			if(bShowNotInplay == true){
 				for(int i = 0; i < originalDetailsData.size(); i++){
-					if(!originalDetailsData.elementAt(i)[NEWMERGEINDEX.EVENTNAMNE.ordinal()].contains("滚动盘")){
+					if(originalDetailsData.elementAt(i)[NEWMERGEINDEX.TIME.ordinal()].contains(":")){
 						DetailsDatatmp.add(originalDetailsData.elementAt(i));
 					}
 				}
@@ -197,7 +219,10 @@ public class MergeNewDetailsWindow extends JFrame{
 			
 			
 			if(DetailsDatatmp.size() == 0){
-				DetailsDatatmp = (Vector<String[]>)originalDetailsData.clone();
+				
+				detailsData = (Vector<String[]>)DetailsDatatmp.clone();
+				return;
+				//DetailsDatatmp = (Vector<String[]>)originalDetailsData.clone();
 			}
 			
 			
@@ -216,14 +241,115 @@ public class MergeNewDetailsWindow extends JFrame{
 			}
 
 			
-			detailsData = (Vector<String[]>)DetailsDatatmp1.clone();
+			
+			Vector<String[]> DetailsDatatmp2 = new Vector<String[]>();
 			
 			
-			if(true == bhideData){
-				hideDatacols();
+			//隐藏数额
+			if(rqhidenum == 0 && dxqhidenum ==0){
+				DetailsDatatmp2 = (Vector<String[]>)DetailsDatatmp1.clone();
 			}else{
-				showDatacols();
+				for(int i = 0; i < DetailsDatatmp1.size(); i++)
+				{
+					
+					String[] item = DetailsDatatmp1.elementAt(i);
+					
+					//rqhide
+					String p8hstr = item[NEWMERGEINDEX.P8HRES.ordinal()];
+					double p8h = 0;
+					if(p8hstr.contains("=")){
+						p8h = Double.parseDouble(p8hstr.split("=")[1]);
+					}
+					
+					if(bshowp8==true && Math.abs(p8h) < rqhidenum){
+						continue;
+					}
+					
+					String p8hinstr = item[NEWMERGEINDEX.INP8HRES.ordinal()];
+					double p8hin = 0;
+					if(p8hinstr.contains("=")){
+						p8hin = Double.parseDouble(p8hinstr.split("=")[1]);
+					}
+					
+					if(bshowp8inplay==true && Math.abs(p8hin) < rqhidenum){
+						continue;
+					}
+					
+					String zhibohstr = item[NEWMERGEINDEX.ZHIBOHRES.ordinal()];
+					double zhiboh = 0;
+					zhiboh = Double.parseDouble(zhibohstr);
+					
+					if(bshowzhibo==true && Math.abs(zhiboh) < rqhidenum){
+						continue;
+					}
+					
+					
+					String hghstr = item[NEWMERGEINDEX.HGHRES.ordinal()];
+					double hgh = 0;
+					if(hghstr.contains("=")){
+						hgh = Double.parseDouble(hghstr.split("=")[1]);
+					}
+					
+					if(bshowhg==true && Math.abs(hgh) < rqhidenum){
+						continue;
+					}
+					
+					
+					//dxqhide
+					String p8ostr = item[NEWMERGEINDEX.P8ORES.ordinal()];
+					double p8o = 0;
+					if(p8ostr.contains("=")){
+						p8o = Double.parseDouble(p8ostr.split("=")[1]);
+					}
+					
+					if(bshowp8==true && Math.abs(p8o) < dxqhidenum){
+						continue;
+					}
+					
+					String p8oinstr = item[NEWMERGEINDEX.INP8ORES.ordinal()];
+					double p8oin = 0;
+					if(p8oinstr.contains("=")){
+						p8oin = Double.parseDouble(p8oinstr.split("=")[1]);
+					}
+					
+					if(bshowp8inplay==true && Math.abs(p8oin) < dxqhidenum){
+						continue;
+					}
+					
+					String zhiboostr = item[NEWMERGEINDEX.ZHIBOORES.ordinal()];
+					double zhiboo = 0;
+					zhiboo = Double.parseDouble(zhiboostr);
+					
+					if(bshowzhibo==true && Math.abs(zhiboo) < dxqhidenum){
+						continue;
+					}
+					
+					
+					String hgostr = item[NEWMERGEINDEX.HGORES.ordinal()];
+					double hgo = 0;
+					if(hgostr.contains("=")){
+						hgo = Double.parseDouble(hgostr.split("=")[1]);
+					}
+					
+					if(bshowhg==true && Math.abs(hgo) < dxqhidenum){
+						continue;
+					}
+					
+					DetailsDatatmp2.add(item);
+				}
 			}
+			
+			
+			
+			
+			
+			
+			detailsData = (Vector<String[]>)DetailsDatatmp2.clone();
+			
+			
+			
+				hideDatacols();
+			
 
 			fittable();
 			
@@ -268,20 +394,41 @@ public class MergeNewDetailsWindow extends JFrame{
 			
 			container.setLayout(new BorderLayout());
 			
-			JPanel panelNorth = new JPanel(new GridLayout(1, 4));
+			JPanel panelNorth = new JPanel(new GridLayout(1, 5));
 
 	        container.add(panelNorth, BorderLayout.NORTH);  
 	        
+	        JPanel paneltime = new JPanel(new GridLayout(1,2));
+	        paneltime.add(labelInterval);
+	        paneltime.add(jcb);
 	        
+	        JPanel panelfilter = new JPanel(new GridLayout(1,3));
+	        panelfilter.add(onlyShow5Big);
+	        panelfilter.add(ShowInplay);
+	        panelfilter.add(ShowNotInplay);
+	        
+	        
+	        JPanel panelstate = new JPanel(new GridLayout(1,2));
+	        panelstate.add(labelGrabStat);
+	        panelstate.add(textFieldGrabStat);
+
 	        
 	        JPanel panelCheckbox = new JPanel(new GridLayout(1, 4));
 	        
-
+	        JPanel panelInput = new JPanel(new GridLayout(1,4));
 	        
-	        panelCheckbox.add(hideDetailsData);
-	        panelCheckbox.add(ShowInplay);
-	        panelCheckbox.add(ShowNotInplay);
+	        panelInput.add(rqhide);
+	        panelInput.add(rqnum);
+	        panelInput.add(dxqhide);
+	        panelInput.add(dxqnum);
 
+
+
+	        panelCheckbox.add(showp8);
+	        panelCheckbox.add(showp8inplay);
+	        panelCheckbox.add(showzhibo);
+	        panelCheckbox.add(showhg);
+	        
 	        
 	        jcb.setSelectedIndex(0);
 	        
@@ -317,9 +464,62 @@ public class MergeNewDetailsWindow extends JFrame{
 				}
 	        });
 	        
-	        hideDetailsData.setSelected(false);
 	        
-	        hideDetailsData.addItemListener(new ItemListener() {
+	        
+	        
+	        rqnum.setText("0");
+
+	        rqnum.addKeyListener(new KeyListener(){
+	            public void keyPressed(KeyEvent e) {  
+	                if (e.getKeyCode() == KeyEvent.VK_ENTER) {  
+	                    String value = rqnum.getText();  
+	                    
+	                    if(!Common.isNum(value)){
+	                    	return;
+	                    }else{
+	                    	rqhidenum = Double.parseDouble(value);
+	                    	updateShowItem();
+	                    }
+	                    
+	                }  
+	                // System.out.println("Text " + value);  
+	            }  
+	            public void keyReleased(KeyEvent e) {  
+	            }  
+	            public void keyTyped(KeyEvent e) {  
+	            }  
+
+	        });
+		    
+	        
+	        dxqnum.setText("0");
+
+	        dxqnum.addKeyListener(new KeyListener(){
+	            public void keyPressed(KeyEvent e) {  
+	                if (e.getKeyCode() == KeyEvent.VK_ENTER) {  
+	                    String value = dxqnum.getText();  
+	                    
+	                    if(!Common.isNum(value)){
+	                    	return;
+	                    }else{
+	                    	dxqhidenum = Double.parseDouble(value);
+	                    	updateShowItem();
+	                    }
+	                    
+	                }  
+	                // System.out.println("Text " + value);  
+	            }  
+	            public void keyReleased(KeyEvent e) {  
+	            }  
+	            public void keyTyped(KeyEvent e) {  
+	            }  
+
+	        });
+
+	        
+	        showp8.setSelected(true);
+	        
+	        showp8.addItemListener(new ItemListener() {
 
 
 				@Override
@@ -327,33 +527,136 @@ public class MergeNewDetailsWindow extends JFrame{
 					// TODO Auto-generated method stub
 	               // int index = jcb.getSelectedIndex();
 					if(e.getStateChange() == ItemEvent.DESELECTED){
-						bhideData = false;
+						bshowp8 = false;
 
 					}else{
-						bhideData = true;
+						bshowp8 = true;
 					}
 					
 					updateShowItem();
 				}
 	        });
 	        
+	        showp8inplay.setSelected(true);
+	        
+	        showp8inplay.addItemListener(new ItemListener() {
 
+
+				@Override
+				public void itemStateChanged(ItemEvent e) {
+					// TODO Auto-generated method stub
+	               // int index = jcb.getSelectedIndex();
+					if(e.getStateChange() == ItemEvent.DESELECTED){
+						bshowp8inplay = false;
+
+					}else{
+						bshowp8inplay= true;
+					}
+					
+					updateShowItem();
+				}
+	        });
+	        
+	        
+	        ShowInplay.setSelected(true);
+	        
+	        ShowInplay.addItemListener(new ItemListener() {
+
+
+				@Override
+				public void itemStateChanged(ItemEvent e) {
+					// TODO Auto-generated method stub
+	               // int index = jcb.getSelectedIndex();
+					if(e.getStateChange() == ItemEvent.DESELECTED){
+						bShowInplay = false;
+
+					}else{
+						bShowInplay= true;
+					}
+					
+					updateShowItem();
+				}
+	        });
+	        
+	        
+	        ShowNotInplay.setSelected(true);
+	        
+	        ShowNotInplay.addItemListener(new ItemListener() {
+
+
+				@Override
+				public void itemStateChanged(ItemEvent e) {
+					// TODO Auto-generated method stub
+	               // int index = jcb.getSelectedIndex();
+					if(e.getStateChange() == ItemEvent.DESELECTED){
+						bShowNotInplay = false;
+
+					}else{
+						bShowNotInplay= true;
+					}
+					
+					updateShowItem();
+				}
+	        });
+	        
+	        
+	        showzhibo.setSelected(true);
+	        
+	        showzhibo.addItemListener(new ItemListener() {
+
+
+				@Override
+				public void itemStateChanged(ItemEvent e) {
+					// TODO Auto-generated method stub
+	               // int index = jcb.getSelectedIndex();
+					if(e.getStateChange() == ItemEvent.DESELECTED){
+						bshowzhibo = false;
+
+					}else{
+						bshowzhibo= true;
+					}
+					
+					updateShowItem();
+				}
+	        });
+	        
+	        showhg.setSelected(true);
+	        
+	        showhg.addItemListener(new ItemListener() {
+
+
+				@Override
+				public void itemStateChanged(ItemEvent e) {
+					// TODO Auto-generated method stub
+	               // int index = jcb.getSelectedIndex();
+					if(e.getStateChange() == ItemEvent.DESELECTED){
+						bshowhg = false;
+
+					}else{
+						bshowhg = true;
+					}
+					
+					updateShowItem();
+				}
+	        });
 	        
 	        
 	       
 	        
-	        panelNorth.add(labelInterval);
-	        panelNorth.add(jcb);
+	        panelNorth.add(paneltime);
+	        
 		    
 
 
-	        panelNorth.add(onlyShow5Big);
+	        panelNorth.add(panelfilter);
+	        
+	        panelNorth.add(panelInput);
+	        
 	        panelNorth.add(panelCheckbox);
 
 	        
-	        panelNorth.add(labelGrabStat);
+	        panelNorth.add(panelstate);
 
-	        panelNorth.add(textFieldGrabStat);
 	        
 	        
 
@@ -468,9 +771,44 @@ public class MergeNewDetailsWindow extends JFrame{
 			try{
 				TableColumnModel   columnModel=table.getColumnModel();   
 				TableColumnModel column_id_header = table.getTableHeader().getColumnModel(); 
+				
+				Vector<Integer> hidecol = new Vector<Integer>();
+				if(bshowp8 == false){
+					hidecol.add(NEWMERGEINDEX.P8HRES.ordinal());
+					hidecol.add(NEWMERGEINDEX.P8ORES.ordinal());
+				}
+				
+				if(bshowp8inplay == false){
+					hidecol.add(NEWMERGEINDEX.INP8HRES.ordinal());
+					hidecol.add(NEWMERGEINDEX.INP8ORES.ordinal());
+				}
+				
+				if(bshowzhibo == false){
+					hidecol.add(NEWMERGEINDEX.ZHIBOHRES.ordinal());
+					hidecol.add(NEWMERGEINDEX.ZHIBOORES.ordinal());
+				}
+
+				if(bshowhg == false){
+					hidecol.add(NEWMERGEINDEX.HGHRES.ordinal());
+					hidecol.add(NEWMERGEINDEX.HGORES.ordinal());
+				}
+				
+				
 				for(int i = NEWMERGEINDEX.P8HRES.ordinal();i <= NEWMERGEINDEX.HGORES.ordinal(); i++ ){
 				    
 				    TableColumn   column=columnModel.getColumn(i);   
+				    column.setMinWidth(0);   
+				    column.setMaxWidth(500);
+				    column.setWidth(300);
+				    column.setPreferredWidth(300);
+
+				    
+				}
+				
+				
+				for(int i = 0;i < hidecol.size(); i++ ){
+				    
+				    TableColumn   column=columnModel.getColumn(hidecol.elementAt(i));   
 				    column.setMinWidth(0);   
 				    column.setMaxWidth(0);
 				    column.setWidth(0);
@@ -596,15 +934,15 @@ public class MergeNewDetailsWindow extends JFrame{
 	        		int newRow = 0;
 	        		newRow = (int)(rowIndex/2);
 	        		String res = detailsData.elementAt(newRow)[columnIndex];
-	        		
-	        		if(res.equals("|")){
-	        			return "";
-	        		}
-	        		
 	        		if(res.contains("|")){
-	            		String[] resA = res.split("=");
-	            		res = resA[0];
-	            		resA = res.split("\\|");
+	/*            		String[] resA = res.split("=");
+	            		res = resA[0];*/
+	        			
+	        			if(res.equals("|")){
+	        				return "";
+	        			}
+	        			
+	            		String[] resA = res.split("\\|");
 	            		res = resA[rowIndex%2];
 	            		return res;
 	        		}else{
@@ -615,17 +953,14 @@ public class MergeNewDetailsWindow extends JFrame{
 	        	}else if(columnIndex == NEWMERGEINDEX.DXQSW.ordinal()){
 	        		int newRow = 0;
 	        		newRow = (int)(rowIndex/2);
-	        		
 	        		String res = detailsData.elementAt(newRow)[columnIndex];
-	        		
-	        		if(res.equals("|")){
-	        			return "";
-	        		}
-	        		
 	        		if(res.contains("|")){
-	            		String[] resA = res.split("=");
-	            		res = resA[0];
-	            		resA = res.split("\\|");
+	/*            		String[] resA = res.split("=");
+	            		res = resA[0];*/
+	        			if(res.equals("|")){
+	        				return "";
+	        			}
+	            		String[] resA = res.split("\\|");
 	            		res = resA[rowIndex%2];
 	            		return res;
 	        		}else{
@@ -637,15 +972,13 @@ public class MergeNewDetailsWindow extends JFrame{
 	        		int newRow = 0;
 	        		newRow = (int)(rowIndex/2);
 	        		String res = detailsData.elementAt(newRow)[columnIndex];
-	        		
-	        		if(res.equals("|")){
-	        			return "";
-	        		}
-	        		
 	        		if(res.contains("|")){
-	            		String[] resA = res.split("=");
-	            		res = resA[0];
-	            		resA = res.split("\\|");
+	/*            		String[] resA = res.split("=");
+	            		res = resA[0];*/
+	        			if(res.equals("|")){
+	        				return "";
+	        			}
+	            		String[] resA = res.split("\\|");
 	            		res = resA[rowIndex%2];
 	            		return res;
 	        		}else{
@@ -657,14 +990,13 @@ public class MergeNewDetailsWindow extends JFrame{
 	        		int newRow = 0;
 	        		newRow = (int)(rowIndex/2);
 	        		String res = detailsData.elementAt(newRow)[columnIndex];
-	        		
-	        		if(res.equals("|")){
-	        			return "";
-	        		}
 	        		if(res.contains("|")){
-	            		String[] resA = res.split("=");
-	            		res = resA[0];
-	            		resA = res.split("\\|");
+	/*            		String[] resA = res.split("=");
+	            		res = resA[0];*/
+	        			if(res.equals("|")){
+	        				return "";
+	        			}
+	            		String[] resA = res.split("\\|");
 	            		res = resA[rowIndex%2];
 	            		return res;
 	        		}else{
