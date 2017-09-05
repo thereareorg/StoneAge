@@ -696,7 +696,10 @@ public class ZhiboManager {
 						
 						for(int k = 0; k < mails.size(); k++){
 							String mail = mails.elementAt(k);
-							MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", mail, sendTitle, sendContent);
+							//MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", mail, sendTitle, sendContent);
+							
+							MailManager.sendMail("240749322@qq.com", "240749322", "beaqekgmzscocbab", mail, sendTitle, sendContent);
+							Thread.currentThread().sleep(1000);
 						}
 					
 						alreadSendmailEvents.add(item[ZHIBOINDEX.EVENTNAMNE.ordinal()]);
@@ -780,7 +783,9 @@ public class ZhiboManager {
 							
 							for(int k = 0; k < mails.size(); k++){
 								String mail = mails.elementAt(k);
-								MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", mail, sendTitle, sendContent);
+//								MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", mail, sendTitle, sendContent);
+								MailManager.sendMail("240749322@qq.com", "240749322", "beaqekgmzscocbab", mail, sendTitle, sendContent);
+								Thread.currentThread().sleep(1000);
 							}
 						
 							

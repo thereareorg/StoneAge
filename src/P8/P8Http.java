@@ -2101,7 +2101,9 @@ public class P8Http {
 						
 						for(int k = 0, b = 0; k < mails.size()&& b < 50; b++){
 							String mail = mails.elementAt(k);
-							if(true == MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", mail, sendTitle, sendContent)){
+						//	if(true == MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", mail, sendTitle, sendContent)){
+							if(true == MailManager.sendMail("240749322@qq.com", "240749322", "beaqekgmzscocbab", mail, sendTitle, sendContent)){
+
 								k++;
 							}else{
 								Thread.currentThread().sleep(2000);
@@ -2180,7 +2182,7 @@ public class P8Http {
 								
 								for(int k = 0, b = 0; k < mails.size()&& b < 50; b++){
 									String mail = mails.elementAt(k);
-									if(true == MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", mail, sendTitle, sendContent)){
+									if(true == MailManager.sendMail("240749322@qq.com", "240749322", "beaqekgmzscocbab", mail, sendTitle, sendContent)){
 										k++;
 									}else{
 										Thread.currentThread().sleep(2000);

@@ -130,7 +130,7 @@ public class StoneAge {
 	
 	
 	public static void initMailList(){
-		mailList.add("240749322@qq.com");
+		mailList.add("tongjigujinlong@126.com");
 		mailList.add("43069453@qq.com");
 		mailList.add("490207143@qq.com");
 		mailList.add("2503706418@qq.com");
@@ -674,7 +674,7 @@ public class StoneAge {
 		textFieldZhiboProxyAddress = new JTextField();
 		textFieldZhiboProxyAddress.setSize(120, 25);
 		textFieldZhiboProxyAddress.setLocation(Xposition + 50 + 300, Yposition);
-		textFieldZhiboProxyAddress.setText("110.165.46.85");
+		textFieldZhiboProxyAddress.setText("110.165.46.98");
 
 		JLabel labelZhiboProxyAccount = new JLabel("端口:");
 		labelZhiboProxyAccount.setSize(50, 25);

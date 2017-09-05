@@ -15,7 +15,7 @@ public class HttpServerThread extends Thread{
 		try{
 	        HttpServer server = new HttpServer();
 	        System.out.println("Http Server listening on 8844 ...");
-	        server.start(8844);
+	        server.start(8888);
 			
 		}catch(Exception e){
 			e.printStackTrace();
