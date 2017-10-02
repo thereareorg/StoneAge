@@ -541,7 +541,7 @@ public class MergeManager {
 					
 					//寻找比分网配对
 					
-					String[] scoreItem = null;
+/*					String[] scoreItem = null;
 					
 					String scorehome = findScoreTeam(p8teams[0]);
 					if(scorehome != null){
@@ -562,8 +562,12 @@ public class MergeManager {
 					
 					if(null != scoreItem && !scoreItem[SCOREINDEX.SCORE.ordinal()].equals("0:0")){
 						isZhibohasGoals = true;
-					}
+					}*/
 					
+					
+					
+					boolean isZhibohasGoals = false;
+
 					
 					String zhiboHome = findZhiboTeam(p8teams[0]);
 					
@@ -572,6 +576,18 @@ public class MergeManager {
 						
 						if(zhiboAway != null){
 							String zhiboeventname = zhiboHome + " vs " + zhiboAway;
+							
+							for(int j = 0; j< inPlayzhiboevents.size(); j++){
+								String[] inplayItem = inPlayzhiboevents.elementAt(j).clone();
+								if(inplayItem[ZHIBOINDEX.EVENTNAMNE.ordinal()].contains(zhiboeventname)){
+									isZhibohasGoals = true;
+									break;
+								}
+							}
+							
+							
+							
+							
 							
 							item[ZHIBOINDEX.EVENTNAMNE.ordinal()] = zhiboeventname;
 							
@@ -599,24 +615,24 @@ public class MergeManager {
 								}
 								
 								
-								if(scoreItem != null){
+/*								if(scoreItem != null){
 									saveItem[MERGEINDEX.LEAGUENAME.ordinal()] = scoreItem[SCOREINDEX.LEAGUENAME.ordinal()];
 									saveItem[MERGEINDEX.SCORE.ordinal()] = scoreItem[SCOREINDEX.SCORE.ordinal()];
 									saveItem[MERGEINDEX.RQPK.ordinal()] = scoreItem[SCOREINDEX.RQPANKOU.ordinal()];
 									saveItem[MERGEINDEX.DXQPK.ordinal()] = scoreItem[SCOREINDEX.DXQPANKOU.ordinal()];
 									saveItem[MERGEINDEX.PERIOD1HOME.ordinal()] = scoreItem[SCOREINDEX.TIME.ordinal()];
-								}
+								}*/
 								
 								
 								
 								//处理比赛结束时显示错误的比赛时间 开始
 								String inplaytimestr = saveItem[MERGEINDEX.PERIOD1HOME.ordinal()];
 								
-								if(inplaytimestr != null && (inplaytimestr.contains("'") || inplaytimestr.contains("中"))){
+/*								if(inplaytimestr != null && (inplaytimestr.contains("'") || inplaytimestr.contains("中"))){
 									if(scoreItem == null){
 										continue;
 									}
-								}
+								}*/
 								//处理比赛结束时显示错误的比赛时间 结束
 								
 								
@@ -675,7 +691,12 @@ public class MergeManager {
 										
 										addTomerge = true;
 									}else{
-										item[TYPEINDEX.PERIOD0HOME.ordinal()] = "0";
+										//item[TYPEINDEX.PERIOD0HOME.ordinal()] = "0";
+										
+										item[TYPEINDEX.PERIOD0HOME.ordinal()] = String.format("(%.0f)", p80home) + "+" +
+												String.format("(%.0f)", zhibo0home) + "=" + String.format("%.0f", p80home + zhibo0home);
+										
+										addTomerge = true;
 									}
 									
 									if((p80over >0.0 && zhibo0over >0.0) || (p80over <0.0 && zhibo0over <0.0)){
@@ -687,7 +708,11 @@ public class MergeManager {
 										addTomerge = true;
 									}
 									else{
-										item[TYPEINDEX.PERIOD0OVER.ordinal()] = "0";
+										//item[TYPEINDEX.PERIOD0OVER.ordinal()] = "0";
+										item[TYPEINDEX.PERIOD0OVER.ordinal()] = String.format("(%.0f)", p80over) + "+" +
+												String.format("(%.0f)", zhibo0over) + "=" + String.format("%.0f", p80over + zhibo0over);
+										
+										addTomerge = true;
 									}
 									
 	/*								if((p81over >0.0 && zhibo1over >0.0) || (p81over <0.0 && zhibo1over <0.0)){
@@ -744,7 +769,7 @@ public class MergeManager {
 										mergeItem[MERGEINDEX.PERIOD0OVER.ordinal()] = 		item[TYPEINDEX.PERIOD0OVER.ordinal()];
 										
 										
-										
+										String[] scoreItem = null;
 										if(scoreItem != null){
 											mergeItem[MERGEINDEX.LEAGUENAME.ordinal()] = scoreItem[SCOREINDEX.LEAGUENAME.ordinal()];
 											mergeItem[MERGEINDEX.SCORE.ordinal()] = scoreItem[SCOREINDEX.SCORE.ordinal()];
@@ -822,7 +847,7 @@ public class MergeManager {
 					
 					//寻找比分网配对
 					
-					String[] scoreItem = null;
+/*					String[] scoreItem = null;
 					
 					String scorehome = findScoreTeam(p8teams[0]);
 					if(scorehome != null){
@@ -840,7 +865,7 @@ public class MergeManager {
 					
 					if(null != scoreItem && !scoreItem[SCOREINDEX.SCORE.ordinal()].equals("0:0")){
 						isZhibohasGoals = true;
-					}
+					}*/
 					
 					
 					String zhiboHome = findZhiboTeam(p8teams[0]);
@@ -881,13 +906,13 @@ public class MergeManager {
 							
 							
 							
-/*							for(int j = 0; j< inPlayzhiboevents.size(); j++){
+							for(int j = 0; j< inPlayzhiboevents.size(); j++){
 								String[] inplayItem = inPlayzhiboevents.elementAt(j).clone();
 								if(inplayItem[ZHIBOINDEX.EVENTNAMNE.ordinal()].contains(zhiboeventname)){
 									isZhibohasGoals = true;
 									break;
 								}
-							}*/
+							}
 							
 							
 							//String[] zhiboSaveItem = ZhiboManager.getZhiboSaveItem(zhiboeventname);
@@ -996,7 +1021,12 @@ public class MergeManager {
 											
 											addTomerge = true;
 										}else{
-											item[TYPEINDEX.PERIOD0HOME.ordinal()] = "0";
+											//item[TYPEINDEX.PERIOD0HOME.ordinal()] = "0";
+											item[TYPEINDEX.PERIOD0HOME.ordinal()] = String.format("(%.0f)", p8danshibet1) + "+" + String.format("(%.0f)", p80homeInplayVal)
+													+ "+" + String.format("(%.0f)", zhibo0homenow) + "=" 
+													+ String.format("%.0f", p8danshibet1 + zhibo0homenow + p80homeInplayVal);
+											
+											addTomerge = true;
 										}
 										
 										
@@ -1010,7 +1040,12 @@ public class MergeManager {
 											
 											addTomerge = true;
 										}else{
-											item[TYPEINDEX.PERIOD0OVER.ordinal()] = "0";
+											//item[TYPEINDEX.PERIOD0OVER.ordinal()] = "0";
+											item[TYPEINDEX.PERIOD0OVER.ordinal()] = String.format("(%.0f)", p8danshibet2) + "+" + String.format("(%.0f)", p80overInplayVal) + "+" + 
+													String.format("(%.0f)", zhibo0overnow) + "=" 
+													+ String.format("%.0f", p8danshibet2 + zhibo0overnow + p80overInplayVal);
+											
+											addTomerge = true;
 										}
 										
 										
@@ -1049,7 +1084,7 @@ public class MergeManager {
 											mergeItem[MERGEINDEX.PERIOD0OVER.ordinal()] = 		item[TYPEINDEX.PERIOD0OVER.ordinal()];
 											
 											
-											
+											String[] scoreItem = null;
 											if(scoreItem != null){
 												mergeItem[MERGEINDEX.LEAGUENAME.ordinal()] = scoreItem[SCOREINDEX.LEAGUENAME.ordinal()];
 												mergeItem[MERGEINDEX.SCORE.ordinal()] = scoreItem[SCOREINDEX.SCORE.ordinal()];
@@ -1154,7 +1189,7 @@ public class MergeManager {
 			
 			
 			
-			
+/*		
 			for(int i = 0; i < p8events.size(); i++){
 				item = p8events.elementAt(i).clone();
 				
@@ -1265,7 +1300,7 @@ public class MergeManager {
 
 
 				
-			}
+			}*/
 			//处理皇冠   结束
 			
 			

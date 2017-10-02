@@ -21,6 +21,7 @@ import java.awt.event.WindowEvent;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Enumeration;
 import java.util.Vector;
 
 import javax.swing.JCheckBox;
@@ -37,7 +38,9 @@ import javax.swing.JTextField;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
+import MergeNew.NEWMERGEINDEX;
 import P8.EventsDetailsWindow.MyTableModel;
 
 public class MergeDetailsWindow extends JFrame{
@@ -153,7 +156,7 @@ public class MergeDetailsWindow extends JFrame{
 			
 	        intiComponent();  
 	        
-	        
+	        hideDatacols();
 	        
 	        
 	        
@@ -655,6 +658,14 @@ public class MergeDetailsWindow extends JFrame{
 			
 			tableMode.updateTable();
 			
+			
+/*			hideDatacols();
+			
+			
+			fittable();*/
+			
+			
+			
 			//setOneRowBackgroundColor();
 			
 		}
@@ -662,6 +673,28 @@ public class MergeDetailsWindow extends JFrame{
 		
 		
 
+	
+	    public void fittable(){
+		    JTableHeader header = table.getTableHeader();
+		     int rowCount = table.getRowCount();
+		     Enumeration columns = table.getColumnModel().getColumns();
+		     while(columns.hasMoreElements()){
+		         TableColumn column = (TableColumn)columns.nextElement();
+		         int col = header.getColumnModel().getColumnIndex(column.getIdentifier());
+		         int width = (int)table.getTableHeader().getDefaultRenderer()
+		                 .getTableCellRendererComponent(table, column.getIdentifier()
+		                         , false, false, -1, col).getPreferredSize().getWidth();
+		         for(int row = 0; row<rowCount; row++){
+		             int preferedWidth = (int)table.getCellRenderer(row, col).getTableCellRendererComponent(table,
+		            		 table.getValueAt(row, col), false, false, row, col).getPreferredSize().getWidth();
+		             width = Math.max(width, preferedWidth);
+		         }
+		         header.setResizingColumn(column); // 此行很重要
+		         column.setWidth(width+table.getIntercellSpacing().width);
+		    
+		     }
+	    }
+		
 		
 		
 		
@@ -689,7 +722,7 @@ public class MergeDetailsWindow extends JFrame{
 	        panelCheckbox.add(p8oneside);
 	        panelCheckbox.add(p8inplayoneside);
 	        panelCheckbox.add(zhibooneside);
-	        panelCheckbox.add(hgoneside);
+	        //panelCheckbox.add(hgoneside);
 	        
 	        
 	        
@@ -1281,7 +1314,58 @@ public class MergeDetailsWindow extends JFrame{
 	    
 
 	    
+		public void hideDatacols(){
+			try{
+				TableColumnModel   columnModel=table.getColumnModel();   
+				TableColumnModel column_id_header = table.getTableHeader().getColumnModel(); 
+				
+				Vector<Integer> hidecol = new Vector<Integer>();
+				
+					hidecol.add(MERGEINDEX.RQPK.ordinal());
+					
+				
+				
+				
+					hidecol.add(MERGEINDEX.DXQPK.ordinal());
+					
+				
+				
+				
 
+				
+					hidecol.add(MERGEINDEX.HGHRES.ordinal());
+					hidecol.add(MERGEINDEX.HGORES.ordinal());
+				
+				
+				
+/*				for(int i = NEWMERGEINDEX.P8HRES.ordinal();i <= NEWMERGEINDEX.HGORES.ordinal(); i++ ){
+				    
+				    TableColumn   column=columnModel.getColumn(i);   
+				    column.setMinWidth(0);   
+				    column.setMaxWidth(500);
+				    column.setWidth(300);
+				    column.setPreferredWidth(300);
+
+				    
+				}*/
+				
+				
+				for(int i = 0;i < hidecol.size(); i++ ){
+				    
+				    TableColumn   column=columnModel.getColumn(hidecol.elementAt(i));   
+				    column.setMinWidth(0);   
+				    column.setMaxWidth(0);
+				    column.setWidth(0);
+				    column.setPreferredWidth(0);
+				}
+
+				
+				
+				
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+		}
 	    
 	    
 	    

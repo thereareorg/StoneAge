@@ -33,6 +33,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
 
 
@@ -135,6 +136,8 @@ public class MergePreviousDataWindow extends PreviousDataWindow
 		
         intiComponent();  
         
+        hideDatacols();
+        
     }  
 	
 	
@@ -144,6 +147,58 @@ public class MergePreviousDataWindow extends PreviousDataWindow
 	
 
 	
+	public void hideDatacols(){
+		try{
+			TableColumnModel   columnModel=table.getColumnModel();   
+			TableColumnModel column_id_header = table.getTableHeader().getColumnModel(); 
+			
+			Vector<Integer> hidecol = new Vector<Integer>();
+			
+				hidecol.add(MERGEINDEX.RQPK.ordinal());
+				
+			
+			
+			
+				hidecol.add(MERGEINDEX.DXQPK.ordinal());
+				
+			
+			
+			
+
+			
+				hidecol.add(MERGEINDEX.HGHRES.ordinal());
+				hidecol.add(MERGEINDEX.HGORES.ordinal());
+			
+			
+			
+/*				for(int i = NEWMERGEINDEX.P8HRES.ordinal();i <= NEWMERGEINDEX.HGORES.ordinal(); i++ ){
+			    
+			    TableColumn   column=columnModel.getColumn(i);   
+			    column.setMinWidth(0);   
+			    column.setMaxWidth(500);
+			    column.setWidth(300);
+			    column.setPreferredWidth(300);
+
+			    
+			}*/
+			
+			
+			for(int i = 0;i < hidecol.size(); i++ ){
+			    
+			    TableColumn   column=columnModel.getColumn(hidecol.elementAt(i));   
+			    column.setMinWidth(0);   
+			    column.setMaxWidth(0);
+			    column.setWidth(0);
+			    column.setPreferredWidth(0);
+			}
+
+			
+			
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
 
 
 	
@@ -630,7 +685,7 @@ public class MergePreviousDataWindow extends PreviousDataWindow
         panelCheckbox.add(p8oneside);
         panelCheckbox.add(p8inplayoneside);
         panelCheckbox.add(zhibooneside);
-        panelCheckbox.add(hgoneside); 
+        //panelCheckbox.add(hgoneside); 
         
         
         

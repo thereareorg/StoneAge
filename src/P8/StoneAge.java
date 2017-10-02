@@ -37,6 +37,7 @@ import javax.swing.ImageIcon;
 import HG.GrabHGEventsThread;
 import HG.HGMergeManager;
 import HG.HGhttp;
+import HGclient.HGclienthttp;
 import HttpServer.HttpServer;
 import HttpServer.HttpServerThread;
 import MergeNew.MergeNewManager;
@@ -169,13 +170,21 @@ public class StoneAge {
 			System.out.println(testa[i]);
 		}
 */		
+/*		String address = "http://66.133.87.54/";
+		
+		
+		HGclienthttp hg = new HGclienthttp();
+		hg.setLoginParams(address, "gcwfool1", "aaa222");
+		
+		
+		hg.login();*/
 		
 		
 
 		
 
-		scorethread = new ScoreThread();
-		scorethread.start();
+/*		scorethread = new ScoreThread();
+		scorethread.start();*/
 		
 		
 		initMailList();
@@ -453,7 +462,7 @@ public class StoneAge {
 		btnhgLogin.setLocation(Xposition, Yposition - 40);
 		
 		
-		contain.add(btnhgLogin);
+		//contain.add(btnhgLogin);
 		
 		
 		
@@ -470,7 +479,7 @@ public class StoneAge {
 		btnHGpData.setSize(120, 25);
 		btnHGpData.setLocation(Xposition+ 150, Yposition - 40);
 		
-		contain.add(btnHGpData);
+		//contain.add(btnHGpData);
         
         
 		
@@ -594,7 +603,7 @@ public class StoneAge {
 		btnNewMergeWnd.setSize(120, 25);
 		btnNewMergeWnd.setLocation(Xposition, Yposition + 40);
 		
-		
+		//contain.add(btnNewMergeWnd);
 		
 		
 		
@@ -612,7 +621,7 @@ public class StoneAge {
 		btnNewMergepData.setLocation(Xposition + 150, Yposition + 40);
 		
 		
-		contain.add(btnNewMergepData);
+		//contain.add(btnNewMergepData);
 		
 		
 
@@ -635,7 +644,7 @@ public class StoneAge {
         scoreBtn.setLocation(Xposition, Yposition + 80);
         scoreBtn.setSize(90, 25);
         
-        contain.add(scoreBtn);
+        //contain.add(scoreBtn);
 
 		
 		
@@ -695,7 +704,7 @@ public class StoneAge {
 		contain.add(btnZhiboConnect);
 		
 		contain.add(btnMergeWnd);
-		contain.add(btnNewMergeWnd);
+		
 		
 		
 
