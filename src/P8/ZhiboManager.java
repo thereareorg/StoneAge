@@ -666,10 +666,11 @@ public class ZhiboManager {
 					boolean sendMail = false;
 					
 					String eventName = item[ZHIBOINDEX.EVENTNAMNE.ordinal()];
+					String leagueName = item[ZHIBOINDEX.LEAGUENAME.ordinal()];
 	    			double p0h = Double.parseDouble(item[ZHIBOINDEX.PERIOD0HOME.ordinal()]);
 	    			double p0o = Double.parseDouble(item[ZHIBOINDEX.PERIOD0OVER.ordinal()]);
 	    			
-	    			String sendTitle = "LL " + eventName + " " + timeStr;
+	    			String sendTitle = "LL " + "【" + leagueName + "】" +  eventName + " " + timeStr;
 	    			String sendContent = "";
 					
 /*						if(Math.abs(p0h) >= Zhibop0hSendNumber){
@@ -761,10 +762,11 @@ public class ZhiboManager {
 						boolean sendMail = false;
 						
 						String eventName = item[ZHIBOINDEX.EVENTNAMNE.ordinal()];
+						String leagueName = item[ZHIBOINDEX.LEAGUENAME.ordinal()];
 		    			double p0h = Double.parseDouble(item[ZHIBOINDEX.PERIOD0HOME.ordinal()]);
 		    			double p0o = Double.parseDouble(item[ZHIBOINDEX.PERIOD0OVER.ordinal()]);
 		    			
-		    			String sendTitle = "LL " + eventName + " " + timeStr;
+		    			String sendTitle = "LL " + "【" + leagueName + "】" +   eventName + " " + timeStr;
 		    			String sendContent = "";
 						
 /*						if(Math.abs(p0h) >= Zhibop0hSendNumber){

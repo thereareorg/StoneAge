@@ -2071,8 +2071,20 @@ public class P8Http {
 					
 					//
 					String[] item = (String[])eventDetailsVec.elementAt(i).clone();
+					String leagueNameStr = item[TYPEINDEX.LEAGUENAME.ordinal()];
 					String eventNameStr = item[TYPEINDEX.EVENTNAMNE.ordinal()];
 					String eventTimestr = item[TYPEINDEX.TIME.ordinal()];
+					
+					SimpleDateFormat dfmin = new SimpleDateFormat("yyyy-MM-dd HH:mm");// 设置日期格式
+					
+					
+					//long currentTimeL = System.currentTimeMillis();
+			    	
+					eventTimestr = dfmin.format(Long.parseLong(eventTimestr));
+					
+					
+					
+					
 					String p0oStr = item[TYPEINDEX.PERIOD0OVER.ordinal()];
 					double p0o = 0.0;
 
@@ -2083,7 +2095,7 @@ public class P8Http {
 	    			}
 
 	    			
-	    			String sendTitle = "PP " + eventNameStr + " " + eventTimestr;
+	    			String sendTitle = "PP " + "【" + leagueNameStr+ "】" +  eventNameStr + " " + eventTimestr;
 	    			String sendContent = "";
 					
 					boolean sendMail = false;
@@ -2144,6 +2156,8 @@ public class P8Http {
 							
 							String eventNameStr = saveItem[TYPEINDEX.EVENTNAMNE.ordinal()];
 							
+							String leagueNameStr = saveItem[TYPEINDEX.LEAGUENAME.ordinal()];
+							
 			    			double p0h = 0.0;
 			    			double p0o = 0.0;
 			    			
@@ -2161,7 +2175,7 @@ public class P8Http {
 			    			}
 
 			    			
-			    			String sendTitle = "PP " + eventNameStr + " " + eventTimestr;
+			    			String sendTitle = "PP " + "【" + leagueNameStr+ "】" + eventNameStr + " " + eventTimestr;
 			    			String sendContent = "";
 							
 							if(Math.abs(p0h) >= P8p0hSendNumber){
