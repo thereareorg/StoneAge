@@ -41,7 +41,7 @@ public class HttpServerInboundHandler extends ChannelInboundHandlerAdapter {
             request = (HttpRequest) msg;
 
             String uri = request.getUri();
-            System.out.println("Uri:" + uri);
+           // System.out.println("Uri:" + uri);
             
             
             if(uri.equals("/p8")){

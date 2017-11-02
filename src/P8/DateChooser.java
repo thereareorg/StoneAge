@@ -25,6 +25,7 @@ import java.util.Calendar;
 import java.util.Comparator;  
 import java.util.Date;  
 import java.util.List;  
+
 import javax.swing.BorderFactory;  
 import javax.swing.JButton;  
 import javax.swing.JFrame;  
@@ -35,6 +36,8 @@ import javax.swing.PopupFactory;
 import javax.swing.SwingUtilities;  
 import javax.swing.event.AncestorEvent;  
 import javax.swing.event.AncestorListener;  
+
+import HGclient.HGclienthttp;
   
 /** 
  * 日期选择器，可以指定日期的显示格式 
@@ -57,16 +60,18 @@ public class DateChooser extends JPanel{
     private SimpleDateFormat sdf;  
     private boolean isShow=false;  
     private Popup pop;  
-    private PreviousDataWindow pdWnd;
+    private PreviousDataWindow pdWnd = null;
+    
+    private String bindName = "";
       
     /** 
      * Creates a new instance of DateChooser 
      */  
-    public DateChooser() {  
-        this(new Date());  
+    public DateChooser(String bindname) {  
+        this(new Date(), "yyyy-MM-dd", bindname);  
     }  
     public DateChooser(Date date){  
-       //this(date, "yyyy年MM月dd日");  
+       this(date, "yyyy-MM-dd");  
     }  
     public DateChooser(String format, PreviousDataWindow pdwnd){  
         this(new Date(), format ,pdwnd);  
@@ -80,6 +85,28 @@ public class DateChooser extends JPanel{
         initPanel();  
         initLabel();  
     }  
+    
+    public DateChooser(Date date, String format){  
+    	//pdWnd = pdwnd;
+        initDate=date;  
+        sdf=new SimpleDateFormat(format);  
+        select=Calendar.getInstance();  
+        select.setTime(initDate);  
+        initPanel();  
+        initLabel();  
+    }  
+    
+    public DateChooser(Date date, String format, String bindname){  
+    	//pdWnd = pdwnd;
+        initDate=date;  
+        sdf=new SimpleDateFormat(format);  
+        select=Calendar.getInstance();  
+        select.setTime(initDate);  
+        bindName = bindname;
+        initPanel();  
+        initLabel();  
+    } 
+    
       
     /** 
      * 是否允许用户选择 
@@ -184,7 +211,19 @@ public class DateChooser extends JPanel{
     private void commit(){  
         System.out.println("选中的日期是："+sdf.format(select.getTime()));  
         showDate.setText(sdf.format(select.getTime()));  
-        pdWnd.updateShowItem();
+        if(pdWnd != null){
+        	 pdWnd.updateShowItem();
+        }else if(bindName.equals("GamePreviousDetailsWindow")){//HGPODDS
+        	HGclienthttp.updateGamepdetailsvec();
+        }else if(bindName.equals("DXQPreviousDetailsWindow")){
+        	HGclienthttp.updateDXQpdetailsvec();
+        }else if(bindName.equals("dxqAnsdatee")){
+        	HGclienthttp.constructDaysGaemDetails();
+        }else if(bindName.equals("dxqAnsdates")){
+        	HGclienthttp.constructDaysGaemDetails();
+        }
+        
+       
         hidePanel();  
     } 
     public String getChooseDate(){

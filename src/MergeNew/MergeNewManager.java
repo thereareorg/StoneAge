@@ -887,10 +887,10 @@ public class MergeNewManager {
 			
 			
 			
-			System.out.println("新合并注单:");
+/*			System.out.println("新合并注单:");
 			for(int i = 0; i < mergeEventDetailsVec.size(); i++){
 				System.out.println(Arrays.toString(mergeEventDetailsVec.elementAt(i)));
-			}
+			}*/
 			
 			
 			

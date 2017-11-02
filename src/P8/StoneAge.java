@@ -37,10 +37,12 @@ import javax.swing.ImageIcon;
 import HG.GrabHGEventsThread;
 import HG.HGMergeManager;
 import HG.HGhttp;
+import HGclient.GrabHGclientThread;
 import HGclient.HGclienthttp;
 import HttpServer.HttpServer;
 import HttpServer.HttpServerThread;
 import MergeNew.MergeNewManager;
+import P8client.P8clienthttp;
 import team.gl.nio.cln.ZhiboClient;
 
 
@@ -65,6 +67,16 @@ public class StoneAge {
 	public static JButton btnhgLogin;
 	
 	public static JButton btnAccount;
+	
+	public static JButton btnodds;
+	
+	public static JButton btndxq;
+	
+	public static JButton btndxqans;
+	
+	public static JButton btnpdxq;
+	
+	public static JButton btnpodds;
 	
 	public static boolean bLogin = false;
 	
@@ -131,8 +143,20 @@ public class StoneAge {
 	
 	
 	public static void initMailList(){
+		
+		mailList.add("490207143@qq.com");
+		
+		mailList.add("1131894627@qq.com");
+		
 		mailList.add("tongjigujinlong@126.com");
-		mailList.add("43069453@qq.com");
+		
+		mailList.add("2503706418@qq.com");
+		
+		mailList.add("2195876152@qq.com");
+		
+		
+		
+/*		mailList.add("43069453@qq.com");
 		mailList.add("490207143@qq.com");
 		mailList.add("2503706418@qq.com");
 		mailList.add("281426295@qq.com");
@@ -142,7 +166,7 @@ public class StoneAge {
 		mailList.add("2195876152@qq.com");
 		mailList.add("3215676858@qq.com");
 		mailList.add("573306035@qq.com");
-		mailList.add("45517203@qq.com");
+		mailList.add("45517203@qq.com");*/
 
 	}
 	
@@ -152,36 +176,24 @@ public class StoneAge {
 	
 	
 	public static void main(String[] args) throws Exception {
-		
-		
-		//HGhttp.testXML();
 
-/*		HGhttp hgHttp = new HGhttp();
-		hgHttp.setLoginParams("https://ag.hg0088.com/", "long168", "aaa999", "aaa222");
-		if(true == hgHttp.login()){
-			hgHttp.getTotalBet();
+		
+		GrabHGclientThread hgclientthread = new GrabHGclientThread();
+		hgclientthread.start();
+		
+		
+
+		
+		
+		//平博会员
+/*		String address = "https://www.pinbet88.com/";
+		P8clienthttp p8 = new P8clienthttp();
+		p8.setLoginParams(address, "12q0301001", "aabb1122");*/
+		//if(p8.login()==1){
+/*		P8clienthttp p8 = new P8clienthttp();
+		if(true){
+			p8.getTotalbet();
 		}*/
-
-/*		String test = "-1|3";
-		
-		String[] testa = test.split("\\|");
-		
-		for(int i = 0; i < testa.length; i++){
-			System.out.println(testa[i]);
-		}
-*/		
-/*		String address = "http://66.133.87.54/";
-		
-		
-		HGclienthttp hg = new HGclienthttp();
-		hg.setLoginParams(address, "gcwfool1", "aaa222");
-		
-		
-		hg.login();*/
-		
-		
-
-		
 
 /*		scorethread = new ScoreThread();
 		scorethread.start();*/
@@ -646,6 +658,83 @@ public class StoneAge {
         
         //contain.add(scoreBtn);
 
+        
+		btndxq = new JButton("大小球");
+		btndxq.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				
+				
+				HGclienthttp.showdxqwnd(true);
+			}
+		});
+		
+		
+		btndxq.setSize(120, 25);
+		btndxq.setLocation(Xposition, Yposition + 40);
+
+		
+		contain.add(btndxq);
+        
+
+		btnpdxq = new JButton("大小球历史");
+		btnpdxq.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				
+				
+				HGclienthttp.showdxqpdwnd(true);
+			}
+		});
+		
+		
+		btnpdxq.setSize(120, 25);
+		btnpdxq.setLocation(Xposition + 150, Yposition + 40);
+
+		
+		contain.add(btnpdxq);
+
+		
+		
+		
+        
+		
+		
+		btnodds = new JButton("水位");
+		btnodds.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				
+				
+				HGclienthttp.showdetailswnd(true);
+			}
+		});
+		
+		
+		btnodds.setSize(120, 25);
+		btnodds.setLocation(Xposition, Yposition + 80);
+
+		
+		contain.add(btnodds);
+        
+        
+		
+		btnpodds = new JButton("历史水位");
+		btnpodds.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				
+				
+				HGclienthttp.showpdwnd(true);
+			}
+		});
+		
+		
+		btnpodds.setSize(120, 25);
+		btnpodds.setLocation(Xposition + 150, Yposition + 80);
+
+		
+		contain.add(btnpodds);
 		
 		
 		
@@ -659,7 +748,7 @@ public class StoneAge {
 				
 				accountWnd.setVisible(true);
 				
-
+				//HGclienthttp.showdetailswnd(true);
 			}
 		});
 		
@@ -671,7 +760,20 @@ public class StoneAge {
 		contain.add(btnAccount);
 		
 		
+		btndxqans = new JButton("大小球分析");
+		btndxqans.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				HGclienthttp.showdxqanswnd(true);
+			}
+		});
 		
+		
+		btndxqans.setSize(120, 25);
+		btndxqans.setLocation(Xposition + 150, Yposition + 120);
+
+		
+		contain.add(btndxqans);
 		
 		
 		

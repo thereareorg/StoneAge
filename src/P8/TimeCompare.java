@@ -51,7 +51,7 @@ public class TimeCompare implements Comparator //ʵ��Comparator�����
 			
 			if(calTime1.getTimeInMillis() > calTime2.getTimeInMillis())//����Ƚ��ǽ���,����-1�ĳ�1��������.
 			{
-			   return 11;
+			   return 1;
 			}
 			else if(calTime1.getTimeInMillis() == calTime2.getTimeInMillis())
 			{

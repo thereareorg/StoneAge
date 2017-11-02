@@ -279,8 +279,13 @@ public class P8Http {
     		finalEventDetailsVec.clear();
     	}
     	
+    	//System.out.println("p8 final events:");
+    	
     	for(int i = 0; i < eventDetailsVec.size(); i++ ){
     		finalEventDetailsVec.add(eventDetailsVec.elementAt(i).clone());
+    		
+    		//System.out.println(Arrays.toString(eventDetailsVec.elementAt(i)));
+    		
     	}
     	
     	//finalEventDetailsVec = (Vector<String[]>)eventDetailsVec.clone();
@@ -1156,13 +1161,12 @@ public class P8Http {
     			
     		}
     		
-/*    		for(int k = 0; k<eventDetailsVec.size(); k++ ){
+    		for(int k = 0; k<eventDetailsVec.size(); k++ ){
     			
-    			String[] outRow = eventDetailsVec.elementAt(k);
+    			//String[] outRow = eventDetailsVec.elementAt(k);
     			
-    			System.out.println(outRow[0] + "," +outRow[1] + outRow[2] + "," +outRow[3] + "," +outRow[4] + "," +outRow[5] + "," +
-    					outRow[6] + "," + outRow[7]);
-    		}*/
+    			//System.out.println(Arrays.toString(eventDetailsVec.elementAt(k)));
+    		}
     		
     	}catch(Exception e){
     		e.printStackTrace();
@@ -1323,6 +1327,38 @@ public class P8Http {
         			
         			eventDetailsVec.elementAt(i)[TYPEINDEX.TIME.ordinal()] = timeStr;
             	}
+            	
+            	
+            	
+            	for(int i = 0; i < eventDetailsVec.size(); i++){
+        			String eventname = eventDetailsVec.elementAt(i)[TYPEINDEX.EVENTNAMNE.ordinal()];
+        			
+        			
+        		//	if(!eventname.contains("滚动盘")){
+        				String[] saveItem = getP8SaveItem(eventname);
+        				
+        				
+        				
+        				if(saveItem != null){
+        					
+        					
+        					eventDetailsVec.elementAt(i)[TYPEINDEX.PERIOD0HOME.ordinal()] = saveItem[TYPEINDEX.PERIOD0HOME.ordinal()];
+        					eventDetailsVec.elementAt(i)[TYPEINDEX.PERIOD0OVER.ordinal()] = saveItem[TYPEINDEX.PERIOD0OVER.ordinal()];
+        					eventDetailsVec.elementAt(i)[TYPEINDEX.PERIOD1HOME.ordinal()] = saveItem[TYPEINDEX.PERIOD1HOME.ordinal()];
+        					eventDetailsVec.elementAt(i)[TYPEINDEX.PERIOD1OVER.ordinal()] = saveItem[TYPEINDEX.PERIOD1OVER.ordinal()];
+        					
+        					
+        				}
+        			//}
+        			
+        		
+        			
+        			
+        			
+            	}
+
+            	
+            	
             	
 
         	}
@@ -2008,12 +2044,12 @@ public class P8Http {
 				}
 			}
 			
-			for(int i = 0; i< eventDetailsVec.size(); i++){
+/*			for(int i = 0; i< eventDetailsVec.size(); i++){
 				String eventName = eventDetailsVec.elementAt(i)[TYPEINDEX.EVENTNAMNE.ordinal()];
-				if(eventName.contains("滚动盘")){
+				//if(eventName.contains("滚动盘")){
 					System.out.println(Arrays.toString(eventDetailsVec.elementAt(i)));
-					}
-				}
+					//}
+				}*/
 			
 			
 			lockeFinalEventsDetails.readLock().unlock();
