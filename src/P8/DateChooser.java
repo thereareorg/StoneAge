@@ -221,6 +221,10 @@ public class DateChooser extends JPanel{
         	HGclienthttp.constructDaysGaemDetails();
         }else if(bindName.equals("dxqAnsdates")){
         	HGclienthttp.constructDaysGaemDetails();
+        }else if(bindName.equals("ratioAnsdates")){
+        	HGclienthttp.constructDaysGaemDetailsForRatioAns();
+        }else if(bindName.equals("ratioAnsdatee")){
+        	HGclienthttp.constructDaysGaemDetailsForRatioAns();
         }
         
        

@@ -1,5 +1,6 @@
 package HGclient;
 
+import java.awt.Color;
 import java.text.SimpleDateFormat;
 import java.util.Vector;
 
@@ -19,12 +20,12 @@ public class GrabHGclientThread extends Thread{
 
 				HGclienthttp hg = new HGclienthttp();
 				
-				hg.recoverGamedetailsVecfromefile();
+				HGclienthttp.recoverGamedetailsVecfromefile();
 				
-				hg.setLoginParams(address, "gcwfool1", "aaa222");
+				hg.setLoginParams(address, "gcwfool4", "aaa222");
 				
-				boolean b = hg.login();
-				if(b){
+				int b = hg.login();
+				if(b == 1){
 					//hg.getTotalBet();
 				}else{
 					hg.login();
@@ -40,6 +41,9 @@ public class GrabHGclientThread extends Thread{
 					
 					
 					boolean bgettotal = hg.getTotalBet();
+					
+					
+					
 					boolean bgetinplay = hg.getInplaybet();
 					boolean bgetgameres = hg.getgameresult();
 					
@@ -50,26 +54,59 @@ public class GrabHGclientThread extends Thread{
 						
 						hg.updateDXQdetailsvec();
 						
-						System.out.println("get all success:" + df.format(System.currentTimeMillis()));
-					}else{
-						failtimes++;
+						//System.out.println("get all success:" + df.format(System.currentTimeMillis()));
 						
-						if(failtimes > 10){
-							System.out.println("failed:" + df.format(System.currentTimeMillis()));
-							System.out.println("relogin:");
+						HGclienthttp.setGrabStext("更新成功");
+						
+						HGclienthttp.setGrabColor(Color.GREEN);
+						
+						
+						Thread.currentThread();
+						Thread.sleep(1*1000);
+						
+						
+					}else{
+						
+						
+						HGclienthttp.setGrabColor(Color.RED);
+						
+						
+						System.out.println("failed:" + df.format(System.currentTimeMillis()));
+						
+						//hg.setLoginParams(address, "gcwfool5", "aaa222");
+						
+						
+						int loginres = hg.login();
+						
+						while(loginres == 2){
 							
-							b = hg.login();
+							HGclienthttp.setGrabStext("维护中...");
 							
+							Thread.currentThread();
+							Thread.sleep(120*1000);
+							loginres = hg.login();
 							
-							failtimes = 0;
 							
 							
 						}
+						
+						
+						if(loginres== 1){
+							System.out.println("relogin success");
+						}else{
+							Thread.currentThread();
+							Thread.sleep(5*1000);
+						}
+						
+						
+							
+							
+						
 					}
 					
 					
 					
-					Thread.currentThread().sleep(30*1000);
+
 					
 				}
 				

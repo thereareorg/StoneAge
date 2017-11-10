@@ -177,9 +177,9 @@ public class StoneAge {
 	
 	public static void main(String[] args) throws Exception {
 
-		
+/*		
 		GrabHGclientThread hgclientthread = new GrabHGclientThread();
-		hgclientthread.start();
+		hgclientthread.start();*/
 		
 		
 
@@ -785,7 +785,7 @@ public class StoneAge {
 		textFieldZhiboProxyAddress = new JTextField();
 		textFieldZhiboProxyAddress.setSize(120, 25);
 		textFieldZhiboProxyAddress.setLocation(Xposition + 50 + 300, Yposition);
-		textFieldZhiboProxyAddress.setText("110.165.46.98");
+		textFieldZhiboProxyAddress.setText("110.165.46.121");
 
 		JLabel labelZhiboProxyAccount = new JLabel("端口:");
 		labelZhiboProxyAccount.setSize(50, 25);

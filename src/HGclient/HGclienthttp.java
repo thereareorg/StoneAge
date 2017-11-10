@@ -90,6 +90,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 
 
+
 import org.w3c.dom.Document;  
 import org.w3c.dom.Element;  
 import org.w3c.dom.NodeList; 
@@ -109,7 +110,7 @@ public class HGclienthttp {
 	    requestConfig = RequestConfig.copy(requestConfig).setRedirectsEnabled(false).build();//禁止重定向 ， 以便获取cookieb18
 	    //requestConfig = RequestConfig.copy(requestConfig).setConnectTimeout(autoBet.timeOut).setConnectionRequestTimeout(autoBet.timeOut).setSocketTimeout(autoBet.timeOut).build();//设置超时
 	        httpclient = HttpClients.custom().setDefaultRequestConfig(requestConfig).build();
-	   }
+	 }
 	
 	 
 	 
@@ -135,6 +136,8 @@ public class HGclienthttp {
 	public static DXQPreviousDetailsWindow dxqpdwnd = new DXQPreviousDetailsWindow();
 	
 	public static DXQAnalysisWindow dxqAnswnd = new DXQAnalysisWindow();
+	
+	public static RatioAnalysisWindow ratioAnswnd = new RatioAnalysisWindow();
 	
 	public static DXQdetailsWindow dxqdetailswnd = new DXQdetailsWindow();
 	
@@ -193,6 +196,11 @@ public class HGclienthttp {
 	
 	public static void showdxqanswnd(boolean b){
 		dxqAnswnd.setVisible(b);
+	}
+	
+	
+	public static void showratioanswnd(boolean b){
+		ratioAnswnd.setVisible(b);
 	}
 	
 	
@@ -369,7 +377,7 @@ public class HGclienthttp {
 				if(f.isDirectory()){
 					System.out.println("fuck directory here");
 				}else{
-					System.out.println(f.getAbsolutePath());
+					//System.out.println(f.getAbsolutePath());
 					//
 					GameDetails gamedetails = new GameDetails();
 					
@@ -427,25 +435,7 @@ public class HGclienthttp {
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	public  static boolean isInShowLeagueName(String str){
-		boolean in = false;
-		
-		for(int i = 0; i < showLeagueName.size(); i++){
-			if(showLeagueName.elementAt(i).contains(str)){
-				in = true;
-				break;
-			}
-		}
-		
-		return in;
-	}
-	
+
 	
 	
 	public static boolean recoverGamedetailsVecfromefile(){
@@ -479,9 +469,9 @@ public class HGclienthttp {
 			
 			for(File f : flist){
 				if(f.isDirectory()){
-					System.out.println("fuck directory here");
+					//System.out.println("fuck directory here");
 				}else{
-					System.out.println(f.getAbsolutePath());
+					//System.out.println(f.getAbsolutePath());
 					//
 					GameDetails gamedetails = new GameDetails();
 					
@@ -520,7 +510,16 @@ public class HGclienthttp {
 					
 					gameDetailsVec.add(gamedetails);
 					
+					if(null != freader){
+						freader.close();
+					}
+					
+					
 				}
+				
+				
+				
+				
 			}
 			
 			
@@ -610,53 +609,65 @@ public class HGclienthttp {
 				
 				for(File f : flist){
 					if(f.isDirectory()){
-						System.out.println("fuck directory here");
+						//System.out.println("fuck directory here");
 					}else{
 						
 						//
 						GameDetails gamedetails = new GameDetails();
 						
-						BufferedReader freader = new BufferedReader(new InputStreamReader(new FileInputStream(f), "UTF-8"));
-						
-						String str = "";
-						
-						linenum = 0;
+						BufferedReader freader = null;
 						int last1danshiindex = -1;
 						int firstinplayindex = -1;
+						try{
+							freader = new BufferedReader(new InputStreamReader(new FileInputStream(f), "UTF-8"));
+							
+							String str = "";
+							
+							linenum = 0;
+
+							
+							while ((str = freader.readLine()) != null) {
+								
+								String[] contents = str.split(",");
+								
+								if(linenum == 0){
+									
+									gamedetails.eventid = contents[0];
+									gamedetails.datetime = contents[1];
+									gamedetails.league = contents[2];
+									gamedetails.teamh = contents[3];
+									gamedetails.teamc = contents[4];
+									gamedetails.filename = f.getName();
+									
+									if(contents.length > 5){
+										gamedetails.gameresult = contents[5];
+									}
+
+								}else{
+									gamedetails.addodds(contents);
+									
+									if(contents[HGODDSINDEX.PRIOTITY.ordinal()].equals("1") && contents[HGODDSINDEX.TYPE.ordinal()].equals("danshi")){
+										last1danshiindex = linenum-1;
+									}
+									
+									if(contents[HGODDSINDEX.PRIOTITY.ordinal()].equals("1") && contents[HGODDSINDEX.TYPE.ordinal()].equals("inplay") && firstinplayindex == -1){
+										firstinplayindex = linenum -1;
+									}
+									
+								}
+								
+								linenum = linenum + 1;
+
+								}
+						}catch(Exception e){
+							e.printStackTrace();
+						}finally{
+							if(null != freader){
+								freader.close();
+							}
+						}
 						
-						while ((str = freader.readLine()) != null) {
-							
-							String[] contents = str.split(",");
-							
-							if(linenum == 0){
-								
-								gamedetails.eventid = contents[0];
-								gamedetails.datetime = contents[1];
-								gamedetails.league = contents[2];
-								gamedetails.teamh = contents[3];
-								gamedetails.teamc = contents[4];
-								gamedetails.filename = f.getName();
-								
-								if(contents.length > 5){
-									gamedetails.gameresult = contents[5];
-								}
 
-							}else{
-								gamedetails.addodds(contents);
-								
-								if(contents[HGODDSINDEX.PRIOTITY.ordinal()].equals("1") && contents[HGODDSINDEX.TYPE.ordinal()].equals("danshi")){
-									last1danshiindex = linenum-1;
-								}
-								
-								if(contents[HGODDSINDEX.PRIOTITY.ordinal()].equals("1") && contents[HGODDSINDEX.TYPE.ordinal()].equals("inplay") && firstinplayindex == -1){
-									firstinplayindex = linenum -1;
-								}
-								
-							}
-							
-							linenum = linenum + 1;
-
-							}
 						
 						if(gamedetails.getodds().elementAt(gamedetails.getodds().size()-1)[HGODDSINDEX.TYPE.ordinal()].equals("inplay")){
 							
@@ -672,7 +683,7 @@ public class HGclienthttp {
 							gamedetails1.addodds(gamedetails.getodds().elementAt(last1danshiindex));
 							gamedetails1.addodds(gamedetails.getodds().elementAt(firstinplayindex));
 							
-							System.out.println(f.getAbsolutePath());
+							//System.out.println(f.getAbsolutePath());
 							gamePreviousDetailsVec.add(gamedetails1);
 						}
 						
@@ -704,35 +715,433 @@ public class HGclienthttp {
 	
 	
 	
-    
-    
-	public static void setGrabStext(){
-
+	
+	
+	
+	
+	public static void constructDaysGaemDetailsForRatioAns(){
 		
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");// 设置日期格式
+		String startdate = ratioAnswnd.getmpstartdate();
+		String enddate = ratioAnswnd.getmpenddate();
 		
-		String timeStr = df.format(System.currentTimeMillis());
+		int comparemins = ratioAnswnd.getComparemins();
 		
-		String res = "";
+		SimpleDateFormat dfday = new SimpleDateFormat("yyyy-MM-dd");// 设置日期格式
 		
-		if(failedCatchAccount.size() != 0){
+		
+		
+		try{
 			
-			res = "失败:";
+			Calendar currentTime = Calendar.getInstance();
 			
-			for(int i = 0; i < failedCatchAccount.size(); i++){
-				res = res + "  " + failedCatchAccount.elementAt(i);
+			java.util.Date currentdate = dfday.parse(enddate);
+			
+			java.util.Date sdate = dfday.parse(startdate);
+			
+			if(sdate.getTime() > currentdate.getTime()){
+				return;
 			}
-		}else{
-			res = "成功";
-		}
-		
+			
+			
+			
+			
+			currentTime.setTime(currentdate);
+			currentTime.add(Calendar.DAY_OF_YEAR, 1);
+			
+			enddate = dfday.format(currentTime.getTimeInMillis());
+			
+			
+			
+			
+			
+			
+			
+			String date = startdate;
+			
+			
+			Vector<GameDetails> gamePreviousDetailsVec = new Vector<GameDetails>();
+			
+			
+			
+			long currentTimetmp = System.currentTimeMillis();
+			
+			Calendar eventtime = Calendar.getInstance();
+			
+			SimpleDateFormat dfmin = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+			
+			SimpleDateFormat dfsec = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			
+			
+			GameDetails gamedetails = null;
+			
+			
+			
+			java.util.Date startTimeDate = null;
+			
+			String folder = "";
+			
+			
+			while(!enddate.equals(date)){
+				
+				
 
+				
+				folder = date;
+				
+				
+				
+				
+				//读取改目录下所有文件:
+				File filefolder = new File("hgdata/" + folder + "/");
+				
+				if(!filefolder.exists()){
+					//dxqAnswnd.updateGameDetailsVec(gamePreviousDetailsVec);
+					
+					currentdate = dfday.parse(date);
+					currentTime.setTime(currentdate);
+					currentTime.add(Calendar.DAY_OF_YEAR, 1);
+					
+					date = dfday.format(currentTime.getTimeInMillis());
+					
+					continue;
+				}
+				
+				File flist[] = filefolder.listFiles();
+				
+				int linenum = 0;
+				
+				for(File f : flist){
+					if(f.isDirectory()){
+						//System.out.println("fuck directory here");
+					}else{
+						
+						//
+						gamedetails = new GameDetails();
+						
+						
+						BufferedReader freader = null;
+						
+						try{
+							
+							freader = new BufferedReader(new InputStreamReader(new FileInputStream(f), "UTF-8"));
+							
+							String str = "";
+							
+							linenum = 0;
+
+							
+							while ((str = freader.readLine()) != null) {
+								
+								String[] contents = str.split(",");
+								
+								if(linenum == 0){
+									
+									gamedetails.eventid = contents[0];
+									gamedetails.datetime = contents[1];
+									gamedetails.league = contents[2];
+									gamedetails.teamh = contents[3];
+									gamedetails.teamc = contents[4];
+									gamedetails.filename = f.getName();
+									
+									if(contents.length > 5){
+										gamedetails.gameresult = contents[5];
+									}
+
+								}else{
+									gamedetails.addodds(contents);
+									
+
+								}
+								
+								linenum = linenum + 1;
+
+								}
+							
+						}catch(Exception e){
+							e.printStackTrace();
+						}finally{
+							if(null != freader){
+								freader.close();
+							}
+						}
+						
+						
+						
+						//计算水位差值
+						
+						
+						currentTimetmp = System.currentTimeMillis();
+						
+						eventtime = Calendar.getInstance();
+						
+						
+						
+						
+						
+						
+						
+						
+						startTimeDate = dfmin.parse(gamedetails.datetime);
+						
+						eventtime.setTime(startTimeDate);
+						
+
+						
+						
+						
+						int latestOdd = -1;
+						
+						if(currentTimetmp > eventtime.getTimeInMillis()){
+							
+							String[] latestodds = null;
+							
+							Long searchTime = eventtime.getTimeInMillis() - comparemins * 60 * 1000;
+							
+							
+							
+							
+							//盘口
+							for(int j = gamedetails.getodds().size() - 1; j >=0 ; j--){
+								
+								String[] odds = gamedetails.getodds().elementAt(j);
+								
+								
+								
+								if(odds[HGODDSINDEX.PRIOTITY.ordinal()].equals("1") && odds[HGODDSINDEX.TYPE.ordinal()].equals("danshi") &&latestOdd == -1){
+									latestOdd = j;
+									
+									latestodds = gamedetails.getodds().elementAt(latestOdd);
+									
+									gamedetails.currentpankou = latestodds[HGODDSINDEX.PANKOU.ordinal()];
+									
+									gamedetails.currentscore = latestodds[HGODDSINDEX.O.ordinal()];
+									
+									
+									
+								}
+								
+								Calendar oddtime = Calendar.getInstance();
+								java.util.Date oddtimedate = dfmin.parse(odds[HGODDSINDEX.TIME.ordinal()]);
+								oddtime.setTime(oddtimedate);
+								
+								if(searchTime > oddtime.getTimeInMillis() &&  odds[HGODDSINDEX.TYPE.ordinal()].equals("danshi")){
+									
+									if(latestOdd == -1){
+										//System.out.println(gameDetailsVec.elementAt(i).teamh + "vs" + gameDetailsVec.elementAt(i).teamc);
+										break;
+									}
+									
+									if(!odds[HGODDSINDEX.PANKOU.ordinal()].equals(gamedetails.getodds().elementAt(latestOdd)[HGODDSINDEX.PANKOU.ordinal()])){
+										continue;
+									}
+									
+									
+									if(gamedetails.getodds().elementAt(j).length < 9){
+										
+										
+										continue;
+									}
+									
+									double odd1;
+									double odd2;
+									
+									int res;
+									
+									
+									if(!gamedetails.getodds().elementAt(latestOdd)[HGODDSINDEX.HODD.ordinal()].equals("none") && !gamedetails.getodds().elementAt(j)[HGODDSINDEX.HODD.ordinal()].equals("none")){
+										odd1 = Double.parseDouble(gamedetails.getodds().elementAt(latestOdd)[HGODDSINDEX.HODD.ordinal()]);
+										odd2 = Double.parseDouble(gamedetails.getodds().elementAt(j)[HGODDSINDEX.HODD.ordinal()]);
+										
+										res = (int)(odd1*100) - (int)(odd2*100);
+										
+										gamedetails.pankouh = res;
+									}
+
+
+									break;
+									
+								}
+								
+								
+							}
+							//盘口结束
+							
+							
+							
+							//大小球
+							
+								
+							for(int j = gamedetails.getodds().size() - 1; j >=0 ; j--){
+								
+								String[] odds = gamedetails.getodds().elementAt(j);
+								
+								if(latestOdd == -1){
+									//System.out.println(gameDetailsVec.elementAt(i).teamh + "vs" + gameDetailsVec.elementAt(i).teamc);
+									break;
+								}
+								
+								
+								
+								Calendar oddtime = Calendar.getInstance();
+								java.util.Date oddtimedate = dfmin.parse(odds[HGODDSINDEX.TIME.ordinal()]);
+								oddtime.setTime(oddtimedate);
+								
+								if(searchTime > oddtime.getTimeInMillis() &&  odds[HGODDSINDEX.TYPE.ordinal()].equals("danshi")){
+									
+									
+									
+									if(!odds[HGODDSINDEX.O.ordinal()].equals(gamedetails.getodds().elementAt(latestOdd)[HGODDSINDEX.O.ordinal()])){
+										continue;
+									}
+									
+									
+									if(gamedetails.getodds().elementAt(j).length < 9){
+										/*System.out.println(Arrays.toString(gamedetails.getodds().elementAt(j)));
+										System.out.println("fuck fuck");*/
+										
+										continue;
+									}
+									
+									double odd1;
+									double odd2;
+									
+									int res;
+									
+									
+
+									
+									if(!gamedetails.getodds().elementAt(latestOdd)[HGODDSINDEX.OODD.ordinal()].equals("none") && !gamedetails.getodds().elementAt(j)[HGODDSINDEX.OODD.ordinal()].equals("none")){
+										odd1 = Double.parseDouble(gamedetails.getodds().elementAt(latestOdd)[HGODDSINDEX.OODD.ordinal()]);
+										odd2 = Double.parseDouble(gamedetails.getodds().elementAt(j)[HGODDSINDEX.OODD.ordinal()]);
+
+										res = (int)(odd1*100) - (int)(odd2*100);
+										
+										gamedetails.ouh = res;
+									}
+									
+
+									
+									break;
+									
+								}
+								
+								
+							}
+							//大小球结束
+							
+							
+							
+							
+
+							
+						}
+						
+						
+						
+						//计算水位差值结束
+						
+						
+						
+						
+						
+						
+						
+						
+						if(gamedetails.pankouh != -1000 || gamedetails.ouh != -1000){
+							
+							GameDetails gamedetails1 = new GameDetails();
+							gamedetails1.eventid = gamedetails.eventid;
+							gamedetails1.datetime = gamedetails.datetime;
+							gamedetails1.league = gamedetails.league;
+							gamedetails1.teamh = gamedetails.teamh;
+							gamedetails1.teamc = gamedetails.teamc;
+							gamedetails1.filename = gamedetails.filename;
+							gamedetails1.gameresult = gamedetails.gameresult;
+							gamedetails1.currentpankou = gamedetails.currentpankou;//rangqiupan pankou
+							gamedetails1.currentscore = gamedetails.currentscore;//dxq pankou
+							gamedetails1.pankouh = gamedetails.pankouh;
+							gamedetails1.ouh = gamedetails.ouh;
+							
+
+							gamePreviousDetailsVec.add(gamedetails1);
+						}
+						
+
+						
+					}
+				}
+				
+				
+				currentdate = dfday.parse(date);
+				currentTime.setTime(currentdate);
+				currentTime.add(Calendar.DAY_OF_YEAR, 1);
+				
+				date = dfday.format(currentTime.getTimeInMillis());
+
+			}
+			
+			
+			ratioAnswnd.updateGameDetailsVec(gamePreviousDetailsVec);
+			
+			
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 		
 		
 	}
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public  static boolean isInShowLeagueName(String str){
+		boolean in = false;
+		
+		for(int i = 0; i < showLeagueName.size(); i++){
+			if(showLeagueName.elementAt(i).contains(str)){
+				in = true;
+				break;
+			}
+		}
+		
+		return in;
+	}
+    
+    
+	public static void setGrabStext(String str){
+
+		SimpleDateFormat df = new SimpleDateFormat("MM-dd HH:mm:ss");// 设置日期格式
+		
+		String timeStr = df.format(System.currentTimeMillis());
+
+		gamedetailswnd.setStateText(timeStr + ":" + str);
+
+	}
+	
 	public static void setGrabColor(Color cr){
 		
+		gamedetailswnd.setStateColor(cr);
+	
 	}
     
     
@@ -754,8 +1163,7 @@ public class HGclienthttp {
     	for(int i = 0; i < eventDetailsVec.size(); i++ ){
     		finalEventDetailsVec.add(eventDetailsVec.elementAt(i).clone());
     	}
-    	
-    	//finalEventDetailsVec = (Vector<String[]>)eventDetailsVec.clone();
+
     	
     	lockeFinalEventsDetails.writeLock().unlock();
     	
@@ -899,13 +1307,19 @@ public class HGclienthttp {
 	}
 	 
     
-    public boolean login(){
+    public int login(){// 1成功	2维护   -1失败
     	
     	try{
+    		
+    		
     		
         	String loginLine = ADDRESS;
         	
         	String res = doGet(loginLine, "", "");
+        	
+        	
+        	System.out.println("address" + ADDRESS + "        account:" + ACCOUNT + "    pwd:" + PWD);
+        	
         	
         	if(res != null && res.contains("Welcome")){
         		res = doGet(loginLine + "app/member/", "", "");
@@ -921,9 +1335,6 @@ public class HGclienthttp {
     		        params.add(new BasicNameValuePair("auto", "CDCAAH"));
     		        params.add(new BasicNameValuePair("langx", "zh-cn"));
     		        params.add(new BasicNameValuePair("blackbox", "0400YF6d92uvKm0HcCiyOFFxUNbEtcBcrNWm7tjCQkotdjQw5xWQZwLvBMyYsEeVxkp8AsEb5KdHtSVIoHD9oBcKvSjz#xHPtjuExyrUMidKQPdDdd59r5gHsk3Jqo5kIgFTWgT#Kx4Epa2zQm#3qhD9kgWQTC0m/HvQziHA3t4riiOkovqko/fSmkNYIad05MNb8cFCb3XpK0LXm0XBtvk2RW2s0fO33l4#I5kdy9nogBJzJxGFLwTACkxFXRiZcQcAnPGnG3CqgLln#4KLswTyWhDAstLN4US5V97h50/5jKuksZ#gFcc8aSfcCd7fI2wGBY4wR2MiMzmg5dRbGWPI8M6GAfCDvUlifMI371dvXAlCeVnfbH9JZylCz8QbOZkvGRHvjriYIbIg9HUSBfXWuKXJErkyaWn5BDFLHM#5G3JxvQfkiMeQJwpKzgpVgoHiiKr8#cIUNmwDMCagJZpV4kcOjS9hgMLfbLOSjLND7KBtrNHzt95ePjtsUScOr3#mWrjg3IZNlqx9izplUCi1HTOpvCmZZrwjRMXJ9IEnfRv4X35U0eVzPZLWOlxpt0YU9cmKrLQxcxA5OE2KkOZe/0jXzk77ILZ/eUsQ7RNrLro1kTKIs1496YkpIh3A707lm2e25SQbo1NCGnRFJ9gtT0iED#cGuWwPkTvlqBdC12PmY1XpDGBtyWF8hRwW7Jsss29L0sFkQPnkjHloApNDPJIEFaG7TsuZF23lTgKl7AgMpOFU/WEDIN342j#XX27r3xadNE2jqb6o3IAEdbB#xALkiiRCA6evF2DQIx40pMrR#V2uydxMn8KIELRmyFBRJU1LrmbzelD6oxNEfoZFV#DscBxLl#dLtt4maFOL6yMyCcKD6b0XNCXEa99vL6##cavgcLy#nCx3lS47UriKIBZvEwomnPIiZRIJh8#MYnBjjZSkBTBViCtv5Q#LwBkPsYCocoX3ay#ZYWs5ngHUuqh1fJQrFSBW1n74tpcOq4iPaqS7dmS/OQAz11sFE541B9tAPWn4oRxXqLz#1vlqUAr9dE2jcfl0TIBnmyVMxonU1BmpxahzafJVg5zBIetJQ3Xefa#YB7ITNEE/Z3YwxutPPQ2GfVUsST63vMEjSJvXcAKvCGTjEWW8FcEnsI4IYmfElm5kQLAjYyWW#JjxmQNQW0lAb85RpiIn/4g7jAkiUi5StOu7r2IPArjDreTC6uFgohzG6tj56xHvIydRqRTKZa4iOl37jofZbR2X0CLn3eIcxKkwcJxyTYzWRQCI05#m/s9uEinmaXtSl2UmmhmloMaC#EMyflyElqcirhzppla8ZDW2bRXD8/H#Z6OjIIpfSMVFz9D2oYC/XhwVjHdl07AJ8M8661zNfpWIs8ccjFNznha7un7RKil3e3ILbfnJeW/Yd7I6npjlUJWbuQ/t47DkHIydbRuRfHjyH8k=;0400R9HVeoYv1gsNf94lis1ztpUkBF3gMqJVUvQPAuo2LgKAC3SfR7deSLSUZpybFcXA9SHJSmUeiL2574HgzbCSorEfVk9EjAzqJqKR0TY3#IFLuAeH2h6vGuixLXGBICA18sQyiQagYnGC7XLTgcuc7Li8jBePvEwYYDvethm0ixXKgDzSlcJpdqYR9FtpPsLf0LVQmADUFBlDgm50c6V/UsE25KpZgUeTfmJPV146JuMtAB9loDuNKLAcesNbcdJjGc#x7ZkkKyrh7d/W78RPOnlWmCRBdNDNnZsKRSTH#IO/n2TRrnUfz408VtFnRD0j9gpHloQhD09UgBbu4NCNc/UJiL5MGqveuaS#rdCzyPnMiYmUc71BnBd2rg#lFhraKNsnunrHByLq6nUttt2l9ujJRwgyXS2Q9KG9HNi#2VI85h7zmVcUJBNBM7WaTBsiYt9JBUxxiSlCSOP8F/eyAGlZmakw#7cndFvPrWIExT58wjfvV29cCUJ5Wd9sf0lnKULPxBs5mS8ZEe#OuJghsiD0dRIF9da4X770SAb3TRP#mvvWgPnrWmK0aG2E3OZcNlPGOByHX4huF83Aa9GmgYQonmwROuiCBJVw9IRDLb0JdqJazYFDT6nqahhMcUIPjTxW0WdEPSP0r/qhtNUJaUF/V33vgKI2yAfUMZ5LKFpDFK356A5knwl2Y1Y/iacvjAucj41K34TIB9QxnksoWmbZIYRwZnYim9ceHDKRCiK4xI1RTIYC8ouD71qCKcmZqa#c5UMfdLNXqLz#1vlqUAr9dE2jcfl0wgroQBfpyuIW#rd/mIenAaO5heWtZpAZVTw2C4oQ2p6vWc20/w4QKST/riUqiozfAOitx40UDzaLaxNWMM2S8UTjbKzZpUNBxKb7FG#fia#fFCEvMT9cc6XakoCa7XCW5#Cltm6/m0VPMQF00uJew0LT2BH9Dx8Z6yFodg/w6rrQcsfKD46f8YCZ40cfr7DqC5#fMqH79MWbCOyMpXT69QD9gfNsKE0OTpKVKH42hNGROirpBMeFwJbCNXUqqTCq8v2oTkvCePSyGF4U0UGkX4j/DuWtwWHvxu8HkHDHdhgOuh4IvPUNS9mgigMcqzmtWrjg3IZNlqx9izplUCi1HWHk3C7XHo8go3BLDGnaz5XZuCYrzj4mEQTXvE##wwwV4vY8lHQcj#Q4fFf2NX4F#7ro#M4ipsfWJ3GXWNSW6tchW6oU287S#V22PjcuhFhUlslmfUf9dDYrUFN9IOYdo3Gr4HC8vpwsd5UuO1K4iiAWbxMKJpzyIianSZZ3QS5Wiuv6Xcf4KsK5LEMIr6#sTO9JtnL1pW8sgn5/pctOOs8Gf8KtIH3o8RLGPxs#gOfLtiKNVrMXJ6Cbt1mVTbhWyJHvK6mfVAgSx/UA41KIRpRwPpPV0ZSMvwjoZA0RWfglGlMNiDk8cpbQEMxtWqZWeSBtbA/EssweGUfIPaozkqWdjIx23VgkipYstdZ3m/rUpwLBtZfh#7IyA21v8MPMxPMyventUynb8yHl2y5x3t9/3n2CdEwdsx88Bwt#VCNf"));
-
-    		      //  params.add(new BasicNameValuePair("blackbox", "0400AKHeWb1CT4UHcCiyOFFxUHMGYHECdOIvwTpqC7aOF/G7cVE#xxeTH9qn7gvBN1hODpQyKLUtdcy/gVjxK6YQUmuthzD1rRD5A9buc5roGxhe#J5xbAcO8rvcbfkqJhb4bZWp/5NFsh3QANolZLufCAU8wqwM/zbpaoaJowy5lsfph/T#lMlRTHHUCeHGUbX/DJ0qCc4gMpergecSo06izT8HnO#s8lyWpM5YbymrVY4S1YNroVW2O#vTryf#1pnmL9Jy7/47AzuYFkjtvjQOGelJ8Gb9SG/q90QXugNbYJEhxduA4kdPqOowfmZjGrzu0rdKBra3m4ZR2Ms7S7avd7cd1XhlYwZ/NVnZnS3CaRq121JSnXsZD0Yd#YUrKwdACkrOClWCgeJKdvgBMCV4rfrJz/fklocMiDLIKDP729GOZTYvnKL0JQQ08ROukpTp9XBuSvEwBJDnVb7uHgXQGYo9JmvF3vc9CXZjVj#Jpy8kiBJpMqMw/SVBeKzAru#JYXyFHBbsmyyzb0vSwWRA#eSMeWgCk0M8gU5#pf0qGt1hmfU9oknoVD8HnO#s8lyWpM5YbymrVY5rDWMmJP3LXY/VcdsVtZ27r60IH4il38Cda6YSRkX1hf3sJEoPCuv0BDL#bbK9Z4N/Vd5CP8xsYmGPscHQQQuA6YfK6hVDbT4tkHtr0ZkEKbb2959p22PirHxvKCUU8yzEpkWTlnMi5v5ndDC26MVOJiDbCfVZTGBk19tyNs7g88qK4pvupFpLemvXgd8701PyxDKJBqBicS71nGU##vhH/C0ztoeqIFpgO962GbSLFTli83238dgy/7mtppD6DPiufFeW6Q#QODVpFvFPfsOdZhjjOUIR7qxqtAwYWkaqVzAjgGPH#MppYmhOFwNStz0HYYNdyOmCGfNeJ9fURZJUYTtUNo5lYHxObL5PzR66nFKf43HBI7W88aVqlQ8/8l/z3wafI/WYHEhE9ByNPHzEbZ/KaW8jWEQ6C0Er7EtpjRlOV0BV1vqg3eln9a65pRCxrjL9PqU5WA");
-    		        
     		        
     		        res = doPost(ADDRESS + "app/member/new_login.php", params, "");
     		        
@@ -935,7 +1346,7 @@ public class HGclienthttp {
     		        	user_id = res.substring(ps, pe);
     		        	
     		        	
-    		        	return true;
+    		        	return 1;
 
     		        }
     		        
@@ -945,16 +1356,25 @@ public class HGclienthttp {
         		
         	}
         	
-        	//System.out.println(res);
+        	System.out.println("登录失败:");
+        	
+        	System.out.println(res);
+        	
+        	if(res.contains("System Maintenance")){
+        		return 2;
+        	}else if(res.contains("today_gmt")){
+        		return 1;
+        	}
+        	
     		
     	}catch(Exception e){
     		e.printStackTrace();
-    		return false;
+    		return -1;
     	}
     	
 
     	
-    	return false;
+    	return -1;
     }
     
     
@@ -986,7 +1406,11 @@ public class HGclienthttp {
             
             if(res.contains("logout_warn")){
             	
-            	boolean bl = login();
+            	System.out.println("contains logout_warn");
+            	
+            	return false;
+            	
+            	/*boolean bl = login();
             	
             	int logintimes = 0;
             	
@@ -1003,7 +1427,7 @@ public class HGclienthttp {
                 
                 if(res == null){
                     res = doGet(ADDRESS + "app/member/FT_browse/body_var.php?" + "uid=" + user_id + "&rtype=r" + "&langx=zh-cn" + "&mtype=" + mtype + "&page_no=0" + "&league_id=&hot_game="   , "", "");            	
-                }
+                }*/
             	
             }
             
@@ -1069,6 +1493,27 @@ public class HGclienthttp {
             		gid = gid.replace("'", "");
             		
             		String datetime = details[1];
+            		
+            		
+            		
+            		if(!datetime.contains("Running Ball")){
+                		ps = res.indexOf("g([", pe);
+                		previousgame = currentgame;
+                		if(ps == -1){
+                			
+                		//	System.out.println("不考特别投注");
+                			break;
+                		}
+                		
+                		ps = ps +3;
+                		
+                    	pe = res.indexOf(";", ps);
+                    	
+                    	
+                    	
+                    	continue;
+            		}
+            		
             		datetime = datetime.replace("'", "");
             		datetime = datetime.replace("<br>", " ");
             		
@@ -1124,7 +1569,7 @@ public class HGclienthttp {
                 		previousgame = currentgame;
                 		if(ps == -1){
                 			
-                			System.out.println("不考特别投注");
+                		//	System.out.println("不考特别投注");
                 			break;
                 		}
                 		
@@ -1145,7 +1590,7 @@ public class HGclienthttp {
                 		previousgame = currentgame;
                 		if(ps == -1){
                 			
-                			System.out.println("不考虑角球数,罚牌数");
+                			//System.out.println("不考虑角球数,罚牌数");
                 			break;
                 		}
                 		
@@ -1250,17 +1695,17 @@ public class HGclienthttp {
             							String[] newodditem = {gid, Integer.toString(priority), currentTime, strong + pankou, rh, rc, 
             	            					o, u, oh, oc, "danshi"};
             							
-            							if(rh.equals("") || rc.equals("") || oh.equals("") || oc.equals("")){
+            							if(rh.equals("none") && rc.equals("none") && oh.equals("none") && oc.equals("none")){
             								
-            								System.out.println(res);
+            								//System.out.println(res);
             								
-            								System.out.println("empty odds in:");
+            								System.out.println("wrong data in:");
             								
             								System.out.println(gameDetailsVec.elementAt(i).datetime + gameDetailsVec.elementAt(i).teamh);
             								
             								System.out.println(Arrays.toString(newodditem));
             								
-            								//break;
+            								break;
             							}else{
                 							gameDetailsVec.elementAt(i).addodds(newodditem);
                 							
@@ -1275,17 +1720,17 @@ public class HGclienthttp {
     	            					o, u, oh, oc, "danshi"};
     							
     							
-    							if(rh.equals("") || rc.equals("") || oh.equals("") || oc.equals("")){
+    							if(rh.equals("none") && rc.equals("none") && oh.equals("none") && oc.equals("none")){
     								
-    								System.out.println(res);
     								
-    								System.out.println("empty odds in:");
+    								
+    								System.out.println("wrong data in:");
     								
     								System.out.println(gameDetailsVec.elementAt(i).datetime + gameDetailsVec.elementAt(i).teamh);
     								
     								System.out.println(Arrays.toString(newodditem));
     								
-    								
+    								break;
     							}else{
         							gameDetailsVec.elementAt(i).addodds(newodditem);
         							
@@ -1317,16 +1762,18 @@ public class HGclienthttp {
             			String[] odds = {gid, Integer.toString(priority), currentTime, strong + pankou, rh, rc, 
             					o, u, oh, oc, "danshi"};
             			
-            			if(rh.equals("") || rc.equals("") || oh.equals("") || oc.equals("")){
-            				
-            				System.out.println(res);
-            				
-            				System.out.println("empty odds in:");
-            				
-							System.out.println(gamedetails.datetime + gamedetails.teamh);
+            			if(rh.equals("none") && rc.equals("none") && oh.equals("none") && oc.equals("none")){
+							
+							
+							
+							System.out.println("wrong data in:");
+							
+							System.out.println(datetime + teamh);
 							
 							System.out.println(Arrays.toString(odds));
-            			}else{
+							
+							
+						}else{
                 			gamedetails.addodds(odds);
                 			
                 			gamedetails.savetofile();
@@ -1409,6 +1856,25 @@ public class HGclienthttp {
                     		gid = gid.replace("'", "");
                     		
                     		String datetime = details[1];
+                    		
+                    		if(!datetime.contains("Running Ball")){
+                        		ps = res.indexOf("g([", pe);
+                        		previousgame = currentgame;
+                        		if(ps == -1){
+                        			
+                        		//	System.out.println("不考特别投注");
+                        			break;
+                        		}
+                        		
+                        		ps = ps +3;
+                        		
+                            	pe = res.indexOf(";", ps);
+                            	
+                            	
+                            	
+                            	continue;
+                    		}
+                    		
                     		datetime = datetime.replace("'", "");
                     		datetime = datetime.replace("<br>", " ");
                     		
@@ -1466,7 +1932,7 @@ public class HGclienthttp {
                         		
                         		if(ps == -1){
                         			
-                        			System.out.println("不考虑角球数");
+                        			//System.out.println("不考虑角球数");
                         			break;
                         		}
                         		
@@ -1489,7 +1955,7 @@ public class HGclienthttp {
                         		
                         		if(ps == -1){
                         			
-                        			System.out.println("不考虑角球数");
+                        			//System.out.println("不考虑角球数");
                         			break;
                         		}
                         		
@@ -1598,17 +2064,17 @@ public class HGclienthttp {
                     							String[] newodditem = {gid, Integer.toString(priority), currentTime, strong + pankou, rh, rc, 
                     	            					o, u, oh, oc, "danshi"};
                     							
-                    							if(rh.equals("") || rc.equals("") || oh.equals("") || oc.equals("")){
+                    							if(rh.equals("none") && rc.equals("none") && oh.equals("none") && oc.equals("none")){
                     								
-                    								System.out.println(res);
                     								
-                    								System.out.println("empty odds in:");
+                    								
+                    								System.out.println("wrong data in:");
                     								
                     								System.out.println(gameDetailsVec.elementAt(i).datetime + gameDetailsVec.elementAt(i).teamh);
                     								
                     								System.out.println(Arrays.toString(newodditem));
                     								
-                    								//break;
+                    								break;
                     							}else{
                         							gameDetailsVec.elementAt(i).addodds(newodditem);
                         							
@@ -1623,16 +2089,17 @@ public class HGclienthttp {
             	            					o, u, oh, oc, "danshi"};
             							
             							
-            							if(rh.equals("") || rc.equals("") || oh.equals("") || oc.equals("")){
-            								System.out.println(res);
+            							if(rh.equals("none") && rc.equals("none") && oh.equals("none") && oc.equals("none")){
             								
-            								System.out.println("empty odds in:");
+            								
+            								
+            								System.out.println("wrong data in:");
             								
             								System.out.println(gameDetailsVec.elementAt(i).datetime + gameDetailsVec.elementAt(i).teamh);
             								
             								System.out.println(Arrays.toString(newodditem));
             								
-            								
+            								break;
             							}else{
                 							gameDetailsVec.elementAt(i).addodds(newodditem);
                 							
@@ -1663,15 +2130,18 @@ public class HGclienthttp {
                     			String[] odds = {gid, Integer.toString(priority), currentTime, strong + pankou, rh, rc, 
                     					o, u, oh, oc, "danshi"};
                     			
-                    			if(rh.equals("") || rc.equals("") || oh.equals("") || oc.equals("")){
-                    				System.out.println(res);
-                    				
-                    				System.out.println("empty odds in:");
-                    				
-        							System.out.println(gamedetails.datetime + gamedetails.teamh);
-        							
-        							System.out.println(Arrays.toString(odds));
-                    			}else{
+                    			if(rh.equals("none") && rc.equals("none") && oh.equals("none") && oc.equals("none")){
+    								
+    								
+    								
+    								System.out.println("wrong data in:");
+    								
+    								System.out.println(datetime + teamh);
+    								
+    								System.out.println(Arrays.toString(odds));
+    								
+    								
+    							}else{
                         			gamedetails.addodds(odds);
                         			
                         			gamedetails.savetofile();
@@ -1711,6 +2181,15 @@ public class HGclienthttp {
             	
             	
             }else{
+            	
+            	if(null == res){
+            		return false;
+            	}else if(res.contains("gid")){
+            		return true;
+            	}
+            	
+            	System.out.println(res);
+            	
             	return false;
             }
             
@@ -1756,24 +2235,7 @@ public class HGclienthttp {
             
             if(res.contains("logout_warn")){
             	
-            	boolean bl = login();
-            	
-            	int logintimes = 0;
-            	
-            	
-            	while(bl == false && logintimes < 10){
-            		bl = login();
-            		logintimes++;
-            		Thread.currentThread().sleep(5*1000);
-            	}
-            	
-            	
-                res = doGet(ADDRESS + "app/member/FT_browse/body_var.php?" + "uid=" + user_id + "&rtype=re" + "&langx=zh-cn" + "&mtype=" + mtype + "&page_no=0" + "&league_id=&hot_game="   , "", "");
-                
-                
-                if(res == null){
-                    res = doGet(ADDRESS + "app/member/FT_browse/body_var.php?" + "uid=" + user_id + "&rtype=re" + "&langx=zh-cn" + "&mtype=" + mtype + "&page_no=0" + "&league_id=&hot_game="   , "", "");            	
-                }
+            	return false;
             	
             }
             
@@ -1824,7 +2286,7 @@ public class HGclienthttp {
             		String[] details = res.substring(ps, pe).split(",");
             		
             		if(details.length < 57){
-            			System.out.println("funck you");
+            			System.out.println("funck length small than 57");
             		}
             		
             		String eventid = details[50];
@@ -1895,7 +2357,7 @@ public class HGclienthttp {
                 		
                 		if(ps == -1){
                 			
-                			System.out.println("不考虑特别投注");
+                			//System.out.println("不考虑特别投注");
                 			break;
                 		}
                 		
@@ -1919,7 +2381,7 @@ public class HGclienthttp {
                 		
                 		if(ps == -1){
                 			
-                			System.out.println("不考虑角球数");
+                			//System.out.println("不考虑角球数");
                 			break;
                 		}
                 		
@@ -1974,7 +2436,7 @@ public class HGclienthttp {
                 		
                 		if(ps == -1){
                 			
-                			System.out.println("大小球为空，不如何条件");
+                			//System.out.println("大小球为空，不如何条件");
                 			break;
                 		}
                 		
@@ -2128,7 +2590,7 @@ public class HGclienthttp {
                                 				if(scores == 0){
                                 					if(onum >= 1.5){
                                 						String[] newodditem = {gid, Integer.toString(priority), currentTime, strong + pankou, rh, rc, 
-                            	            					o, u, oh, oc, "inplay", scoreh, scorec, timer};
+                            	            					o, oh, oh, oc, "inplay", scoreh, scorec, timer};
                                 						
                                 						gameDetailsVec.elementAt(i).addodds(newodditem);
                                 						
@@ -2140,7 +2602,7 @@ public class HGclienthttp {
                                 				}else if(scores == 1){
                                 					if(onum >= 2.5){
                                 						String[] newodditem = {gid, Integer.toString(priority), currentTime, strong + pankou, rh, rc, 
-                            	            					o, u, oh, oc, "inplay", scoreh, scorec, timer};
+                            	            					o, oh, oh, oc, "inplay", scoreh, scorec, timer};
                                 						
                                 						gameDetailsVec.elementAt(i).addodds(newodditem);
                                 						gameDetailsVec.elementAt(i).savetofile();
@@ -2168,7 +2630,7 @@ public class HGclienthttp {
             		
             		if(ps == -1){
             			
-            			System.out.println("fuck fuck");
+            			
             			break;
             		}
             		
@@ -2290,7 +2752,7 @@ public class HGclienthttp {
                         		
                         		if(ps == -1){
                         			
-                        			System.out.println("不考虑特别投注");
+                        			//System.out.println("不考虑特别投注");
                         			break;
                         		}
                         		
@@ -2313,7 +2775,7 @@ public class HGclienthttp {
                         		ps = res.indexOf("g([", pe);
                         		
                         		if(ps == -1){                        			
-                        			System.out.println("不考虑角球数");
+                        			//System.out.println("不考虑角球数");
                         			break;
                         		}
                         		
@@ -2368,7 +2830,7 @@ public class HGclienthttp {
                         		
                         		if(ps == -1){
                         			
-                        			System.out.println("大小球为空，不如何条件");
+                        			//System.out.println("大小球为空，不如何条件");
                         			break;
                         		}
                         		
@@ -2520,7 +2982,7 @@ public class HGclienthttp {
                                         				if(scores == 0){
                                         					if(onum >= 1.5){
                                         						String[] newodditem = {gid, Integer.toString(priority), currentTime, strong + pankou, rh, rc, 
-                                    	            					o, u, oh, oc, "inplay", scoreh, scorec, timer};
+                                    	            					o, oh, oh, oc, "inplay", scoreh, scorec, timer};
                                         						
                                         						gameDetailsVec.elementAt(i).addodds(newodditem);
                                         						
@@ -2531,7 +2993,7 @@ public class HGclienthttp {
                                         				}else if(scores == 1){
                                         					if(onum >= 2.5){
                                         						String[] newodditem = {gid, Integer.toString(priority), currentTime, strong + pankou, rh, rc, 
-                                    	            					o, u, oh, oc, "inplay", scoreh, scorec, timer};
+                                    	            					o, oh, oh, oc, "inplay", scoreh, scorec, timer};
                                         						
                                         						gameDetailsVec.elementAt(i).addodds(newodditem);
                                         						
@@ -2568,7 +3030,7 @@ public class HGclienthttp {
                     		
                     		if(ps == -1){
                     			
-                    			System.out.println("fuck fuck");
+                    			
                     			break;
                     		}
                     		
@@ -2595,8 +3057,6 @@ public class HGclienthttp {
             	}
             	
             	
-            }else{
-            	return false;
             }
             
             return true;

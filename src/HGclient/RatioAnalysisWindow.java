@@ -10,8 +10,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,76 +27,51 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableColumn;
+import javax.swing.table.JTableHeader;
 
 import org.python.icu.util.Calendar;
 
+import HGclient.DXQdetailsWindow.MyTableModel;
 import P8.Common;
-import P8.EventNameCompare;
+import P8.DateChooser;
 
 
 
+class ratioClassifyItem{
+	public String classify = "";
+	public int pankoutotalgames = 0;
+	public int pankouwingames = 0;
+	public int pankoulosegames = 0;
+	public int dxqtotalgames = 0;
+	public int dxqwingames = 0;
+	public int dxqlosegames = 0;
+}
 
-class oddcompare implements Comparator //ʵ��Comparator�������Լ��ıȽϷ���
+
+class ratioGamesnumCompare implements Comparator //ʵ��Comparator�������Լ��ıȽϷ���
 {
 
 	public int compare(Object o1, Object o2) {
 		
 		try{
+			
+			String[] g1 = (String[])(o1);
+			String[] g2 = (String[])(o2);
 
 			
-			String[] g1 = (String[])o1;
-			String[] g2 = (String[])o2;
+			
+			String gn1 = (String)g1[RatioAnalysisWindow.clickcolumnIndex];
+			String gn2 = (String)g2[RatioAnalysisWindow.clickcolumnIndex];
 
-			
-			int odd1 = 0;
-			int odd2 = 0;
-			
-			if(GameDetailsWindow.compareOdd == 0){
-				
-				if(g1[6].equals("")){
-					odd1 = -1;
-				}else{
-					odd1 = Math.abs(Integer.parseInt(g1[6]));
-				}
-				
-				if(g2[6].equals("")){
-					odd2 = -1;
-				}else{
-					odd2 = Math.abs(Integer.parseInt(g2[6]));
-				}
-				
-
-			}
+			int n1 = Integer.parseInt(gn1);
+			int n2 = Integer.parseInt(gn2);
 			
 			
-			
-			if(GameDetailsWindow.compareOdd == 1){
-
-				
-				if(g1[10].equals("")){
-					odd1 = -1;
-				}else{
-					odd1 = Math.abs(Integer.parseInt(g1[10]));
-				}
-				
-				if(g2[10].equals("")){
-					odd2 = -1;
-				}else{
-					odd2 = Math.abs(Integer.parseInt(g2[10]));
-				}
-				
-			}
-			
-			
-			
-			
-			
-			if(odd1 < odd2)//����Ƚ��ǽ���,����-1�ĳ�1��������.
+			if(n1 < n2)//����Ƚ��ǽ���,����-1�ĳ�1��������.
 			{
 			   return 1;
 			}
-			else if(odd1 == odd2)
+			else if(n1 == n2)
 			{
 			   return 0;
 			}else{
@@ -110,40 +85,78 @@ class oddcompare implements Comparator //ʵ��Comparator�������
 		
 
 	}
-};
+}
+
+
+/*class gamesnumFenziCompare implements Comparator //ʵ��Comparator�������Լ��ıȽϷ���
+{
+
+	public int compare(Object o1, Object o2) {
+		
+		try{
+			
+			String[] g1 = (String[])(o1);
+			String[] g2 = (String[])(o2);
+
+			
+			
+			String gn1 = (String)g1[2];
+			String gn2 = (String)g2[2];
+
+			int n1 = Integer.parseInt(gn1);
+			int n2 = Integer.parseInt(gn2);
+			
+			int fenzi1 = Integer.parseInt(g1[RatioAnalysisWindow.clickcolumnIndex]);
+			int fenzi2 = Integer.parseInt(g2[RatioAnalysisWindow.clickcolumnIndex]);
+			
+			double r1 = fenzi1/n1;
+			double r2 = fenzi2/n2;
+			
+			if(r1 < r2)//����Ƚ��ǽ���,����-1�ĳ�1��������.
+			{
+			   return 1;
+			}
+			else if(r1 == r2)
+			{
+			   return 0;
+			}else{
+				return -1;
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			return 0;
+		}
+		
+
+	}
+}*/
 
 
 
 
 
 
-public class GameDetailsWindow extends JFrame{
+public class RatioAnalysisWindow extends JFrame{
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 5555555555555555555L;
-
-
+	private static final long serialVersionUID = 1000L;
+	
+	
 	public Vector<GameDetails> gameDetailsVec = new Vector<GameDetails>(); 
 	
 	public Vector<String[]> showitemVec = new Vector<String[]>();
+
+	public Vector<ratioClassifyItem> ratioClassifyItemVec = new Vector<ratioClassifyItem>();
 	
+    private JLabel datelb1 = new JLabel("起始日期:");
+    DateChooser mpstart = new DateChooser("ratioAnsdates");
 	
-    MyTableModel tableMode = new MyTableModel();
-    
-    
-    JTable table = null;
-    
-    
-    
-    
-    private JLabel labelGrabStat= new JLabel("状态:");
-    private JTextField textFieldGrabStat = new JTextField(15);
-    
-    
-    
-    
+
+    private JLabel datelb2 = new JLabel("结束日期:");
+    DateChooser mpend = new DateChooser("ratioAnsdatee");
     
     private JLabel comparetimelb = new JLabel("与开赛前比较时间:");
     private JTextField comparetimetxt = new JTextField(15); 
@@ -156,54 +169,59 @@ public class GameDetailsWindow extends JFrame{
     private int ratioChange = 10;
     
     
-    
-    private JCheckBox fhalfjb = new JCheckBox("未开赛");
-    boolean bfhalf = false;
-    
-    private JCheckBox shalfjb = new JCheckBox("走地");
-    boolean bshalf = true;
-    
-    private JCheckBox overjb = new JCheckBox("完赛");
-    boolean bover = false;
-
-    
-    
-    
-    
+    public static int clickcolumnIndex = 2;
     
 
-    private JLabel sortlb = new JLabel("排序:");
-    private JCheckBox pankouhcb = new JCheckBox("盘口主队赔率");
-    //private JCheckBox pankouccb = new JCheckBox("盘口客队赔率");
-    private JCheckBox ouhcb = new JCheckBox("大小球主队赔率");
-    //private JCheckBox ouccb = new JCheckBox("大小球客队赔率");
-    
-    
-    private JCheckBox timecb = new JCheckBox("时间");
-    
-    
-    
-    public static int compareOdd = 0;
-    
-    
-    
-	public GameDetailsWindow()  
-    {  
-		setTitle("水位变动表");  
+	
+	RatioAnalysisWindow(){
 		
-        intiComponent();  
-        
-        
-        
-    } 
+		
+		setTitle("水位分析");
+		
+		
+		intiComponent();
+	}
+	
+	
+
+	
+    MyTableModel tableMode = new MyTableModel();
+    
+    
+    JTable table = null;
+    
+    
+    private JLabel classirylb = new JLabel("分类选择:");
+    private JCheckBox allcb = new JCheckBox("汇总");
+    boolean bclassifyByall = true;
+    
+    private JCheckBox leaguecb = new JCheckBox("联赛名");
+    boolean bclassifyByleague = false;
+    
+    
+    
+ 
+    
+    
+	public String getmpstartdate(){
+		return mpstart.getChooseDate();
+	}
+    
+    
+	public String getmpenddate(){
+		return mpend.getChooseDate();
+	}
+
 	
 	public void updateGameDetailsVec(Vector<GameDetails> gamesvec){
-		
+
 		try{
-			
+
 			if(gameDetailsVec.size() != 0){
 				gameDetailsVec.clear();
 			}
+			
+			//System.out.println("符合条件的球赛");
 			
 			for(int i = 0; i< gamesvec.size(); i++){
 				GameDetails gameitem = new GameDetails();
@@ -214,18 +232,24 @@ public class GameDetailsWindow extends JFrame{
 				gameitem.teamc = gamesvec.elementAt(i).teamc;
 				gameitem.gameresult = gamesvec.elementAt(i).gameresult;
 				
-				
-				
-				for(int j = 0; j < gamesvec.elementAt(i).getodds().size(); j++){
-					gameitem.addodds(gamesvec.elementAt(i).odds.elementAt(j).clone());
-				}
+				gameitem.currentpankou = gamesvec.elementAt(i).currentpankou;
+				gameitem.currentscore = gamesvec.elementAt(i).currentscore;
+				gameitem.pankouh = gamesvec.elementAt(i).pankouh;
+				gameitem.pankouc = gamesvec.elementAt(i).pankouc;
+				gameitem.ouh = gamesvec.elementAt(i).ouh;
+				gameitem.ouc = gamesvec.elementAt(i).ouc;
 				
 
+				
 				gameDetailsVec.add(gameitem);
+				
+				//System.out.println(gameitem.teamh + "vs" + gameitem.teamc);
+
 
 			}
+
 			
-			sortgamedetails();
+			//System.out.println("-------------");
 			
 			updateShowItem();
 			
@@ -234,8 +258,12 @@ public class GameDetailsWindow extends JFrame{
 		}
 
 	}
+
 	
-	@SuppressWarnings("unchecked")
+	public int getComparemins(){
+		return comparemins;
+	}
+	
 	public void sortgamedetails(){
 		
 		try{
@@ -249,10 +277,6 @@ public class GameDetailsWindow extends JFrame{
 			
 			for(int i = 0; i < gameDetailsVec.size(); i++){
 				GameDetails tmp = gameDetailsVec.elementAt(i);
-				
-				
-				gameDetailsVec.elementAt(i).pankouh = -1000;
-				gameDetailsVec.elementAt(i).ouh = -1000;
 				
 				java.util.Date startTimeDate = dfmin.parse(tmp.datetime);
 				
@@ -418,266 +442,48 @@ public class GameDetailsWindow extends JFrame{
 		}
 		
 		
-	}
+	}	
 	
 	
-	public void showfhalf(){
+	
+	
+	
+	
+	public void showbyall(){
 		try{
+			int pankoutotalgames = 0;
+			int pankouwingames = 0;
+			int pankoulosegames =0;
+			int dxqtotalgames = 0;
+			int dxqwingames = 0;
+			int dxqlosegames = 0;
 			
-
 			if(showitemVec.size() != 0){
 				showitemVec.clear();
 			}
 			
 			
-			SimpleDateFormat dfmin = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-			long currenttime = System.currentTimeMillis();
+
 			
 			for(int i = 0; i < gameDetailsVec.size(); i++){
 				GameDetails onegame = gameDetailsVec.elementAt(i);
 				
-				java.util.Date startTimeDate = dfmin.parse(onegame.datetime);
-				
-				
-				if(onegame.gameresult.contains("-") || currenttime > startTimeDate.getTime()){
-					continue;
-				}
-				
-        		int latestIndex = -1;
-        		
-        		for(int j =onegame.odds.size()-1; j >=0 ; j--){
-        			if(onegame.odds.elementAt(j)[HGODDSINDEX.PRIOTITY.ordinal()].equals("1") && onegame.odds.elementAt(j)[HGODDSINDEX.TYPE.ordinal()].equals("danshi")){
-        				latestIndex = j;
-        				break;
-        			}
-        		}
-        		
-        		if(latestIndex == -1){
-        			continue;
-        		}
-        		
-        		
-
-        			
-    			String pankoustr = onegame.odds.elementAt(latestIndex)[HGODDSINDEX.PANKOU.ordinal()];
-    			
-    			if(pankoustr.contains("C")){
-    				pankoustr = pankoustr.replace("C", "受让 ");
-    			}else{
-    				pankoustr = pankoustr.replace("H", "");
-    			}
-
-        			
-    			String hoddstr = onegame.odds.elementAt(latestIndex)[HGODDSINDEX.HODD.ordinal()];
-    			
-    			String hdvaluestr = "";
-    			if(onegame.pankouh != -1000){
-    				hdvaluestr = Integer.toString(onegame.pankouh);
-    			}
-        			
-
-        		
-    			String dxqstr = onegame.odds.elementAt(latestIndex)[HGODDSINDEX.O.ordinal()];
-    			dxqstr = dxqstr.replace("O", "");
-        		
-        		
-        		
-        		
-        			
-    			String ooddstr = onegame.odds.elementAt(latestIndex)[HGODDSINDEX.OODD.ordinal()];
-    			
-    			String odvaluestr = "";
-    			if(onegame.ouh != -1000){
-    				odvaluestr = Integer.toString(onegame.ouh);
-    			}
-
-        		
-        		int tableindex = showitemVec.size();
-				
-				
-				
-				String[] item = {Integer.toString(tableindex), onegame.league, onegame.datetime, onegame.teamh + "-" + onegame.teamc, 
-									pankoustr, hoddstr, hdvaluestr, "", dxqstr, ooddstr, odvaluestr, "", onegame.gameresult};
-				
-				showitemVec.add(item);
-			}
-			
-			
-			if(showitemVec.size() != 0){
-				Comparator ct = new gamedetailsTimeCompare();
-				Collections.sort(showitemVec, ct);
-			}
-			
-			
-			for(int i = 0; i < showitemVec.size(); i++){
-				showitemVec.elementAt(i)[0] = Integer.toString(i+1);
-			}
-			
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-	}
-	
-	public void showshalf(){
-		try{
-			
-
-			if(showitemVec.size() != 0){
-				showitemVec.clear();
-			}
-			
-			
-			SimpleDateFormat dfmin = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-			long currenttime = System.currentTimeMillis();
-			
-			for(int i = 0; i < gameDetailsVec.size(); i++){
-				GameDetails onegame = gameDetailsVec.elementAt(i);
-				
-				java.util.Date startTimeDate = dfmin.parse(onegame.datetime);
-				
-				
-				if(onegame.gameresult.contains("-") || currenttime < startTimeDate.getTime()){
-					continue;
-				}
-				
-				if(currenttime - startTimeDate.getTime() > 6*60*60*1000){
-					continue;
-				}
-				
-        		int latestIndex = -1;
-        		
-        		for(int j =onegame.odds.size()-1; j >=0 ; j--){
-        			if(onegame.odds.elementAt(j)[HGODDSINDEX.PRIOTITY.ordinal()].equals("1") && onegame.odds.elementAt(j)[HGODDSINDEX.TYPE.ordinal()].equals("danshi")){
-        				latestIndex = j;
-        				break;
-        			}
-        		}
-        		
-        		if(latestIndex == -1){
-        			continue;
-        		}
-        		
-        		
-
-        			
-    			String pankoustr = onegame.odds.elementAt(latestIndex)[HGODDSINDEX.PANKOU.ordinal()];
-    			
-    			if(pankoustr.contains("C")){
-    				pankoustr = pankoustr.replace("C", "受让 ");
-    			}else{
-    				pankoustr = pankoustr.replace("H", "");
-    			}
-
-        			
-    			String hoddstr = onegame.odds.elementAt(latestIndex)[HGODDSINDEX.HODD.ordinal()];
-    			
-    			String hdvaluestr = "";
-    			if(onegame.pankouh != -1000){
-    				hdvaluestr = Integer.toString(onegame.pankouh);
-    			}
-        			
-
-        		
-    			String dxqstr = onegame.odds.elementAt(latestIndex)[HGODDSINDEX.O.ordinal()];
-    			dxqstr = dxqstr.replace("O", "");
-        		
-        		
-        		
-        		
-        			
-    			String ooddstr = onegame.odds.elementAt(latestIndex)[HGODDSINDEX.OODD.ordinal()];
-    			
-    			String odvaluestr = "";
-    			if(onegame.ouh != -1000){
-    				odvaluestr = Integer.toString(onegame.ouh);
-    			}
-
-        		
-        		
-				
-    			int tableindex = showitemVec.size();
-				
-				String[] item = {Integer.toString(tableindex), onegame.league, onegame.datetime, onegame.teamh + "-" + onegame.teamc, 
-									pankoustr, hoddstr, hdvaluestr, "", dxqstr, ooddstr, odvaluestr, "", onegame.gameresult};
-				
-        		if((Math.abs(onegame.pankouh) >= ratioChange && onegame.pankouh != -1000) || (Math.abs(onegame.ouh) >= ratioChange && onegame.ouh != -1000)){
-        			showitemVec.add(item);
-        		}
-			}
-			
-			
-			if(showitemVec.size() != 0 && compareOdd != 2){
-				@SuppressWarnings({ "unchecked", "rawtypes" })
-				Comparator co = new oddcompare(); 
-	        	
-
-	        		
-	        	Collections.sort(showitemVec, co);
-	        		
-	        		
-	        	
-			}else if(showitemVec.size() != 0 && compareOdd == 2){
-				Comparator ct = new gamedetailsTimeCompare();
-				Collections.sort(showitemVec, ct);
-			}
-			
-			for(int i = 0; i < showitemVec.size(); i++){
-				showitemVec.elementAt(i)[0] = Integer.toString(i+1);
-			}
-			
-			
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-	}
-	
-	public void showover(){
-		try{
-			
-
-			if(showitemVec.size() != 0){
-				showitemVec.clear();
-			}
-			
-			
-			
-			for(int i = 0; i < gameDetailsVec.size(); i++){
-				GameDetails onegame = gameDetailsVec.elementAt(i);
 				
 				if(onegame.gameresult.equals("")){
 					continue;
 				}
 				
-        		int latestIndex = -1;
         		
-        		for(int j =onegame.odds.size()-1; j >=0 ; j--){
-        			if(onegame.odds.elementAt(j)[HGODDSINDEX.PRIOTITY.ordinal()].equals("1") && onegame.odds.elementAt(j)[HGODDSINDEX.TYPE.ordinal()].equals("danshi")){
-        				latestIndex = j;
-        				break;
-        			}
-        		}
-        		
-        		if(latestIndex == -1){
-        			continue;
-        		}
-        		
-        		
-
-        			
-    			String pankoustr = onegame.odds.elementAt(latestIndex)[HGODDSINDEX.PANKOU.ordinal()];
-    			
-    			if(pankoustr.contains("C")){
-    				pankoustr = pankoustr.replace("C", "受让 ");
-    			}else{
-    				pankoustr = pankoustr.replace("H", "");
-    			}
-
-        			
-    			String hoddstr = onegame.odds.elementAt(latestIndex)[HGODDSINDEX.HODD.ordinal()];
-    			
+				
+				
+				
+				//让球盘开始
     			String hdvaluestr = "";
     			String pankoures = "";
-    			if(onegame.pankouh != -1000 && onegame.pankouh != 0){
+    			
+    			
+    			
+    			if(onegame.pankouh != -1000 && Math.abs(onegame.pankouh) >= ratioChange){
     				hdvaluestr = Integer.toString(onegame.pankouh);
     				
     				
@@ -687,7 +493,12 @@ public class GameDetailsWindow extends JFrame{
     					int scorec = Integer.parseInt(onegame.gameresult.split("-")[1]);
     					int scoredvalue = scoreh - scorec;
     					
-    					String tmppankoustr = onegame.odds.elementAt(latestIndex)[HGODDSINDEX.PANKOU.ordinal()];
+    					String tmppankoustr = onegame.currentpankou;
+    					
+    					pankoutotalgames++;	//让球盘总数
+    					
+    					//System.out.println(onegame.teamh + "vs" + onegame.teamc);
+    					
     					
     					if(tmppankoustr.contains("C")){	//客队让球
     						tmppankoustr = tmppankoustr.replace("C", "");
@@ -703,16 +514,20 @@ public class GameDetailsWindow extends JFrame{
     							if(scoredvalue <= tmp1){	//买主队的人输
     								if(onegame.pankouh < 0){
     									pankoures = "输";
+    									pankoulosegames++;
     								}else{
     									pankoures = "赢";
+    									pankouwingames++;
     								}
 
     								
     							}else if(scoredvalue >= tmp2){
     								if(onegame.pankouh < 0){
     									pankoures = "赢";
+    									pankouwingames++;
     								}else{
     									pankoures = "输";
+    									pankoulosegames++;
     								}
     							}
     							
@@ -723,16 +538,20 @@ public class GameDetailsWindow extends JFrame{
     							if(scoredvalue < tmp){	//买主队的人输
     								if(onegame.pankouh < 0){
     									pankoures = "输";
+    									pankoulosegames++;
     								}else{
     									pankoures = "赢";
+    									pankouwingames++;
     								}
 
     								
     							}else if(scoredvalue > tmp){
     								if(onegame.pankouh < 0){
     									pankoures = "赢";
+    									pankouwingames++;
     								}else{
     									pankoures = "输";
+    									pankoulosegames++;
     								}
     							}else if(scoredvalue == tmp){
     								pankoures = "走水";
@@ -759,16 +578,20 @@ public class GameDetailsWindow extends JFrame{
     							if(scoredvalue <= tmp1){	//买主队的人输
     								if(onegame.pankouh < 0){
     									pankoures = "赢";
+    									pankouwingames++;
     								}else{
     									pankoures = "输";
+    									pankoulosegames++;
     								}
 
     								
     							}else if(scoredvalue >= tmp2){
     								if(onegame.pankouh < 0){
     									pankoures = "输";
+    									pankoulosegames++;
     								}else{
     									pankoures = "赢";
+    									pankouwingames++;
     								}
     							}
     							
@@ -779,16 +602,20 @@ public class GameDetailsWindow extends JFrame{
     							if(scoredvalue < tmp){	//买主队的人输
     								if(onegame.pankouh < 0){
     									pankoures = "赢";
+    									pankouwingames++;
     								}else{
     									pankoures = "输";
+    									pankoulosegames++;
     								}
 
     								
     							}else if(scoredvalue > tmp){
     								if(onegame.pankouh < 0){
     									pankoures = "输";
+    									pankoulosegames++;
     								}else{
     									pankoures = "赢";
+    									pankouwingames++;
     								}
     							}else if(scoredvalue == tmp){
     								pankoures = "走水";
@@ -800,40 +627,29 @@ public class GameDetailsWindow extends JFrame{
     					
     				}
     				
-    				
-    				
-    				
-    				
-    				
-    				
-    				
-    			}
-        			
 
-        		
-    			String dxqstr = onegame.odds.elementAt(latestIndex)[HGODDSINDEX.O.ordinal()];
-    			dxqstr = dxqstr.replace("O", "");
-        		
-        		
-        		
-        		
-        			
-    			String ooddstr = onegame.odds.elementAt(latestIndex)[HGODDSINDEX.OODD.ordinal()];
+    			}//让球盘结束
+				
     			
+    			
+    			
+    			//大小球盘开始
     			String odvaluestr = "";
     			
     			String dxqres = "";
     			
-    			if(onegame.ouh != -1000 && onegame.ouh != 0){
+    			if(onegame.ouh != -1000 && Math.abs(onegame.ouh) >= ratioChange){
     				odvaluestr = Integer.toString(onegame.ouh);
     				
     				if(onegame.gameresult.contains("-")){
+    					
+    					dxqtotalgames++;	//大小球总数
     					
     					int scoreh = Integer.parseInt(onegame.gameresult.split("-")[0]);
     					int scorec = Integer.parseInt(onegame.gameresult.split("-")[1]);
     					int scoretvalue = scoreh + scorec;
     					
-    					String tmpdxqstr = onegame.odds.elementAt(latestIndex)[HGODDSINDEX.O.ordinal()];
+    					String tmpdxqstr = onegame.currentscore;
     					tmpdxqstr = tmpdxqstr.replace("O", "");
 					
 						
@@ -845,16 +661,20 @@ public class GameDetailsWindow extends JFrame{
 							if(scoretvalue <= tmp1){	
 								if(onegame.ouh < 0){
 									dxqres = "赢";
+									dxqwingames++;
 								}else{
 									dxqres = "输";
+									dxqlosegames++;
 								}
 
 								
 							}else if(scoretvalue >= tmp2){
 								if(onegame.ouh < 0){
 									dxqres = "输";
+									dxqlosegames++;
 								}else{
 									dxqres = "赢";
+									dxqwingames++;
 								}
 							}
 							
@@ -865,16 +685,20 @@ public class GameDetailsWindow extends JFrame{
 							if(scoretvalue < tmp){	//买主队的人输
 								if(onegame.ouh < 0){
 									dxqres = "赢";
+									dxqwingames++;
 								}else{
 									dxqres = "输";
+									dxqlosegames++;
 								}
 
 								
 							}else if(scoretvalue > tmp){
 								if(onegame.ouh < 0){
 									dxqres = "输";
+									dxqlosegames++;
 								}else{
 									dxqres = "赢";
+									dxqwingames++;
 								}
 							}else if(scoretvalue == tmp){
 								dxqres = "走水";
@@ -888,42 +712,18 @@ public class GameDetailsWindow extends JFrame{
     				
     				
     			}
+    			//大小球盘结束
+    			
+    			
 
-        		
-        		
-				
-    			int tableindex = showitemVec.size();
-				
-				String[] item = {Integer.toString(tableindex), onegame.league, onegame.datetime, onegame.teamh + "-" + onegame.teamc, 
-									pankoustr, hoddstr, hdvaluestr, pankoures, dxqstr, ooddstr, odvaluestr, dxqres, onegame.gameresult};
-				
-        		if((Math.abs(onegame.pankouh) >= ratioChange && onegame.pankouh != -1000) || (Math.abs(onegame.ouh) >= ratioChange && onegame.ouh != -1000)){
-        			showitemVec.add(item);
-        		}
-			}
-			
-			
-			if(showitemVec.size() != 0 && compareOdd != 2){
-				@SuppressWarnings({ "unchecked", "rawtypes" })
-				Comparator co = new oddcompare(); 
-	        	
 
-	        		
-	        	Collections.sort(showitemVec, co);
-	        		
-	        		
-	        	
-			}else if(showitemVec.size() != 0 && compareOdd == 2){
-				Comparator ct = new gamedetailsTimeCompare();
-				Collections.sort(showitemVec, ct);
 			}
+	
+			String[] item = {"1", "总", Integer.toString(pankoutotalgames), Integer.toString(pankouwingames),Integer.toString(pankoulosegames),
+					Integer.toString(dxqtotalgames),Integer.toString(dxqwingames),Integer.toString(dxqlosegames)};
 			
 			
-			for(int i = 0; i < showitemVec.size(); i++){
-				showitemVec.elementAt(i)[0] = Integer.toString(i+1);
-			}
-			
-			
+			showitemVec.add(item);
 			
 			
 		}catch(Exception e){
@@ -931,33 +731,377 @@ public class GameDetailsWindow extends JFrame{
 		}
 	}
 	
+	
+	public void showbyleague(){
+		try{
+			
+			
+			if(showitemVec.size() != 0){
+				showitemVec.clear();
+			}
+			
+			
+			if(ratioClassifyItemVec.size() != 0){
+				ratioClassifyItemVec.clear();
+			}
+			
+
+			
+			for(int i = 0; i < gameDetailsVec.size(); i++){
+				GameDetails onegame = gameDetailsVec.elementAt(i);
+				
+				if(onegame.gameresult.equals("")){
+					continue;
+				}
+				
+        		
+				
+				
+				
+				//让球盘开始
+    			String hdvaluestr = "";
+    			String pankoures = "";
+    			
+    			
+    			
+    			if(onegame.pankouh != -1000 && Math.abs(onegame.pankouh) >= ratioChange){
+    				hdvaluestr = Integer.toString(onegame.pankouh);
+    				
+    				
+    				if(onegame.gameresult.contains("-")){
+    					
+    					int scoreh = Integer.parseInt(onegame.gameresult.split("-")[0]);
+    					int scorec = Integer.parseInt(onegame.gameresult.split("-")[1]);
+    					int scoredvalue = scoreh - scorec;
+    					
+    					String tmppankoustr = onegame.currentpankou;
+    					
+    					
+    					
+    					int findIndex = -1;
+						for(int k = 0; k < ratioClassifyItemVec.size(); k++){
+							if(ratioClassifyItemVec.elementAt(k).classify.equals(onegame.league)){
+								
+								findIndex = k;
+								break;
+							}
+						}
+						
+						if(findIndex == -1){
+							ratioClassifyItem tmpitem = new ratioClassifyItem();
+							tmpitem.classify = onegame.league;
+							ratioClassifyItemVec.add(tmpitem);
+							findIndex = ratioClassifyItemVec.size() -1;
+						}
+    					
+    					
+						ratioClassifyItemVec.elementAt(findIndex).pankoutotalgames++;
+    					
+    					
+    					//System.out.println(onegame.teamh + "vs" + onegame.teamc);
+    					
+    					
+    					if(tmppankoustr.contains("C")){	//客队让球
+    						tmppankoustr = tmppankoustr.replace("C", "");
+    						tmppankoustr = tmppankoustr.replace(" ", "");
+    						
+    						scoredvalue = scorec -  scoreh;
+    						
+    						
+    						if(tmppankoustr.contains("/")){
+    							double tmp1 = Double.parseDouble(tmppankoustr.split("/")[0]);
+    							double tmp2 = Double.parseDouble(tmppankoustr.split("/")[1]);
+    							
+    							if(scoredvalue <= tmp1){	//买主队的人输
+    								if(onegame.pankouh < 0){
+    									pankoures = "输";
+    									
+    									ratioClassifyItemVec.elementAt(findIndex).pankoulosegames++;
+    								}else{
+    									pankoures = "赢";
+    									ratioClassifyItemVec.elementAt(findIndex).pankouwingames++;
+    								}
+
+    								
+    							}else if(scoredvalue >= tmp2){
+    								if(onegame.pankouh < 0){
+    									pankoures = "赢";
+    									ratioClassifyItemVec.elementAt(findIndex).pankouwingames++;
+    								}else{
+    									pankoures = "输";
+    									ratioClassifyItemVec.elementAt(findIndex).pankoulosegames++;
+    								}
+    							}
+    							
+    						}else{
+    							
+    							double tmp = Double.parseDouble(tmppankoustr);
+    							
+    							if(scoredvalue < tmp){	//买主队的人输
+    								if(onegame.pankouh < 0){
+    									pankoures = "输";
+    									ratioClassifyItemVec.elementAt(findIndex).pankoulosegames++;
+    								}else{
+    									pankoures = "赢";
+    									ratioClassifyItemVec.elementAt(findIndex).pankouwingames++;
+    								}
+
+    								
+    							}else if(scoredvalue > tmp){
+    								if(onegame.pankouh < 0){
+    									pankoures = "赢";
+    									ratioClassifyItemVec.elementAt(findIndex).pankouwingames++;
+    								}else{
+    									pankoures = "输";
+    									ratioClassifyItemVec.elementAt(findIndex).pankoulosegames++;
+    								}
+    							}else if(scoredvalue == tmp){
+    								pankoures = "走水";
+    							}
+    							
+    							
+    						}
+    						
+    						
+    						
+    					}else{	//主队让球
+    						
+    						scoredvalue = scoreh - scorec;
+    						
+    						tmppankoustr = tmppankoustr.replace("H", "");
+    						tmppankoustr = tmppankoustr.replace(" ", "");
+    						
+    						
+    						
+    						if(tmppankoustr.contains("/")){
+    							double tmp1 = Double.parseDouble(tmppankoustr.split("/")[0]);
+    							double tmp2 = Double.parseDouble(tmppankoustr.split("/")[1]);
+    							
+    							if(scoredvalue <= tmp1){	//买主队的人输
+    								if(onegame.pankouh < 0){
+    									pankoures = "赢";
+    									ratioClassifyItemVec.elementAt(findIndex).pankouwingames++;
+    								}else{
+    									pankoures = "输";
+    									ratioClassifyItemVec.elementAt(findIndex).pankoulosegames++;
+    								}
+
+    								
+    							}else if(scoredvalue >= tmp2){
+    								if(onegame.pankouh < 0){
+    									pankoures = "输";
+    									ratioClassifyItemVec.elementAt(findIndex).pankoulosegames++;
+    								}else{
+    									pankoures = "赢";
+    									ratioClassifyItemVec.elementAt(findIndex).pankouwingames++;
+    								}
+    							}
+    							
+    						}else{
+    							
+    							double tmp = Double.parseDouble(tmppankoustr);
+    							
+    							if(scoredvalue < tmp){	//买主队的人输
+    								if(onegame.pankouh < 0){
+    									pankoures = "赢";
+    									ratioClassifyItemVec.elementAt(findIndex).pankouwingames++;
+    								}else{
+    									pankoures = "输";
+    									ratioClassifyItemVec.elementAt(findIndex).pankoulosegames++;
+    								}
+
+    								
+    							}else if(scoredvalue > tmp){
+    								if(onegame.pankouh < 0){
+    									pankoures = "输";
+    									ratioClassifyItemVec.elementAt(findIndex).pankoulosegames++;
+    								}else{
+    									pankoures = "赢";
+    									ratioClassifyItemVec.elementAt(findIndex).pankouwingames++;
+    								}
+    							}else if(scoredvalue == tmp){
+    								pankoures = "走水";
+    							}
+    							
+    							
+    						}
+    					}
+    					
+    				}
+    				
+
+    			}//让球盘结束
+    			
+    			
+    			
+    			
+    			
+    			
+    			//大小球盘开始
+    			String odvaluestr = "";
+    			
+    			String dxqres = "";
+    			
+    			if(onegame.ouh != -1000 && Math.abs(onegame.ouh) >= ratioChange){
+    				odvaluestr = Integer.toString(onegame.ouh);
+    				
+    				if(onegame.gameresult.contains("-")){
+    					
+    					
+    					
+    					int scoreh = Integer.parseInt(onegame.gameresult.split("-")[0]);
+    					int scorec = Integer.parseInt(onegame.gameresult.split("-")[1]);
+    					int scoretvalue = scoreh + scorec;
+    					
+    					String tmpdxqstr = onegame.currentscore;
+    					tmpdxqstr = tmpdxqstr.replace("O", "");
+    					
+    					
+    					int findIndex = -1;
+						for(int k = 0; k < ratioClassifyItemVec.size(); k++){
+							if(ratioClassifyItemVec.elementAt(k).classify.equals(onegame.league)){
+								
+								findIndex = k;
+								break;
+							}
+						}
+						
+						if(findIndex == -1){
+							ratioClassifyItem tmpitem = new ratioClassifyItem();
+							tmpitem.classify = onegame.league;
+							ratioClassifyItemVec.add(tmpitem);
+							findIndex = ratioClassifyItemVec.size() -1;
+						}
+    					
+    					
+						ratioClassifyItemVec.elementAt(findIndex).dxqtotalgames++;
+    					
+    					
+    					
+					
+						
+    					tmpdxqstr = tmpdxqstr.replace(" ", "");
+						if(tmpdxqstr.contains("/")){
+							double tmp1 = Double.parseDouble(tmpdxqstr.split("/")[0]);
+							double tmp2 = Double.parseDouble(tmpdxqstr.split("/")[1]);
+							
+							if(scoretvalue <= tmp1){	
+								if(onegame.ouh < 0){
+									dxqres = "赢";
+									ratioClassifyItemVec.elementAt(findIndex).dxqwingames++;
+								}else{
+									dxqres = "输";
+									ratioClassifyItemVec.elementAt(findIndex).dxqlosegames++;
+								}
+
+								
+							}else if(scoretvalue >= tmp2){
+								if(onegame.ouh < 0){
+									dxqres = "输";
+									ratioClassifyItemVec.elementAt(findIndex).dxqlosegames++;
+								}else{
+									dxqres = "赢";
+									ratioClassifyItemVec.elementAt(findIndex).dxqwingames++;
+								}
+							}
+							
+						}else{
+							
+							double tmp = Double.parseDouble(tmpdxqstr);
+							
+							if(scoretvalue < tmp){	//买主队的人输
+								if(onegame.ouh < 0){
+									dxqres = "赢";
+									ratioClassifyItemVec.elementAt(findIndex).dxqwingames++;
+								}else{
+									dxqres = "输";
+									ratioClassifyItemVec.elementAt(findIndex).dxqlosegames++;
+								}
+
+								
+							}else if(scoretvalue > tmp){
+								if(onegame.ouh < 0){
+									dxqres = "输";
+									ratioClassifyItemVec.elementAt(findIndex).dxqlosegames++;
+								}else{
+									dxqres = "赢";
+									ratioClassifyItemVec.elementAt(findIndex).dxqwingames++;
+								}
+							}else if(scoretvalue == tmp){
+								dxqres = "走水";
+							}
+							
+							
+						}
+    					
+    					
+    				}
+    				
+    				
+    			}
+    			//大小球盘结束
+    			
+    			
+    			
+				
+			}
+
+
+			
+			
+			for(int i = 0; i < ratioClassifyItemVec.size(); i++){
+				ratioClassifyItem ci = ratioClassifyItemVec.elementAt(i);
+				String[] item = {Integer.toString(i+1), ci.classify, Integer.toString(ci.pankoutotalgames), Integer.toString(ci.pankouwingames), 
+						Integer.toString(ci.pankoulosegames), Integer.toString(ci.dxqtotalgames), Integer.toString(ci.dxqwingames), Integer.toString(ci.dxqlosegames)};
+				
+				showitemVec.add(item);
+			}
+			
+			
+			if(clickcolumnIndex == 2 || clickcolumnIndex == 5){
+				Comparator cn = new ratioGamesnumCompare(); 
+
+	        	if(showitemVec.size() != 0){
+	        		
+	        		Collections.sort(showitemVec, cn);
+
+	        	}
+			}
+
+        	
+        	for(int i = 0; i < showitemVec.size(); i++){
+        		showitemVec.elementAt(i)[0] = Integer.toString(i+1);
+        	}
+			
+			
+
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+
+	
+	
+	
 	public void updateShowItem(){
 		
-		
-		if(bfhalf == true){//未开赛
-			showfhalf();
-		}else if(bshalf == true){ //走地
-			showshalf();
-		}else if(bover == true){
-			showover();
-		}
 
+		if(bclassifyByall == true){
+			showbyall();
+		}else if(bclassifyByleague == true){
+			showbyleague();
+		}
+		
+		
 		tableMode.updateTable();
 		
 		setOneRowBackgroundColor();
-	}
-	
-	
-	
-	
-	public void setStateText(String txt){
-		textFieldGrabStat.setText(txt);
-	}
-	
-	public void setStateColor(Color cr){
-		textFieldGrabStat.setBackground(cr);
-	}
+		
 
+	}
+	
+	
 	
 	
 	
@@ -968,34 +1112,64 @@ public class GameDetailsWindow extends JFrame{
 		
 		container.setLayout(new BorderLayout());
 		
-		JPanel panelNorth = new JPanel(new GridLayout(1, 11));
+		JPanel panelNorth = new JPanel(new GridLayout(1, 14));
 
         container.add(panelNorth, BorderLayout.NORTH);  
         
 
-        panelNorth.add(labelGrabStat);
-        panelNorth.add(textFieldGrabStat);
+        panelNorth.add(datelb1);
+        panelNorth.add(mpstart);
+
+        panelNorth.add(datelb2);
+        panelNorth.add(mpend);
         
-        textFieldGrabStat.setEditable(false);
-        
+
         panelNorth.add(comparetimelb);
         panelNorth.add(comparetimetxt);
         
         panelNorth.add(ratioChangelb);
         panelNorth.add(ratioChangetxt);
+
+        panelNorth.add(classirylb);
+        panelNorth.add(allcb);
+
+        panelNorth.add(leaguecb);
+
         
-        panelNorth.add(fhalfjb);
-        panelNorth.add(shalfjb);
-        panelNorth.add(overjb);
         
+
         
+
         
-        panelNorth.add(sortlb);
-        panelNorth.add(pankouhcb);
-       
-        panelNorth.add(ouhcb);
+
         
-        panelNorth.add(timecb);
+        comparetimetxt.setText(Integer.toString(comparemins));
+
+        comparetimetxt.addKeyListener(new KeyListener(){
+            public void keyPressed(KeyEvent e) {  
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {  
+                    String value = comparetimetxt.getText();  
+                    
+                    if(!Common.isNum(value)){
+                    	return;
+                    }else{
+                    	comparemins = Integer.parseInt(value);
+                    	
+                    	//sortgamedetails();
+                    	HGclienthttp.constructDaysGaemDetailsForRatioAns();
+                    	
+                    	
+                    	updateShowItem();
+                    }
+                    
+                }  
+            }  
+            public void keyReleased(KeyEvent e) {  
+            }  
+            public void keyTyped(KeyEvent e) {  
+            }  
+
+        });
         
         
         
@@ -1026,142 +1200,16 @@ public class GameDetailsWindow extends JFrame{
 
         });
         
-        fhalfjb.setSelected(false);
-        
-        fhalfjb.addItemListener(new ItemListener() {
-
-
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				// TODO Auto-generated method stub
-               // int index = jcb.getSelectedIndex();
-				if(e.getStateChange() == ItemEvent.DESELECTED){
-					bfhalf= false;
-					
-				}else{
-					
-					bfhalf= true;
-					
-					bshalf = false;
-					bover = false;
-					shalfjb.setSelected(false);
-					overjb.setSelected(false);
-					
-				}
-				
-				updateShowItem();	
-			}
-        });
         
         
         
         
-        shalfjb.setSelected(true);
-        
-        shalfjb.addItemListener(new ItemListener() {
-
-
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				// TODO Auto-generated method stub
-               // int index = jcb.getSelectedIndex();
-				if(e.getStateChange() == ItemEvent.DESELECTED){
-					bshalf= false;
-					
-				}else{
-					
-					bshalf= true;
-					
-					bfhalf = false;
-					bover = false;
-					fhalfjb.setSelected(false);
-					overjb.setSelected(false);
-					
-				}
-				
-				updateShowItem();	
-			}
-        });
         
         
         
-        overjb.setSelected(false);
+        allcb.setSelected(true);
         
-        overjb.addItemListener(new ItemListener() {
-
-
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				// TODO Auto-generated method stub
-               // int index = jcb.getSelectedIndex();
-				if(e.getStateChange() == ItemEvent.DESELECTED){
-					bover= false;
-					
-				}else{
-					
-					bover= true;
-					
-					bshalf = false;
-					bfhalf = false;
-					shalfjb.setSelected(false);
-					fhalfjb.setSelected(false);
-					
-				}
-				
-				updateShowItem();	
-			}
-        });
-
-        
-
-        
-        pankouhcb.setSelected(true);
-        
-        pankouhcb.addItemListener(new ItemListener() {
-
-
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				// TODO Auto-generated method stub
-               // int index = jcb.getSelectedIndex();
-				if(e.getStateChange() == ItemEvent.DESELECTED){
-					//pankouhcb.setSelected(true);
-					/*compareOdd = 0;
-					
-					pankouccb.setSelected(false);
-					ouhcb.setSelected(false);
-					ouccb.setSelected(false);*/
-					
-				}else{
-					
-					//pankouhcb.setSelected(true);
-					compareOdd = 0;
-					
-					
-					ouhcb.setSelected(false);
-					timecb.setSelected(false);
-					
-					sortgamedetails();
-					
-					updateShowItem();
-					
-				}
-				
-
-			}
-        });
-
-        
- 
-        
-
-        
-
-        
-        
-        ouhcb.setSelected(false);
-        
-        ouhcb.addItemListener(new ItemListener() {
+        allcb.addItemListener(new ItemListener() {
 
 
 			@Override
@@ -1170,28 +1218,25 @@ public class GameDetailsWindow extends JFrame{
                // int index = jcb.getSelectedIndex();
 				if(e.getStateChange() == ItemEvent.DESELECTED){
 					
+					bclassifyByall = false;
+					
 					
 				}else{
-				
-					compareOdd = 1;
 					
-					pankouhcb.setSelected(false);
+					bclassifyByall = true;
+					leaguecb.setSelected(false);
 					
-					timecb.setSelected(false);
-					
-					sortgamedetails();
-					
-					updateShowItem();
 				}
 				
+				updateShowItem();
 
 			}
         });
         
         
-        timecb.setSelected(false);
+        leaguecb.setSelected(false);
         
-        timecb.addItemListener(new ItemListener() {
+        leaguecb.addItemListener(new ItemListener() {
 
 
 			@Override
@@ -1200,49 +1245,31 @@ public class GameDetailsWindow extends JFrame{
                // int index = jcb.getSelectedIndex();
 				if(e.getStateChange() == ItemEvent.DESELECTED){
 					
+					bclassifyByleague = false;
+					
 					
 				}else{
-					//ouhcb.setSelected(true);
-					compareOdd = 2;
 					
-					pankouhcb.setSelected(false);
-					ouhcb.setSelected(false);
+					bclassifyByleague = true;
+					allcb.setSelected(false);
 					
-					sortgamedetails();
-					
-					updateShowItem();
 				}
 				
+				updateShowItem();
 
 			}
         });
         
         
-        comparetimetxt.setText(Integer.toString(comparemins));
+        
+        
 
-        comparetimetxt.addKeyListener(new KeyListener(){
-            public void keyPressed(KeyEvent e) {  
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {  
-                    String value = comparetimetxt.getText();  
-                    
-                    if(!Common.isNum(value)){
-                    	return;
-                    }else{
-                    	comparemins = Integer.parseInt(value);
-                    	
-                    	sortgamedetails();
-                    	
-                    	updateShowItem();
-                    }
-                    
-                }  
-            }  
-            public void keyReleased(KeyEvent e) {  
-            }  
-            public void keyTyped(KeyEvent e) {  
-            }  
 
-        });
+        
+
+        
+        
+
 
 	    
 		
@@ -1259,7 +1286,7 @@ public class GameDetailsWindow extends JFrame{
 	    table.getColumnModel().getColumn(2).setPreferredWidth(100);//时间
 	    table.getColumnModel().getColumn(3).setPreferredWidth(160);//球队
 	    table.getColumnModel().getColumn(4).setPreferredWidth(50);//盘口
-	    table.getColumnModel().getColumn(7).setPreferredWidth(50);//大小球
+	    //table.getColumnModel().getColumn(7).setPreferredWidth(50);//大小球
 	    
 	    table.setRowHeight(30);
 	    
@@ -1274,10 +1301,27 @@ public class GameDetailsWindow extends JFrame{
 
 
 	    
-/*        DefaultTableCellRenderer tcr = new DefaultTableCellRenderer();// 设置table内容居中
+        DefaultTableCellRenderer tcr = new DefaultTableCellRenderer();// 设置table内容居中
         tcr.setHorizontalAlignment(JLabel.CENTER);
        // tcr.setHorizontalAlignment(SwingConstants.CENTER);// 这句和上句作用一样
-        table.setDefaultRenderer(Object.class, tcr);*/
+        table.setDefaultRenderer(Object.class, tcr);
+        
+        
+        
+        final JTableHeader header = table.getTableHeader();
+        header.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+            	int tmpclickcolumnIndex = header.columnAtPoint(e.getPoint());
+                
+                if(tmpclickcolumnIndex ==2 ||tmpclickcolumnIndex == 5){
+                	clickcolumnIndex = tmpclickcolumnIndex;
+                	updateShowItem();
+                }
+                
+            }
+        });
+        
         
         
         
@@ -1297,7 +1341,6 @@ public class GameDetailsWindow extends JFrame{
  
 	
     
-    
     public void setOneRowBackgroundColor() {
     	
 
@@ -1310,7 +1353,9 @@ public class GameDetailsWindow extends JFrame{
                 public Component getTableCellRendererComponent(JTable table,  
                         Object value, boolean isSelected, boolean hasFocus,  
                         int row, int column) {  
-                    if (row%2 == 0) {  
+
+                	
+                    if (row%2==1) {  
                     	setBackground(new Color(246,246,246));  
                         
                     }else{  
@@ -1326,12 +1371,13 @@ public class GameDetailsWindow extends JFrame{
             };  
             int columnCount = table.getColumnCount();  
             for (int i = 0; i < columnCount; i++) {  
-                table.getColumn(table.getColumnName(i)).setCellRenderer(tcr);  
+                table.getColumn(table.getColumnName(i)).setCellRenderer(tcr);
             }  
         } catch (Exception ex) {  
             ex.printStackTrace();  
         }  
     }  
+
     
     
 	
@@ -1342,7 +1388,8 @@ public class GameDetailsWindow extends JFrame{
          * 这里和刚才一样，定义列名和每个数据的值 
          */  
         String[] columnNames =  
-        	{ "序号", "联赛", "时间", "球队", "盘口", "主队赔率", "变动", "让球输赢", "大小球", "大小球主队赔率","变动 ", "大小球输赢", "完场比分"};     
+        	 { "序号", "分类", "让球总场*","让球赢场", "让球输场", "大小球总场*", "大小球赢场" , "大小球输场"};
+        
 
         /** 
          * 得到数据所对应对象 
@@ -1353,17 +1400,27 @@ public class GameDetailsWindow extends JFrame{
         	
         	try{
         		
-            	if(showitemVec == null || showitemVec.size() == 0){
-            		return null;
-            	}
-            	
-            	return showitemVec.elementAt(rowIndex)[columnIndex];
+/*        		if(columnIndex == 0){
+        			return Integer.toString(rowIndex+1);
+        		}else{*/
+        		
+        		//System.out.println(showitemVec.elementAt(rowIndex)[columnIndex]);
+        		
+        			return showitemVec.elementAt(rowIndex)[columnIndex];
+        	//	}
+        		
+        		
+        		
+
         		
         	}catch(Exception e){
         		e.printStackTrace();
         		return null;
         	}
+        	
 
+        	
+        	
         }  
         
 

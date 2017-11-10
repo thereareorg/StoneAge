@@ -10,6 +10,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,6 +27,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.JTableHeader;
 
 import org.python.icu.util.Calendar;
 
@@ -40,8 +43,97 @@ class classifyItem{
 	public int nogoalgames = 0;
 	public int onegoalgames = 0;
 	public int twogoalsgames = 0;
+	public int hasgoalsgames = 0;
 	public int noresgames = 0;
 }
+
+
+class gamesnumCompare implements Comparator //ʵ��Comparator�������Լ��ıȽϷ���
+{
+
+	public int compare(Object o1, Object o2) {
+		
+		try{
+			
+			String[] g1 = (String[])(o1);
+			String[] g2 = (String[])(o2);
+
+			
+			
+			String gn1 = (String)g1[2];
+			String gn2 = (String)g2[2];
+
+			int n1 = Integer.parseInt(gn1);
+			int n2 = Integer.parseInt(gn2);
+			
+			
+			if(n1 < n2)//����Ƚ��ǽ���,����-1�ĳ�1��������.
+			{
+			   return 1;
+			}
+			else if(n1 == n2)
+			{
+			   return 0;
+			}else{
+				return -1;
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			return 0;
+		}
+		
+
+	}
+}
+
+
+class gamesnumRatioCompare implements Comparator //ʵ��Comparator�������Լ��ıȽϷ���
+{
+
+	public int compare(Object o1, Object o2) {
+		
+		try{
+			
+			String[] g1 = (String[])(o1);
+			String[] g2 = (String[])(o2);
+
+			
+			
+			String gn1 = (String)g1[2];
+			String gn2 = (String)g2[2];
+
+			int n1 = Integer.parseInt(gn1);
+			int n2 = Integer.parseInt(gn2);
+			
+			int fenzi1 = Integer.parseInt(g1[DXQAnalysisWindow.clickcolumnIndex]);
+			int fenzi2 = Integer.parseInt(g2[DXQAnalysisWindow.clickcolumnIndex]);
+			
+			double r1 = fenzi1/n1;
+			double r2 = fenzi2/n2;
+			
+			if(r1 < r2)//����Ƚ��ǽ���,����-1�ĳ�1��������.
+			{
+			   return 1;
+			}
+			else if(r1 == r2)
+			{
+			   return 0;
+			}else{
+				return -1;
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			return 0;
+		}
+		
+
+	}
+}
+
+
+
 
 
 
@@ -66,6 +158,20 @@ public class DXQAnalysisWindow extends JFrame{
     private JLabel datelb2 = new JLabel("结束日期:");
     DateChooser mpend = new DateChooser("dxqAnsdatee");
     
+    
+    
+    private JLabel danshiratiolb = new JLabel("单式水位");
+    private JTextField danshiratiotxt = new JTextField();
+    double danshiratio = 0.9;
+    
+    private JLabel inplayratiolb = new JLabel("下半场水位");
+    private JTextField inplayratiotxt = new JTextField();
+    double inplayratio = 1.0;
+    
+    
+    
+    
+    public static int clickcolumnIndex = 2;
     
 
 	
@@ -174,6 +280,7 @@ public class DXQAnalysisWindow extends JFrame{
 			int noresgames = 0;
 			int nogoalgames =0;
 			int onegoalgames = 0;
+			int hasgoalgames = 0;
 			int twogoalgames = 0;
 			
 			if(showitemVec.size() != 0){
@@ -215,7 +322,19 @@ public class DXQAnalysisWindow extends JFrame{
 				//
 				if(latestdanshiindex != -1 && firstinplayindex != -1){
 					
+					//水位过滤
+					double tmpdanshiratio = Double.parseDouble(onegame.getodds().elementAt(latestdanshiindex)[HGODDSINDEX.OODD.ordinal()]);
+					double tmpinplayratio = 0.0;
+					if(onegame.getodds().elementAt(firstinplayindex)[HGODDSINDEX.U.ordinal()].contains("U")){
+						tmpinplayratio = Double.parseDouble(onegame.getodds().elementAt(firstinplayindex)[HGODDSINDEX.OODD.ordinal()]);
+					}else{
+						tmpinplayratio = Double.parseDouble(onegame.getodds().elementAt(firstinplayindex)[HGODDSINDEX.U.ordinal()]);
+					}
 					
+					
+					if(tmpdanshiratio > danshiratio || tmpinplayratio > inplayratio){
+						continue;
+					}
 					
 					//盘口过滤
 					if(balldxq == false && !dxqs.contains(onegame.getodds().elementAt(latestdanshiindex)[HGODDSINDEX.O.ordinal()].replace("O", "").replace(" ", ""))){
@@ -238,8 +357,10 @@ public class DXQAnalysisWindow extends JFrame{
 							nogoalgames++;
 						}else if(totalscores == 1){
 							onegoalgames++;
+							hasgoalgames++;
 						}else if(totalscores >= 2){
 							twogoalgames++;
+							hasgoalgames++;
 						}else if(totalscores < 0){
 							System.out.println("结果出错："+ onegame.teamh + "vs" + onegame.teamc);
 							noresgames++;
@@ -249,7 +370,7 @@ public class DXQAnalysisWindow extends JFrame{
 				}
 			}
 			
-			String[] item = {"1","总", Integer.toString(totalgames), Integer.toString(nogoalgames), Integer.toString(onegoalgames),Integer.toString(twogoalgames),Integer.toString(noresgames)};
+			String[] item = {"1","总", Integer.toString(totalgames), Integer.toString(nogoalgames), Integer.toString(onegoalgames),Integer.toString(twogoalgames),Integer.toString(hasgoalgames), Integer.toString(noresgames)};
 			
 			showitemVec.add(item);
 			
@@ -307,6 +428,19 @@ public class DXQAnalysisWindow extends JFrame{
 				//
 				if(latestdanshiindex != -1 && firstinplayindex != -1){
 					
+					//水位过滤
+					double tmpdanshiratio = Double.parseDouble(onegame.getodds().elementAt(latestdanshiindex)[HGODDSINDEX.OODD.ordinal()]);
+					double tmpinplayratio = 0.0;
+					if(onegame.getodds().elementAt(firstinplayindex)[HGODDSINDEX.U.ordinal()].contains("U")){
+						tmpinplayratio = Double.parseDouble(onegame.getodds().elementAt(firstinplayindex)[HGODDSINDEX.OODD.ordinal()]);
+					}else{
+						tmpinplayratio = Double.parseDouble(onegame.getodds().elementAt(firstinplayindex)[HGODDSINDEX.U.ordinal()]);
+					}
+					
+					
+					if(tmpdanshiratio > danshiratio || tmpinplayratio > inplayratio){
+						continue;
+					}
 					
 					
 					//盘口过滤
@@ -372,6 +506,7 @@ public class DXQAnalysisWindow extends JFrame{
 							for(int k = 0; k < classifyItemVec.size(); k++){
 								if(classifyItemVec.elementAt(k).classify.equals(onegame.league)){
 									classifyItemVec.elementAt(k).onegoalgames++;
+									classifyItemVec.elementAt(k).hasgoalsgames++;
 									classifyItemVec.elementAt(k).totalgames++;
 									find = true;
 									break;
@@ -382,6 +517,7 @@ public class DXQAnalysisWindow extends JFrame{
 								classifyItem tmpitem = new classifyItem();
 								tmpitem.classify = onegame.league;
 								tmpitem.onegoalgames = 1;
+								tmpitem.hasgoalsgames = 1;
 								tmpitem.totalgames = 1;
 								classifyItemVec.add(tmpitem);
 							}
@@ -390,6 +526,7 @@ public class DXQAnalysisWindow extends JFrame{
 							for(int k = 0; k < classifyItemVec.size(); k++){
 								if(classifyItemVec.elementAt(k).classify.equals(onegame.league)){
 									classifyItemVec.elementAt(k).twogoalsgames++;
+									classifyItemVec.elementAt(k).hasgoalsgames++;
 									classifyItemVec.elementAt(k).totalgames++;
 									find = true;
 									break;
@@ -400,6 +537,7 @@ public class DXQAnalysisWindow extends JFrame{
 								classifyItem tmpitem = new classifyItem();
 								tmpitem.classify = onegame.league;
 								tmpitem.twogoalsgames = 1;
+								tmpitem.hasgoalsgames = 1;
 								tmpitem.totalgames = 1;
 								classifyItemVec.add(tmpitem);
 							}
@@ -432,10 +570,32 @@ public class DXQAnalysisWindow extends JFrame{
 			for(int i = 0; i < classifyItemVec.size(); i++){
 				classifyItem ci = classifyItemVec.elementAt(i);
 				String[] item = {Integer.toString(i+1), ci.classify, Integer.toString(ci.totalgames), Integer.toString(ci.nogoalgames), 
-						Integer.toString(ci.onegoalgames), Integer.toString(ci.twogoalsgames), Integer.toString(ci.noresgames)};
+						Integer.toString(ci.onegoalgames), Integer.toString(ci.twogoalsgames), Integer.toString(ci.hasgoalsgames), Integer.toString(ci.noresgames)};
 				
 				showitemVec.add(item);
 			}
+			
+			if(clickcolumnIndex == 2){
+				Comparator cn = new gamesnumCompare(); 
+
+	        	if(showitemVec.size() != 0){
+	        		
+	        		Collections.sort(showitemVec, cn);
+
+	        	}
+			}else if(clickcolumnIndex >2 & clickcolumnIndex < 7){
+				Comparator cr = new gamesnumRatioCompare();
+				
+				if(showitemVec.size() != 0){
+					Collections.sort(showitemVec, cr);
+				}
+			}
+			
+
+        	
+        	for(int i = 0; i < showitemVec.size(); i++){
+        		showitemVec.elementAt(i)[0] = Integer.toString(i+1);
+        	}
 			
 			
 
@@ -476,7 +636,7 @@ public class DXQAnalysisWindow extends JFrame{
 		
 		container.setLayout(new BorderLayout());
 		
-		JPanel panelNorth = new JPanel(new GridLayout(1, 10));
+		JPanel panelNorth = new JPanel(new GridLayout(1, 14));
 
         container.add(panelNorth, BorderLayout.NORTH);  
         
@@ -486,6 +646,11 @@ public class DXQAnalysisWindow extends JFrame{
 
         panelNorth.add(datelb2);
         panelNorth.add(mpend);
+        
+        panelNorth.add(danshiratiolb);
+        panelNorth.add(danshiratiotxt);
+        panelNorth.add(inplayratiolb);
+        panelNorth.add(inplayratiotxt);
         
         
         
@@ -509,6 +674,66 @@ public class DXQAnalysisWindow extends JFrame{
         panelNorth.add(dxq3);
         panelNorth.add(dxq4);
         panelNorth.add(dxq5);
+        
+
+        
+        danshiratiotxt.setText(Double.toString(danshiratio));
+        
+        danshiratiotxt.addKeyListener(new KeyListener(){
+            public void keyPressed(KeyEvent e) {  
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {  
+                    String value = danshiratiotxt.getText();  
+                    
+                    if(!Common.isNum(value)){
+                    	return;
+                    }else{
+                    	danshiratio = Double.parseDouble(value);
+                    	updateShowItem();
+                    	
+                    	//tableMode.updateTable();
+                    }
+                    
+                }  
+                // System.out.println("Text " + value);  
+            }  
+            public void keyReleased(KeyEvent e) {  
+            }  
+            public void keyTyped(KeyEvent e) {  
+            }  
+
+        });
+        
+        
+
+        
+        inplayratiotxt.setText(Double.toString(inplayratio));
+        
+        inplayratiotxt.addKeyListener(new KeyListener(){
+            public void keyPressed(KeyEvent e) {  
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {  
+                    String value = inplayratiotxt.getText();  
+                    
+                    if(!Common.isNum(value)){
+                    	return;
+                    }else{
+                    	inplayratio = Double.parseDouble(value);
+                    	updateShowItem();
+                    	
+                    	//tableMode.updateTable();
+                    }
+                    
+                }  
+                // System.out.println("Text " + value);  
+            }  
+            public void keyReleased(KeyEvent e) {  
+            }  
+            public void keyTyped(KeyEvent e) {  
+            }  
+
+        });
+        
+        
+        
         
         
         allcb.setSelected(true);
@@ -760,6 +985,22 @@ public class DXQAnalysisWindow extends JFrame{
         
         
         
+        final JTableHeader header = table.getTableHeader();
+        header.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+            	clickcolumnIndex = header.columnAtPoint(e.getPoint());
+                
+                if(clickcolumnIndex>=2 && clickcolumnIndex < 7 && bclassifyByall == false){
+                	updateShowItem();
+                }
+                
+            }
+        });
+        
+        
+        
+        
         container.add(scroll, BorderLayout.CENTER);  
 
         setVisible(false);  
@@ -806,7 +1047,7 @@ public class DXQAnalysisWindow extends JFrame{
             };  
             int columnCount = table.getColumnCount();  
             for (int i = 0; i < columnCount; i++) {  
-                table.getColumn(table.getColumnName(i)).setCellRenderer(tcr);  
+                table.getColumn(table.getColumnName(i)).setCellRenderer(tcr);
             }  
         } catch (Exception ex) {  
             ex.printStackTrace();  
@@ -823,7 +1064,7 @@ public class DXQAnalysisWindow extends JFrame{
          * 这里和刚才一样，定义列名和每个数据的值 
          */  
         String[] columnNames =  
-        	 { "序号", "分类", "场次","无进球场次", "进1球场次", "进2球场次",  "无结果场次"};
+        	 { "序号", "分类", "场次","无进球场次", "进1球场次", "进2球场次", "有进球场次" , "无结果场次"};
         
 
         /** 

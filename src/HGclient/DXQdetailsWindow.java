@@ -131,10 +131,14 @@ public class DXQdetailsWindow extends JFrame{
     
     JTable table = null;
     
-    private JLabel ratiolb = new JLabel("水位置设置:");
-    private JTextField ratiotxt = new JTextField(15); 
+    private JLabel danshiratiolb = new JLabel("单式水位");
+    private JTextField danshiratiotxt = new JTextField();
+    double danshiratio = 0.9;
     
-    private double ratio = 0.5;
+    private JLabel inplayratiolb = new JLabel("下半场水位");
+    private JTextField inplayratiotxt = new JTextField();
+    double inplayratio = 1.0;
+
     
     
     
@@ -230,7 +234,6 @@ public class DXQdetailsWindow extends JFrame{
         		
         	}
 
-			
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -318,6 +321,22 @@ public class DXQdetailsWindow extends JFrame{
 				//
 				if(latestdanshiindex != -1){
 					
+					//水位过滤
+					
+					if(onegame.getodds().elementAt(latestdanshiindex)[HGODDSINDEX.OODD.ordinal()].contains("none")){
+						System.out.println("wrong oodd");
+						System.out.println(onegame.teamh + "vs" + onegame.teamc);
+						continue;
+					}	
+					
+					double tmpdanshiratio = Double.parseDouble(onegame.getodds().elementAt(latestdanshiindex)[HGODDSINDEX.OODD.ordinal()]);
+					
+					
+					
+					if(tmpdanshiratio > danshiratio){
+						continue;
+					}
+					
 					
 					//盘口过滤
 					if(balldxq == false && !dxqs.contains(onegame.getodds().elementAt(latestdanshiindex)[HGODDSINDEX.O.ordinal()].replace("O", "").replace(" ", ""))){
@@ -335,9 +354,7 @@ public class DXQdetailsWindow extends JFrame{
 					
 					int oddsize = onegame.getodds().size();
 
-/*					String[] item = {Integer.toString(tableindex), onegame.league, onegame.datetime, onegame.teamh + "-vs-" + onegame.teamc, onegame.currentscore, 
-							onegame.getodds().elementAt(latestdanshiindex)[HGODDSINDEX.O.ordinal()].replace("O", ""), onegame.getodds().elementAt(latestdanshiindex)[HGODDSINDEX.OODD.ordinal()], "" ,
-							""};		*/	
+
 					
 					String[] item = {Integer.toString(tableindex), onegame.league, onegame.datetime, onegame.teamh + "-vs-" + onegame.teamc, onegame.currentscore, 
 							onegame.currentpankou, onegame.currentratio, "" ,
@@ -416,6 +433,28 @@ public class DXQdetailsWindow extends JFrame{
 				//
 				if(latestdanshiindex != -1 && firstinplayindex != -1){
 					
+					//水位过滤
+					
+					if(onegame.getodds().elementAt(latestdanshiindex)[HGODDSINDEX.OODD.ordinal()].contains("none")){
+						System.out.println("wrong oodd");
+						System.out.println(onegame.teamh + "vs" + onegame.teamc);
+						continue;
+					}
+					
+					double tmpdanshiratio = Double.parseDouble(onegame.getodds().elementAt(latestdanshiindex)[HGODDSINDEX.OODD.ordinal()]);
+					double tmpinplayratio = 0.0;
+					if(onegame.getodds().elementAt(firstinplayindex)[HGODDSINDEX.U.ordinal()].contains("U")){
+						tmpinplayratio = Double.parseDouble(onegame.getodds().elementAt(firstinplayindex)[HGODDSINDEX.OODD.ordinal()]);
+					}else{
+						tmpinplayratio = Double.parseDouble(onegame.getodds().elementAt(firstinplayindex)[HGODDSINDEX.U.ordinal()]);
+					}
+					
+					
+					if(tmpdanshiratio > danshiratio || tmpinplayratio > inplayratio){
+						continue;
+					}
+					
+					
 					
 					//盘口过滤
 					if(balldxq == false && !dxqs.contains(onegame.getodds().elementAt(latestdanshiindex)[HGODDSINDEX.O.ordinal()].replace("O", "").replace(" ", ""))){
@@ -473,11 +512,16 @@ public class DXQdetailsWindow extends JFrame{
 							
 							scorestr = odd[HGODDSINDEX.SCOREH.ordinal()] + "-" + odd[HGODDSINDEX.SCOREC.ordinal()];
 							
+							if(odd[HGODDSINDEX.U.ordinal()].contains("U")){
+								ratiostr = odd[HGODDSINDEX.OODD.ordinal()];
+							}else{
+								ratiostr = odd[HGODDSINDEX.U.ordinal()];
+							}
+							
+							
 						}else{
 							half = "";
-							if(Double.parseDouble(odd[HGODDSINDEX.OODD.ordinal()]) < ratio){
-								continue;
-							}
+							
 						}
 						
 						
@@ -564,6 +608,27 @@ public class DXQdetailsWindow extends JFrame{
 				if(latestdanshiindex != -1 && firstinplayindex != -1){
 					
 					
+					//水位过滤
+					
+					if(onegame.getodds().elementAt(latestdanshiindex)[HGODDSINDEX.OODD.ordinal()].contains("none")){
+						System.out.println("wrong oodd");
+						System.out.println(onegame.teamh + "vs" + onegame.teamc);
+						continue;
+					}
+					
+					double tmpdanshiratio = Double.parseDouble(onegame.getodds().elementAt(latestdanshiindex)[HGODDSINDEX.OODD.ordinal()]);
+					double tmpinplayratio = 0.0;
+					if(onegame.getodds().elementAt(firstinplayindex)[HGODDSINDEX.U.ordinal()].contains("U")){
+						tmpinplayratio = Double.parseDouble(onegame.getodds().elementAt(firstinplayindex)[HGODDSINDEX.OODD.ordinal()]);
+					}else{
+						tmpinplayratio = Double.parseDouble(onegame.getodds().elementAt(firstinplayindex)[HGODDSINDEX.U.ordinal()]);
+					}
+					
+					
+					if(tmpdanshiratio > danshiratio || tmpinplayratio > inplayratio){
+						continue;
+					}
+					
 					//盘口过滤
 					if(balldxq == false && !dxqs.contains(onegame.getodds().elementAt(latestdanshiindex)[HGODDSINDEX.O.ordinal()].replace("O", "").replace(" ", ""))){
 						continue;
@@ -619,12 +684,15 @@ public class DXQdetailsWindow extends JFrame{
 							half = "下半场";
 							
 							scorestr = odd[HGODDSINDEX.SCOREH.ordinal()] + "-" + odd[HGODDSINDEX.SCOREC.ordinal()];
+							if(odd[HGODDSINDEX.U.ordinal()].contains("U")){
+								ratiostr = odd[HGODDSINDEX.OODD.ordinal()];
+							}else{
+								ratiostr = odd[HGODDSINDEX.U.ordinal()];
+							}
 							
 						}else{
 							half = "";
-							if(Double.parseDouble(odd[HGODDSINDEX.OODD.ordinal()]) < ratio){
-								continue;
-							}
+							
 						}
 						
 						
@@ -692,14 +760,16 @@ public class DXQdetailsWindow extends JFrame{
 		
 		container.setLayout(new BorderLayout());
 		
-		JPanel panelNorth = new JPanel(new GridLayout(1, 10));
+		JPanel panelNorth = new JPanel(new GridLayout(1, 14));
 
         container.add(panelNorth, BorderLayout.NORTH);  
         
 
         
-        panelNorth.add(ratiolb);
-        panelNorth.add(ratiotxt);
+        panelNorth.add(danshiratiolb);
+        panelNorth.add(danshiratiotxt);
+        panelNorth.add(inplayratiolb);
+        panelNorth.add(inplayratiotxt);
         
         
         panelNorth.add(fhalfjb);
@@ -716,6 +786,61 @@ public class DXQdetailsWindow extends JFrame{
         
 
 
+        
+        danshiratiotxt.setText(Double.toString(danshiratio));
+        
+        danshiratiotxt.addKeyListener(new KeyListener(){
+            public void keyPressed(KeyEvent e) {  
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {  
+                    String value = danshiratiotxt.getText();  
+                    
+                    if(!Common.isNum(value)){
+                    	return;
+                    }else{
+                    	danshiratio = Double.parseDouble(value);
+                    	updateShowItem();
+                    	
+                    	//tableMode.updateTable();
+                    }
+                    
+                }  
+                // System.out.println("Text " + value);  
+            }  
+            public void keyReleased(KeyEvent e) {  
+            }  
+            public void keyTyped(KeyEvent e) {  
+            }  
+
+        });
+        
+        
+
+        
+        inplayratiotxt.setText(Double.toString(inplayratio));
+        
+        inplayratiotxt.addKeyListener(new KeyListener(){
+            public void keyPressed(KeyEvent e) {  
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {  
+                    String value = inplayratiotxt.getText();  
+                    
+                    if(!Common.isNum(value)){
+                    	return;
+                    }else{
+                    	inplayratio = Double.parseDouble(value);
+                    	updateShowItem();
+                    	
+                    	//tableMode.updateTable();
+                    }
+                    
+                }  
+                // System.out.println("Text " + value);  
+            }  
+            public void keyReleased(KeyEvent e) {  
+            }  
+            public void keyTyped(KeyEvent e) {  
+            }  
+
+        });
         
         
         
@@ -966,31 +1091,7 @@ public class DXQdetailsWindow extends JFrame{
         
         
         
-        ratiotxt.setText(Double.toString(ratio));
-
-        ratiotxt.addKeyListener(new KeyListener(){
-            public void keyPressed(KeyEvent e) {  
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {  
-                    String value = ratiotxt.getText();  
-                    
-                    if(!Common.isNum(value)){
-                    	return;
-                    }else{
-                    	ratio = Double.parseDouble(value);
-                    	
-                    	
-                    	
-                    	updateShowItem();
-                    }
-                    
-                }  
-            }  
-            public void keyReleased(KeyEvent e) {  
-            }  
-            public void keyTyped(KeyEvent e) {  
-            }  
-
-        });
+        
 
 	    
 		

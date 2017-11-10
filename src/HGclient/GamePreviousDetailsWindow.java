@@ -136,16 +136,16 @@ class preoddcompare implements Comparator //ʵ��Comparator������
 			if(GamePreviousDetailsWindow.compareOdd == 1){
 
 				
-				if(g1[9].equals("")){
+				if(g1[10].equals("")){
 					odd1 = -1;
 				}else{
-					odd1 = Math.abs(Integer.parseInt(g1[9]));
+					odd1 = Math.abs(Integer.parseInt(g1[10]));
 				}
 				
-				if(g2[9].equals("")){
+				if(g2[10].equals("")){
 					odd2 = -1;
 				}else{
-					odd2 = Math.abs(Integer.parseInt(g2[9]));
+					odd2 = Math.abs(Integer.parseInt(g2[10]));
 				}
 				
 			}
@@ -198,7 +198,17 @@ public class GamePreviousDetailsWindow extends JFrame{
     private JLabel comparetimelb = new JLabel("与开赛前比较时间:");
     private JTextField comparetimetxt = new JTextField(15); 
     
-    private int comparemins = 60;
+    private int comparemins = 59;
+    
+    
+    private JLabel ratioChangelb = new JLabel("水位变动最小值:");
+    private JTextField ratioChangetxt = new JTextField(15);
+    
+    private int ratioChange = 10;
+    
+    
+    
+    
     
     
     private JLabel labelInterval = new JLabel("日期选择:");
@@ -289,7 +299,10 @@ public class GamePreviousDetailsWindow extends JFrame{
 			SimpleDateFormat dfsec = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			
 			for(int i = 0; i < gameDetailsVec.size(); i++){
+
 				GameDetails tmp = gameDetailsVec.elementAt(i);
+				gameDetailsVec.elementAt(i).pankouh = -1000;
+				gameDetailsVec.elementAt(i).ouh = -1000;
 				
 				java.util.Date startTimeDate = dfmin.parse(tmp.datetime);
 				
@@ -331,18 +344,22 @@ public class GamePreviousDetailsWindow extends JFrame{
 						if(searchTime > oddtime.getTimeInMillis() &&  odds[HGODDSINDEX.TYPE.ordinal()].equals("danshi")){
 							
 							if(latestOdd == -1){
-								System.out.println(gameDetailsVec.elementAt(i).teamh + "vs" + gameDetailsVec.elementAt(i).teamc);
+								//System.out.println(gameDetailsVec.elementAt(i).teamh + "vs" + gameDetailsVec.elementAt(i).teamc);
 								break;
 							}
+							
+							
 							
 							if(!odds[HGODDSINDEX.PANKOU.ordinal()].equals(tmp.getodds().elementAt(latestOdd)[HGODDSINDEX.PANKOU.ordinal()])){
 								continue;
 							}
 							
 							
+							
+							
 							if(tmp.getodds().elementAt(j).length < 9){
-								System.out.println(Arrays.toString(tmp.getodds().elementAt(j)));
-								System.out.println("fuck fuck");
+/*								System.out.println(Arrays.toString(tmp.getodds().elementAt(j)));
+								System.out.println("fuck fuck");*/
 								
 								continue;
 							}
@@ -381,7 +398,7 @@ public class GamePreviousDetailsWindow extends JFrame{
 						String[] odds = tmp.getodds().elementAt(j);
 						
 						if(latestOdd == -1){
-							System.out.println(gameDetailsVec.elementAt(i).teamh + "vs" + gameDetailsVec.elementAt(i).teamc);
+						//	System.out.println(gameDetailsVec.elementAt(i).teamh + "vs" + gameDetailsVec.elementAt(i).teamc);
 							break;
 						}
 						
@@ -401,8 +418,8 @@ public class GamePreviousDetailsWindow extends JFrame{
 							
 							
 							if(tmp.getodds().elementAt(j).length < 9){
-								System.out.println(Arrays.toString(tmp.getodds().elementAt(j)));
-								System.out.println("fuck fuck");
+					/*			System.out.println(Arrays.toString(tmp.getodds().elementAt(j)));
+								System.out.println("fuck fuck");*/
 								
 								continue;
 							}
@@ -499,8 +516,129 @@ public class GamePreviousDetailsWindow extends JFrame{
     			String hoddstr = onegame.odds.elementAt(latestIndex)[HGODDSINDEX.HODD.ordinal()];
     			
     			String hdvaluestr = "";
-    			if(onegame.pankouh != -1000){
+    			String pankoures = "";
+    			if(onegame.pankouh != -1000 && onegame.pankouh != 0){
     				hdvaluestr = Integer.toString(onegame.pankouh);
+    				
+    				if(onegame.gameresult.contains("-")){
+    					
+    					int scoreh = Integer.parseInt(onegame.gameresult.split("-")[0]);
+    					int scorec = Integer.parseInt(onegame.gameresult.split("-")[1]);
+    					int scoredvalue = scoreh - scorec;
+    					
+    					String tmppankoustr = onegame.odds.elementAt(latestIndex)[HGODDSINDEX.PANKOU.ordinal()];
+    					
+    					if(tmppankoustr.contains("C")){	//客队让球
+    						tmppankoustr = tmppankoustr.replace("C", "");
+    						tmppankoustr = tmppankoustr.replace(" ", "");
+    						
+    						scoredvalue = scorec -  scoreh;
+    						
+    						
+    						if(tmppankoustr.contains("/")){
+    							double tmp1 = Double.parseDouble(tmppankoustr.split("/")[0]);
+    							double tmp2 = Double.parseDouble(tmppankoustr.split("/")[1]);
+    							
+    							if(scoredvalue <= tmp1){	//买主队的人输
+    								if(onegame.pankouh < 0){
+    									pankoures = "输";
+    								}else{
+    									pankoures = "赢";
+    								}
+
+    								
+    							}else if(scoredvalue >= tmp2){
+    								if(onegame.pankouh < 0){
+    									pankoures = "赢";
+    								}else{
+    									pankoures = "输";
+    								}
+    							}
+    							
+    						}else{
+    							
+    							double tmp = Double.parseDouble(tmppankoustr);
+    							
+    							if(scoredvalue < tmp){	//买主队的人输
+    								if(onegame.pankouh < 0){
+    									pankoures = "输";
+    								}else{
+    									pankoures = "赢";
+    								}
+
+    								
+    							}else if(scoredvalue > tmp){
+    								if(onegame.pankouh < 0){
+    									pankoures = "赢";
+    								}else{
+    									pankoures = "输";
+    								}
+    							}else if(scoredvalue == tmp){
+    								pankoures = "走水";
+    							}
+    							
+    							
+    						}
+    						
+    						
+    						
+    					}else{	//主队让球
+    						
+    						scoredvalue = scoreh - scorec;
+    						
+    						tmppankoustr = tmppankoustr.replace("H", "");
+    						tmppankoustr = tmppankoustr.replace(" ", "");
+    						
+    						
+    						
+    						if(tmppankoustr.contains("/")){
+    							double tmp1 = Double.parseDouble(tmppankoustr.split("/")[0]);
+    							double tmp2 = Double.parseDouble(tmppankoustr.split("/")[1]);
+    							
+    							if(scoredvalue <= tmp1){	//买主队的人输
+    								if(onegame.pankouh < 0){
+    									pankoures = "赢";
+    								}else{
+    									pankoures = "输";
+    								}
+
+    								
+    							}else if(scoredvalue >= tmp2){
+    								if(onegame.pankouh < 0){
+    									pankoures = "输";
+    								}else{
+    									pankoures = "赢";
+    								}
+    							}
+    							
+    						}else{
+    							
+    							double tmp = Double.parseDouble(tmppankoustr);
+    							
+    							if(scoredvalue < tmp){	//买主队的人输
+    								if(onegame.pankouh < 0){
+    									pankoures = "赢";
+    								}else{
+    									pankoures = "输";
+    								}
+
+    								
+    							}else if(scoredvalue > tmp){
+    								if(onegame.pankouh < 0){
+    									pankoures = "输";
+    								}else{
+    									pankoures = "赢";
+    								}
+    							}else if(scoredvalue == tmp){
+    								pankoures = "走水";
+    							}
+    							
+    							
+    						}
+    					}
+    					
+    				}
+    				
     			}
         			
 
@@ -515,19 +653,89 @@ public class GamePreviousDetailsWindow extends JFrame{
     			String ooddstr = onegame.odds.elementAt(latestIndex)[HGODDSINDEX.OODD.ordinal()];
     			
     			String odvaluestr = "";
-    			if(onegame.ouh != -1000){
+    			
+    			String dxqres = "";
+    			
+    			if(onegame.ouh != -1000 && onegame.ouh != 0){
     				odvaluestr = Integer.toString(onegame.ouh);
+    				
+    				
+    				
+    				if(onegame.gameresult.contains("-")){
+    					
+    					int scoreh = Integer.parseInt(onegame.gameresult.split("-")[0]);
+    					int scorec = Integer.parseInt(onegame.gameresult.split("-")[1]);
+    					int scoretvalue = scoreh + scorec;
+    					
+    					String tmpdxqstr = onegame.odds.elementAt(latestIndex)[HGODDSINDEX.O.ordinal()];
+    					tmpdxqstr = tmpdxqstr.replace("O", "");
+					
+						
+    					tmpdxqstr = tmpdxqstr.replace(" ", "");
+						if(tmpdxqstr.contains("/")){
+							double tmp1 = Double.parseDouble(tmpdxqstr.split("/")[0]);
+							double tmp2 = Double.parseDouble(tmpdxqstr.split("/")[1]);
+							
+							if(scoretvalue <= tmp1){	
+								if(onegame.ouh < 0){
+									dxqres = "赢";
+								}else{
+									dxqres = "输";
+								}
+
+								
+							}else if(scoretvalue >= tmp2){
+								if(onegame.ouh < 0){
+									dxqres = "输";
+								}else{
+									dxqres = "赢";
+								}
+							}
+							
+						}else{
+							
+							double tmp = Double.parseDouble(tmpdxqstr);
+							
+							if(scoretvalue < tmp){	//买主队的人输
+								if(onegame.ouh < 0){
+									dxqres = "赢";
+								}else{
+									dxqres = "输";
+								}
+
+								
+							}else if(scoretvalue > tmp){
+								if(onegame.ouh < 0){
+									dxqres = "输";
+								}else{
+									dxqres = "赢";
+								}
+							}else if(scoretvalue == tmp){
+								dxqres = "走水";
+							}
+							
+							
+						}
+    					
+    					
+    				}
+    				
+    				
     			}
 
         		
         		
-				
-				
-				
 				String[] item = {Integer.toString(i), onegame.league, onegame.datetime, onegame.teamh + "-" + onegame.teamc, 
-									pankoustr, hoddstr, hdvaluestr, dxqstr, ooddstr, odvaluestr, onegame.gameresult};
+						pankoustr, hoddstr, hdvaluestr, pankoures, dxqstr, ooddstr, odvaluestr, dxqres,onegame.gameresult};
+        		
+        		
+        		if((Math.abs(onegame.pankouh) >= ratioChange && onegame.pankouh != -1000) || (Math.abs(onegame.ouh) >= ratioChange && onegame.ouh != -1000)){
+        			showitemVec.add(item);
+        		}
+    			
+
 				
-				showitemVec.add(item);
+				
 			}
 			
 			
@@ -586,7 +794,8 @@ public class GamePreviousDetailsWindow extends JFrame{
         panelNorth.add(comparetimelb);
         panelNorth.add(comparetimetxt);
         
-
+        panelNorth.add(ratioChangelb);
+        panelNorth.add(ratioChangetxt);
         
 
         
@@ -601,6 +810,32 @@ public class GamePreviousDetailsWindow extends JFrame{
         panelNorth.add(timecb);
 
 
+        
+        ratioChangetxt.setText(Integer.toString(ratioChange));
+
+        ratioChangetxt.addKeyListener(new KeyListener(){
+            public void keyPressed(KeyEvent e) {  
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {  
+                    String value = ratioChangetxt.getText();  
+                    
+                    if(!Common.isNum(value)){
+                    	return;
+                    }else{
+                    	ratioChange = Integer.parseInt(value);
+                    	
+                    	//sortgamedetails();
+                    	
+                    	updateShowItem();
+                    }
+                    
+                }  
+            }  
+            public void keyReleased(KeyEvent e) {  
+            }  
+            public void keyTyped(KeyEvent e) {  
+            }  
+
+        });
         
 
         
@@ -845,7 +1080,7 @@ public class GamePreviousDetailsWindow extends JFrame{
          * 这里和刚才一样，定义列名和每个数据的值 
          */  
         String[] columnNames =  
-        { "序号", "联赛", "时间", "球队", "盘口", "主队赔率", "变动", "大小球", "大小球主队赔率","变动 ", "完场比分"};
+        { "序号", "联赛", "时间", "球队", "盘口", "主队赔率", "变动", "让球输赢", "大小球", "大小球主队赔率","变动 ", "大小球输赢", "完场比分"};
         
 
         /** 
