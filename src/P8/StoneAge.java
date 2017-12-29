@@ -3,6 +3,7 @@
 
 
 import java.awt.Button;
+import java.awt.Color;
 import java.awt.Container; 
 import java.awt.Frame;
 import java.awt.Panel;
@@ -154,6 +155,8 @@ public class StoneAge {
 		
 		mailList.add("2195876152@qq.com");
 		
+		mailList.add("1361861555@qq.com");
+		
 		
 		
 /*		mailList.add("43069453@qq.com");
@@ -195,8 +198,8 @@ public class StoneAge {
 			p8.getTotalbet();
 		}*/
 
-/*		scorethread = new ScoreThread();
-		scorethread.start();*/
+		scorethread = new ScoreThread();
+		scorethread.start();
 		
 		
 		initMailList();
@@ -443,6 +446,18 @@ public class StoneAge {
 		
 		contain.add(btnZhibopData);
 		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
         
 		
 		
@@ -641,12 +656,21 @@ public class StoneAge {
         scoreBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				if(StoneAge.bScoreLogin == true){
+				if(StoneAge.bScoreLogin == false){
+					StoneAge.score.setnewwndstatetxt("获取数据中...");
+					StoneAge.score.setnewwndstatecor(Color.green);
+				}
+				
+				StoneAge.score.showscoredetailswnd();
+				
+				
+				
+				/*if(StoneAge.bScoreLogin == true){
 					StoneAge.score.showscoredetailswnd();
 					return;
 				}
 
-				StoneAge.showScore = true;
+				StoneAge.showScore = true;*/
 				
 				
 				
@@ -656,10 +680,30 @@ public class StoneAge {
         scoreBtn.setLocation(Xposition, Yposition + 80);
         scoreBtn.setSize(90, 25);
         
-        //contain.add(scoreBtn);
+        contain.add(scoreBtn);
+        
+        
+        
+		btnAccount = new JButton("设置");
+		btnAccount.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				accountWnd.setVisible(true);
+				
+				//HGclienthttp.showdetailswnd(true);
+			}
+		});
+		
+		
+		btnAccount.setSize(120, 25);
+		btnAccount.setLocation(Xposition, Yposition + 120);
+
+		
+		contain.add(btnAccount);
+        
 
         
-		btndxq = new JButton("大小球");
+/*		btndxq = new JButton("大小球");
 		btndxq.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -774,7 +818,7 @@ public class StoneAge {
 
 		
 		contain.add(btndxqans);
-		
+		*/
 		
 		
 		
@@ -785,7 +829,7 @@ public class StoneAge {
 		textFieldZhiboProxyAddress = new JTextField();
 		textFieldZhiboProxyAddress.setSize(120, 25);
 		textFieldZhiboProxyAddress.setLocation(Xposition + 50 + 300, Yposition);
-		textFieldZhiboProxyAddress.setText("110.165.46.121");
+		textFieldZhiboProxyAddress.setText("110.165.59.177");
 
 		JLabel labelZhiboProxyAccount = new JLabel("端口:");
 		labelZhiboProxyAccount.setSize(50, 25);

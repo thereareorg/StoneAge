@@ -16,12 +16,22 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;  
   
 import java.awt.Color;
+
+
+
+
+
+
 
 
 
@@ -64,6 +74,7 @@ import javax.swing.table.AbstractTableModel;
 
 
 
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
@@ -79,19 +90,43 @@ import org.json.JSONObject;
 
 
 
+
+
+
+
+
+
 import java.text.SimpleDateFormat;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.Stack;
 
 
 
-
+enum P8PRETABLEHEADINDEX{
+	INDEX,
+	LEAGUE,
+	TIME,
+	EVENTNAME,
+	RQCHUPAN,
+	RQZHONGPAN,
+	RQPANAS,
+	P0HOME,
+	DXQCHUPAN,
+	DXQZHONGPAN,
+	DXQPANAS,
+	P0OVER,
+	SCORE,
+	RQPRES,
+	DXQRES	
+}
 
 
 
 
 public class PreviousDataWindow extends JFrame  
 {  
+	
+	Map<String, Double> rqpmap = new HashMap<String, Double>();
   
    
 	private static final long serialVersionUID = 508685938515369544L;
@@ -109,7 +144,9 @@ public class PreviousDataWindow extends JFrame
     private JLabel labelp0oHighlightNum = new JLabel("大小球高亮金额:");
     private JTextField textFieldp0oHighlightNum = new JTextField(15);  
 
+    private Vector<String[]> showItemVec = new Vector<String[]>();
     
+    private Vector<String[]> scoreDetails = new Vector<String[]>();
     
     
     private JLabel labelInterval = new JLabel("日期选择:");
@@ -184,6 +221,10 @@ public class PreviousDataWindow extends JFrame
 
 
     
+    public void getscoresdetails(){
+    	scoreDetails = StoneAge.score.getpreviousdetailsbyday(mp.getChooseDate());
+    }
+    
     
 	
 
@@ -191,7 +232,50 @@ public class PreviousDataWindow extends JFrame
     {  
 		setTitle("PP历史");  
 		
-        intiComponent();  
+        intiComponent(); 
+        
+        
+		rqpmap.put("平手", 0.0);
+		rqpmap.put("平手/半球", 0.25);
+		rqpmap.put("半球", 0.5);
+		rqpmap.put("半球/一球", 0.75);
+		rqpmap.put("一球", 1.0);
+		rqpmap.put("一球/球半", 1.25);
+		rqpmap.put("球半", 1.5);
+		rqpmap.put("球半/两球", 1.75);
+		rqpmap.put("两球", 2.0);
+		rqpmap.put("两球/两球半", 2.25);
+		rqpmap.put("两球半", 2.5);
+		rqpmap.put("两球半/三球", 2.75);
+		rqpmap.put("三球", 3.0);
+		rqpmap.put("三球/三球半", 3.25);
+		rqpmap.put("三球半", 3.5);
+		rqpmap.put("三球半/四球", 3.75);
+		rqpmap.put("四球", 4.0);
+		rqpmap.put("四球/四球半", 4.25);
+		rqpmap.put("四球半", 4.5);
+		rqpmap.put("四球半/五球", 4.75);
+		rqpmap.put("五球", 5.0);
+		rqpmap.put("五球/五球半", 5.25);
+		rqpmap.put("五球半", 5.5);
+		rqpmap.put("五球半/六球", 5.75);
+		rqpmap.put("六球", 6.0);
+		rqpmap.put("六球/六球半", 6.25);
+		rqpmap.put("六球半", 6.5);
+		rqpmap.put("六球半/七球", 6.75);
+		rqpmap.put("七球", 7.0);
+		rqpmap.put("七球/七球半", 7.25);
+		rqpmap.put("七球半", 7.5);
+		rqpmap.put("七球半/八球", 7.75);
+		rqpmap.put("八球", 8.0);
+		rqpmap.put("八球/八球半", 8.25);
+		rqpmap.put("八球半", 8.5);
+		rqpmap.put("八球半/九球", 8.75);
+		rqpmap.put("九球", 9.0);
+		rqpmap.put("九球/九球半", 9.25);
+		rqpmap.put("九球半", 9.5);
+		rqpmap.put("九球半/十球", 9.75);
+		rqpmap.put("十球", 10.0);
         
     }  
 	
@@ -583,9 +667,230 @@ public class PreviousDataWindow extends JFrame
 					
 				}
 			}
+			
+			
+			
+			
+			getscoresdetails();
+			
+			if(showItemVec.size()!= 0){
+				showItemVec.clear();
+			}
+			
+			//合并score
+			for(int i = 0; i < detailsData.size(); i++){
+				
+				String[] olditem = detailsData.elementAt(i).clone();
+				
+				String p8hometaem = olditem[TYPEINDEX.EVENTNAMNE.ordinal()].split("-vs-")[0];
+				String p8awaytaem = olditem[TYPEINDEX.EVENTNAMNE.ordinal()].split("-vs-")[1];
+				
+				String[] item = {Integer.toString(i+1), olditem[TYPEINDEX.LEAGUENAME.ordinal()], olditem[TYPEINDEX.TIME.ordinal()], olditem[TYPEINDEX.EVENTNAMNE.ordinal()], "", "", "",
+						olditem[TYPEINDEX.PERIOD0HOME.ordinal()], "", "", "", olditem[TYPEINDEX.PERIOD0OVER.ordinal()], "", "", ""};
+				
+				String scorehometeam = ScoreMergeManager.findScoreTeam(p8hometaem);
+				if(scorehometeam != null){
+					String scoreawayteam = ScoreMergeManager.findScoreTeam(p8awaytaem);
+					
+					
+					
+					if(scoreawayteam != null){
+						
+						int indexinscoredetails = -1;
+						for(int j = 0; j < scoreDetails.size(); j++){
+							if(scoreDetails.elementAt(j)[SCORENEWINDEX.EVENTNAMNE.ordinal()].equals(scorehometeam + " vs " + scoreawayteam) ){
+								indexinscoredetails = j;
+								break;
+							}
+						}
+						
+						if(indexinscoredetails != -1){
+							item[P8PRETABLEHEADINDEX.RQCHUPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.RQCHUPAN.ordinal()];
+							item[P8PRETABLEHEADINDEX.RQZHONGPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.RQZHONGPAN.ordinal()];
+							item[P8PRETABLEHEADINDEX.RQPANAS.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.RQPANAS.ordinal()];
+							item[P8PRETABLEHEADINDEX.DXQCHUPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.DXQCHUPAN.ordinal()];
+							item[P8PRETABLEHEADINDEX.DXQZHONGPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.DXQZHONGPAN.ordinal()];
+							item[P8PRETABLEHEADINDEX.DXQPANAS.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.DXQPANAS.ordinal()];
+							
+							
+							
+							
+							if(scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.STATUS.ordinal()].contains("完")){
+								
+								item[P8PRETABLEHEADINDEX.SCORE.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.SCORE.ordinal()];
+								
+								//让球盘结果分析
+								if(!item[P8PRETABLEHEADINDEX.RQZHONGPAN.ordinal()].equals("") && !item[P8PRETABLEHEADINDEX.RQZHONGPAN.ordinal()].equals("-")){
+									
+									System.out.println(Arrays.toString(item));
+									
+									
+									
+									
+									
+									double rqzhongpan = rqpmap.get(item[P8PRETABLEHEADINDEX.RQZHONGPAN.ordinal()].replace("受让", ""));
+									double scoreh = Double.parseDouble(item[P8PRETABLEHEADINDEX.SCORE.ordinal()].split(":")[0]);
+									double scorec = Double.parseDouble(item[P8PRETABLEHEADINDEX.SCORE.ordinal()].split(":")[1]);
+									
+									String rqres = "";
+									if(item[P8PRETABLEHEADINDEX.RQZHONGPAN.ordinal()].contains("受让")){
+										rqzhongpan = 0.0 - rqzhongpan;
+									}
+									
+									
+									int p0home = 0;
+									if(item[P8PRETABLEHEADINDEX.P0HOME.ordinal()].contains("=")){
+										p0home = Integer.parseInt(item[P8PRETABLEHEADINDEX.P0HOME.ordinal()].split("=")[1]);
+									}
+									
+									
+									if((scoreh - scorec-rqzhongpan) >=0.5){
+										if(p0home > 0){
+											rqres = "全输";
+										}else if(p0home == 0){
+											rqres = "-";
+										}else{
+											rqres = "全赢";
+										}
+										
+									}else if((scoreh - scorec-rqzhongpan) == 0.25){
+										
+										if(p0home > 0){
+											rqres = "输半";
+										}else if(p0home == 0){
+											rqres = "-";
+										}else{
+											rqres = "赢半";
+										}
+										
+									}else if((scoreh - scorec-rqzhongpan) == -0.25){
+										
+										if(p0home > 0){
+											rqres = "赢半";
+										}else if(p0home == 0){
+											rqres = "-";
+										}else{
+											rqres = "输半";
+										}
+
+									}else if((scoreh - scorec-rqzhongpan) <= -0.5){
+										
+										if(p0home > 0){
+											rqres = "全赢";
+										}else if(p0home == 0){
+											rqres = "-";
+										}else{
+											rqres = "全输";
+										}
+										
+										
+									}else if((scoreh - scorec-rqzhongpan) == 0.0){
+										rqres = "走水";
+									}
+									
+									
+									
+									
+									
+									item[P8PRETABLEHEADINDEX.RQPRES.ordinal()] = rqres;
+									
+								}
+								
+								//大小球盘结果分析
+								if(!item[P8PRETABLEHEADINDEX.DXQZHONGPAN.ordinal()].equals("") && !item[P8PRETABLEHEADINDEX.DXQZHONGPAN.ordinal()].equals("-")){
+									double dxqzhongpan = 0.0;
+									
+									
+									
+									double scoreh = Double.parseDouble(item[P8PRETABLEHEADINDEX.SCORE.ordinal()].split(":")[0]);
+									double scorec = Double.parseDouble(item[P8PRETABLEHEADINDEX.SCORE.ordinal()].split(":")[1]);
+									
+									String dxqres = "";
+									if(item[P8PRETABLEHEADINDEX.DXQZHONGPAN.ordinal()].contains("/")){
+										dxqzhongpan = (Double.parseDouble(item[P8PRETABLEHEADINDEX.DXQZHONGPAN.ordinal()].split("/")[0]) + 
+												Double.parseDouble(item[P8PRETABLEHEADINDEX.DXQZHONGPAN.ordinal()].split("/")[1]))/2;
+									}else{
+										dxqzhongpan = Double.parseDouble(item[P8PRETABLEHEADINDEX.DXQZHONGPAN.ordinal()]);
+									}
+									
+									
+									int p0over = 0;
+									if(item[P8PRETABLEHEADINDEX.P0OVER.ordinal()].contains("=")){
+										p0over = Integer.parseInt(item[P8PRETABLEHEADINDEX.P0HOME.ordinal()].split("=")[1]);
+									}
+									
+									
+									
+									if((scoreh + scorec-dxqzhongpan) >=0.5){
+										if(p0over > 0){
+											dxqres = "全输";
+										}else if(p0over == 0){
+											dxqres = "-";
+										}else{
+											dxqres = "全赢";
+										}
+
+										
+									}else if((scoreh + scorec-dxqzhongpan) == 0.25){
+										if(p0over > 0){
+											dxqres = "输半";
+										}else if(p0over == 0){
+											dxqres = "-";
+										}else{
+											dxqres = "赢半";
+										}
+									}else if((scoreh + scorec-dxqzhongpan) == -0.25){
+										
+										if(p0over > 0){
+											dxqres = "赢半";
+										}else if(p0over == 0){
+											dxqres = "-";
+										}else{
+											dxqres = "输半";
+										}
+										
+
+									}else if((scoreh + scorec-dxqzhongpan) <= -0.5){
+										
+										if(p0over > 0){
+											dxqres = "全赢";
+										}else if(p0over == 0){
+											dxqres = "-";
+										}else{
+											dxqres = "全输";
+										}
+
+									}else if((scoreh + scorec-dxqzhongpan) == 0.0){
+										dxqres = "走水";
+									}
+									
+									
+									
+									item[P8PRETABLEHEADINDEX.DXQRES.ordinal()] = dxqres;
+									
+								}
+							}
+							
+							
+							
+
+							
+							
+
+							
+						}
+						
+						
+					}
+					
+				}
+				
+				showItemVec.add(item);
+				
+			}
         	
 
-			
+			//fittable();
 			
 			
 			tableMode.updateTable();
@@ -601,6 +906,27 @@ public class PreviousDataWindow extends JFrame
 
 	
 	
+	
+    public void fittable(){
+	    JTableHeader header = table.getTableHeader();
+	     int rowCount = table.getRowCount();
+	     Enumeration columns = table.getColumnModel().getColumns();
+	     while(columns.hasMoreElements()){
+	         TableColumn column = (TableColumn)columns.nextElement();
+	         int col = header.getColumnModel().getColumnIndex(column.getIdentifier());
+	         int width = (int)table.getTableHeader().getDefaultRenderer()
+	                 .getTableCellRendererComponent(table, column.getIdentifier()
+	                         , false, false, -1, col).getPreferredSize().getWidth();
+	         for(int row = 0; row<rowCount; row++){
+	             int preferedWidth = (int)table.getCellRenderer(row, col).getTableCellRendererComponent(table,
+	            		 table.getValueAt(row, col), false, false, row, col).getPreferredSize().getWidth();
+	             width = Math.max(width, preferedWidth);
+	         }
+	         header.setResizingColumn(column); // 此行很重要
+	         column.setWidth(width+table.getIntercellSpacing().width);
+	    
+	     }
+    }
 
 	
 	
@@ -960,12 +1286,25 @@ public class PreviousDataWindow extends JFrame
         JScrollPane scroll = new JScrollPane(table);  
         
         
-	    table.getColumnModel().getColumn(2).setPreferredWidth(240);
+	   
 	    
 	    table.setRowHeight(30);
 	    
 	    table.setFont(new java.awt.Font("黑体", Font.PLAIN, 15));
 	    
+	    
+	    
+	    
+        table.getColumnModel().getColumn(P8PRETABLEHEADINDEX.INDEX.ordinal()).setPreferredWidth(40);//序号
+        table.getColumnModel().getColumn(P8PRETABLEHEADINDEX.LEAGUE.ordinal()).setPreferredWidth(180);;//联赛
+        table.getColumnModel().getColumn(P8PRETABLEHEADINDEX.TIME.ordinal()).setPreferredWidth(140);//时间
+        table.getColumnModel().getColumn(P8PRETABLEHEADINDEX.EVENTNAME.ordinal()).setPreferredWidth(270);//球队
+        table.getColumnModel().getColumn(P8PRETABLEHEADINDEX.P0HOME.ordinal()).setPreferredWidth(300);
+        table.getColumnModel().getColumn(P8PRETABLEHEADINDEX.P0OVER.ordinal()).setPreferredWidth(300);
+	    
+	    
+        table.getColumnModel().getColumn(P8PRETABLEHEADINDEX.RQCHUPAN.ordinal()).setPreferredWidth(110);
+        table.getColumnModel().getColumn(P8PRETABLEHEADINDEX.RQZHONGPAN.ordinal()).setPreferredWidth(110);
 	    
 	    
 	    //table.setColumnModel(columnModel);
@@ -1185,7 +1524,7 @@ public class PreviousDataWindow extends JFrame
         { "联赛", "时间", "球队", "全场让球", "全场大小", "上半让球", "上半大小"};  */
         
         String[] columnNames =  
-        { "联赛", "时间", "球队", "全场让球", "全场大小"};  
+        {"序号", "联赛", "时间", "球队","让球初盘","终盘","盘口分析", "全场让球", "大小初盘","终盘","盘口分析","全场大小","完场比分","盘口结果","大小结果",};  
         
         //Object[][] data = new Object[2][5];  
         
@@ -1228,11 +1567,11 @@ public class PreviousDataWindow extends JFrame
         {  
         	
         	
-        	if(null == detailsData){
+        	if(null == showItemVec){
         		return 0;
         	}
         	
-            return detailsData.size();  
+            return showItemVec.size();  
         }  
   
         /** 
@@ -1241,8 +1580,7 @@ public class PreviousDataWindow extends JFrame
         @Override  
         public Object getValueAt(int rowIndex, int columnIndex)  
         {  
-            //return data[rowIndex][columnIndex];
-        	return detailsData.elementAt(rowIndex)[columnIndex+1];
+        	return showItemVec.elementAt(rowIndex)[columnIndex];
         }  
   
         /** 
@@ -1251,7 +1589,7 @@ public class PreviousDataWindow extends JFrame
         @Override  
         public Class<?> getColumnClass(int columnIndex)  
         {  
-            return detailsData.elementAt(0)[columnIndex].getClass();
+            return showItemVec.elementAt(0)[columnIndex].getClass();
         }  
   
         /** 
@@ -1269,7 +1607,7 @@ public class PreviousDataWindow extends JFrame
         @Override  
         public void setValueAt(Object aValue, int rowIndex, int columnIndex)  
         {  
-            detailsData.elementAt(rowIndex)[columnIndex] = (String)aValue;  
+        	showItemVec.elementAt(rowIndex)[columnIndex] = (String)aValue;  
             /*通知监听器数据单元数据已经改变*/  
             fireTableCellUpdated(rowIndex, columnIndex);  
         }  

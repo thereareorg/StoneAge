@@ -53,7 +53,7 @@ public class ZhiboClient {
             System.out.println("connected");
         } catch (Exception e) {  
         	System.out.println("连接失败！！！！！！" );
-        	//e.printStackTrace();
+        	e.printStackTrace();
             return false; 
         }  
    

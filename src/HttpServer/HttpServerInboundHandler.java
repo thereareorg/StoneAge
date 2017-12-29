@@ -105,6 +105,22 @@ public class HttpServerInboundHandler extends ChannelInboundHandlerAdapter {
             }
             
             
+            if(uri.equals("/iszhibocorrect")){
+            	String res = Boolean.toString(ZhiboClientHandler.grabStat);
+                
+                FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1,
+                        OK, Unpooled.wrappedBuffer(res.getBytes("UTF-8")));
+                response.headers().set(CONTENT_TYPE, "text/plain");
+                response.headers().set(CONTENT_LENGTH,
+                        response.content().readableBytes());
+                if (HttpHeaders.isKeepAlive(request)) {
+                    response.headers().set(CONNECTION, Values.KEEP_ALIVE);
+                }
+                ctx.write(response);
+                ctx.flush();
+            }
+            
+            
             
             
             

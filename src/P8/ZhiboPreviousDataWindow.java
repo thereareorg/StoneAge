@@ -15,12 +15,18 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Vector;  
   
 import java.awt.Color;
+
+
+
+
+
 
 
 
@@ -59,24 +65,48 @@ import org.json.JSONObject;
 
 
 
+
+
+
+
+
 import java.text.SimpleDateFormat;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.Stack;
 
 
-
-
+enum ZHIBOPRETABLEHEADINDEX{
+	INDEX,
+	LEAGUE,
+	TIME,
+	EVENTNAME,
+	RQCHUPAN,
+	RQZHONGPAN,
+	RQPANAS,
+	P0HOME,
+	DXQCHUPAN,
+	DXQZHONGPAN,
+	DXQPANAS,
+	P0OVER,
+	SCORE,
+	RQPRES,
+	DXQRES
+}
 
 
 public class ZhiboPreviousDataWindow extends PreviousDataWindow{
-	  
-	  
-	   
+
 		private static final long serialVersionUID = 508685938515366544L;
 		
 		private  Vector<String[]> detailsData = null;
 		
 		private Vector<String[]> originalDetailsData = new Vector<String[]>();
+		
+		
+	    private Vector<String[]> showItemVec = new Vector<String[]>();
+	    
+	    private Vector<String[]> scoreDetails = new Vector<String[]>();
+		
 		
 		private Vector<Integer> hightlightRows = new Vector<Integer>();
 		
@@ -152,6 +182,9 @@ public class ZhiboPreviousDataWindow extends PreviousDataWindow{
 		}
 		
 
+	    public void getscoresdetails(){
+	    	scoreDetails = StoneAge.score.getpreviousdetailsbyday(mp.getChooseDate());
+	    }
 
 		
 		
@@ -328,6 +361,226 @@ public class ZhiboPreviousDataWindow extends PreviousDataWindow{
 				}
 				
 				detailsData = (Vector<String[]>)DetailsDatatmp2.clone();
+				
+				
+				
+				
+				
+				
+				getscoresdetails();
+				
+				if(showItemVec.size()!= 0){
+					showItemVec.clear();
+				}
+				
+				//合并score
+				for(int i = 0; i < detailsData.size(); i++){
+					
+					String[] olditem = detailsData.elementAt(i).clone();
+					
+					String zhibohometeam = olditem[TYPEINDEX.EVENTNAMNE.ordinal()].split(" vs ")[0];
+					String zhiboawayteam = olditem[TYPEINDEX.EVENTNAMNE.ordinal()].split(" vs ")[1];
+					
+					String[] item = {Integer.toString(i+1), olditem[TYPEINDEX.LEAGUENAME.ordinal()], olditem[TYPEINDEX.TIME.ordinal()], olditem[TYPEINDEX.EVENTNAMNE.ordinal()], "", "", "",
+							olditem[TYPEINDEX.PERIOD0HOME.ordinal()], "", "", "", olditem[TYPEINDEX.PERIOD0OVER.ordinal()], "", "", ""};
+					
+					String scorehometeam = MergeManager.findScoreTeambyzhiboteam(zhibohometeam);
+					if(scorehometeam != null){
+						String scoreawayteam = MergeManager.findScoreTeambyzhiboteam(zhiboawayteam);
+
+						if(scoreawayteam != null){							
+							int indexinscoredetails = -1;
+							for(int j = 0; j < scoreDetails.size(); j++){
+								if(scoreDetails.elementAt(j)[SCORENEWINDEX.EVENTNAMNE.ordinal()].equals(scorehometeam + " vs " + scoreawayteam) ){
+									indexinscoredetails = j;
+									break;
+								}
+							}
+							
+							if(indexinscoredetails != -1){
+								item[ZHIBOPRETABLEHEADINDEX.RQCHUPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.RQCHUPAN.ordinal()];
+								item[ZHIBOPRETABLEHEADINDEX.RQZHONGPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.RQZHONGPAN.ordinal()];
+								item[ZHIBOPRETABLEHEADINDEX.RQPANAS.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.RQPANAS.ordinal()];
+								item[ZHIBOPRETABLEHEADINDEX.DXQCHUPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.DXQCHUPAN.ordinal()];
+								item[ZHIBOPRETABLEHEADINDEX.DXQZHONGPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.DXQZHONGPAN.ordinal()];
+								item[ZHIBOPRETABLEHEADINDEX.DXQPANAS.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.DXQPANAS.ordinal()];
+								
+								
+								
+								
+								if(scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.STATUS.ordinal()].contains("完")){
+									
+									item[ZHIBOPRETABLEHEADINDEX.SCORE.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.SCORE.ordinal()];
+									
+									//让球盘结果分析
+									if(!item[ZHIBOPRETABLEHEADINDEX.RQZHONGPAN.ordinal()].equals("") && !item[ZHIBOPRETABLEHEADINDEX.RQZHONGPAN.ordinal()].equals("-")){
+										
+										System.out.println(Arrays.toString(item));
+										
+										
+										
+										
+										
+										double rqzhongpan = rqpmap.get(item[ZHIBOPRETABLEHEADINDEX.RQZHONGPAN.ordinal()].replace("受让", ""));
+										double scoreh = Double.parseDouble(item[ZHIBOPRETABLEHEADINDEX.SCORE.ordinal()].split(":")[0]);
+										double scorec = Double.parseDouble(item[ZHIBOPRETABLEHEADINDEX.SCORE.ordinal()].split(":")[1]);
+										
+										String rqres = "";
+										if(item[ZHIBOPRETABLEHEADINDEX.RQZHONGPAN.ordinal()].contains("受让")){
+											rqzhongpan = 0.0 - rqzhongpan;
+										}
+										
+										
+										int p0home = 0;
+										
+										p0home = Integer.parseInt(item[ZHIBOPRETABLEHEADINDEX.P0HOME.ordinal()]);
+
+										if((scoreh - scorec-rqzhongpan) >=0.5){
+											if(p0home > 0){
+												rqres = "全输";
+											}else if(p0home == 0){
+												rqres = "-";
+											}else{
+												rqres = "全赢";
+											}
+											
+										}else if((scoreh - scorec-rqzhongpan) == 0.25){
+											
+											if(p0home > 0){
+												rqres = "输半";
+											}else if(p0home == 0){
+												rqres = "-";
+											}else{
+												rqres = "赢半";
+											}
+											
+										}else if((scoreh - scorec-rqzhongpan) == -0.25){
+											
+											if(p0home > 0){
+												rqres = "赢半";
+											}else if(p0home == 0){
+												rqres = "-";
+											}else{
+												rqres = "输半";
+											}
+
+										}else if((scoreh - scorec-rqzhongpan) <= -0.5){
+											
+											if(p0home > 0){
+												rqres = "全赢";
+											}else if(p0home == 0){
+												rqres = "-";
+											}else{
+												rqres = "全输";
+											}
+											
+											
+										}else if((scoreh - scorec-rqzhongpan) == 0.0){
+											rqres = "走水";
+										}
+										
+										
+										
+										
+										
+										item[ZHIBOPRETABLEHEADINDEX.RQPRES.ordinal()] = rqres;
+										
+									}
+									
+									//大小球盘结果分析
+									if(!item[ZHIBOPRETABLEHEADINDEX.DXQZHONGPAN.ordinal()].equals("") && !item[ZHIBOPRETABLEHEADINDEX.DXQZHONGPAN.ordinal()].equals("-")){
+										double dxqzhongpan = 0.0;
+										
+										
+										
+										double scoreh = Double.parseDouble(item[ZHIBOPRETABLEHEADINDEX.SCORE.ordinal()].split(":")[0]);
+										double scorec = Double.parseDouble(item[ZHIBOPRETABLEHEADINDEX.SCORE.ordinal()].split(":")[1]);
+										
+										String dxqres = "";
+										if(item[ZHIBOPRETABLEHEADINDEX.DXQZHONGPAN.ordinal()].contains("/")){
+											dxqzhongpan = (Double.parseDouble(item[ZHIBOPRETABLEHEADINDEX.DXQZHONGPAN.ordinal()].split("/")[0]) + 
+													Double.parseDouble(item[ZHIBOPRETABLEHEADINDEX.DXQZHONGPAN.ordinal()].split("/")[1]))/2;
+										}else{
+											dxqzhongpan = Double.parseDouble(item[ZHIBOPRETABLEHEADINDEX.DXQZHONGPAN.ordinal()]);
+										}
+										
+										
+										int p0over = 0;
+										p0over = Integer.parseInt(item[ZHIBOPRETABLEHEADINDEX.P0OVER.ordinal()]);
+										
+										
+										if((scoreh + scorec-dxqzhongpan) >=0.5){
+											if(p0over > 0){
+												dxqres = "全输";
+											}else if(p0over == 0){
+												dxqres = "-";
+											}else{
+												dxqres = "全赢";
+											}
+
+											
+										}else if((scoreh + scorec-dxqzhongpan) == 0.25){
+											if(p0over > 0){
+												dxqres = "输半";
+											}else if(p0over == 0){
+												dxqres = "-";
+											}else{
+												dxqres = "赢半";
+											}
+										}else if((scoreh + scorec-dxqzhongpan) == -0.25){
+											
+											if(p0over > 0){
+												dxqres = "赢半";
+											}else if(p0over == 0){
+												dxqres = "-";
+											}else{
+												dxqres = "输半";
+											}
+											
+
+										}else if((scoreh + scorec-dxqzhongpan) <= -0.5){
+											
+											if(p0over > 0){
+												dxqres = "全赢";
+											}else if(p0over == 0){
+												dxqres = "-";
+											}else{
+												dxqres = "全输";
+											}
+
+										}else if((scoreh + scorec-dxqzhongpan) == 0.0){
+											dxqres = "走水";
+										}
+										
+										
+										
+										item[ZHIBOPRETABLEHEADINDEX.DXQRES.ordinal()] = dxqres;
+										
+									}
+								}
+								
+								
+								
+
+								
+								
+
+								
+							}
+							
+							
+						}
+						
+					}
+					
+					showItemVec.add(item);
+					
+				}
+				
+				
+				
+				
+				
 				
 				
 				
@@ -580,12 +833,23 @@ public class ZhiboPreviousDataWindow extends PreviousDataWindow{
 	        JScrollPane scroll = new JScrollPane(table);  
 	        
 	        
-		    table.getColumnModel().getColumn(2).setPreferredWidth(240);
+		    
 		    
 		    table.setRowHeight(30);
 		    
 		    table.setFont(new java.awt.Font("黑体", Font.PLAIN, 15));
 		    
+		    
+	        table.getColumnModel().getColumn(ZHIBOPRETABLEHEADINDEX.INDEX.ordinal()).setPreferredWidth(40);//序号
+	        table.getColumnModel().getColumn(ZHIBOPRETABLEHEADINDEX.LEAGUE.ordinal()).setPreferredWidth(180);;//联赛
+	        table.getColumnModel().getColumn(ZHIBOPRETABLEHEADINDEX.TIME.ordinal()).setPreferredWidth(140);//时间
+	        table.getColumnModel().getColumn(ZHIBOPRETABLEHEADINDEX.EVENTNAME.ordinal()).setPreferredWidth(270);//球队
+	        table.getColumnModel().getColumn(ZHIBOPRETABLEHEADINDEX.P0HOME.ordinal()).setPreferredWidth(300);
+	        table.getColumnModel().getColumn(ZHIBOPRETABLEHEADINDEX.P0OVER.ordinal()).setPreferredWidth(300);
+		    
+		    
+	        table.getColumnModel().getColumn(ZHIBOPRETABLEHEADINDEX.RQCHUPAN.ordinal()).setPreferredWidth(110);
+	        table.getColumnModel().getColumn(ZHIBOPRETABLEHEADINDEX.RQZHONGPAN.ordinal()).setPreferredWidth(110);
 		    
 		    
 		    //table.setColumnModel(columnModel);
@@ -745,7 +1009,7 @@ public class ZhiboPreviousDataWindow extends PreviousDataWindow{
 	         * 这里和刚才一样，定义列名和每个数据的值 
 	         */  
 	        String[] columnNames =  
-	        { "联赛", "时间", "球队", "全场让球", "全场大小"};  
+	            {"序号", "联赛", "时间", "球队","让球初盘","终盘","盘口分析", "全场让球", "大小初盘","终盘","盘口分析","全场大小","完场比分","盘口结果","大小结果",};  
 	        
 
 	        
@@ -788,10 +1052,10 @@ public class ZhiboPreviousDataWindow extends PreviousDataWindow{
 	        @Override  
 	        public int getRowCount()  
 	        {  
-	        	if(null == detailsData){
+	        	if(null == showItemVec){
 	        		return 0;
 	        	}
-	            return detailsData.size();  
+	            return showItemVec.size();  
 	        }  
 	  
 	        /** 
@@ -801,7 +1065,7 @@ public class ZhiboPreviousDataWindow extends PreviousDataWindow{
 	        public Object getValueAt(int rowIndex, int columnIndex)  
 	        {  
 	            //return data[rowIndex][columnIndex];
-	        	return detailsData.elementAt(rowIndex)[columnIndex+1];
+	        	return showItemVec.elementAt(rowIndex)[columnIndex];
 	        }  
 	  
 	        /** 
@@ -810,7 +1074,7 @@ public class ZhiboPreviousDataWindow extends PreviousDataWindow{
 	        @Override  
 	        public Class<?> getColumnClass(int columnIndex)  
 	        {  
-	            return detailsData.elementAt(0)[columnIndex].getClass();
+	            return showItemVec.elementAt(0)[columnIndex].getClass();
 	        }  
 	  
 	        /** 
@@ -828,7 +1092,7 @@ public class ZhiboPreviousDataWindow extends PreviousDataWindow{
 	        @Override  
 	        public void setValueAt(Object aValue, int rowIndex, int columnIndex)  
 	        {  
-	            detailsData.elementAt(rowIndex)[columnIndex] = (String)aValue;  
+	        	showItemVec.elementAt(rowIndex)[columnIndex] = (String)aValue;  
 	            /*通知监听器数据单元数据已经改变*/  
 	            fireTableCellUpdated(rowIndex, columnIndex);  
 	        }  

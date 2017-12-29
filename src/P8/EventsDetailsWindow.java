@@ -46,6 +46,8 @@ import java.awt.Color;
 
 
 
+
+
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;  
@@ -77,6 +79,23 @@ import java.text.SimpleDateFormat;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.Stack;
 
+
+enum P8TABLEHEADINDEX{
+	INDEX,
+	LEAGUE,
+	TIME,
+	EVENTNAME,
+	RQCHUPAN,
+	RQZHONGPAN,
+	RQPANAS,
+	P0HOME,
+	DXQCHUPAN,
+	DXQZHONGPAN,
+	DXQPANAS,
+	P0OVER,
+	SCORE
+	
+}
 
 
 
@@ -138,6 +157,10 @@ public class EventsDetailsWindow extends JFrame
 	private  Vector<String[]> originalDetailsData = new Vector<String[]>();
 	
 	private  Vector<String[]> detailsData = null;
+	
+	private Vector<String[]> showItemVec = new Vector<String[]>();
+	
+	private Vector<String[]> scoreDetails = new Vector<String[]>();
 	
 	private Vector<Integer> hightlightRows = new Vector<Integer>();
 	
@@ -393,7 +416,7 @@ public class EventsDetailsWindow extends JFrame
         m_popupMenu.add(chooseMenItem);  
         m_popupMenu.add(mergeMenItem);  
         m_popupMenu.add(scoreMergeMenItem);  
-        m_popupMenu.add(hgMergeMenItem);  
+        //m_popupMenu.add(hgMergeMenItem);  
     }  
 	
 	
@@ -513,6 +536,8 @@ public class EventsDetailsWindow extends JFrame
 					originalDetailsData.elementAt(i)[TYPEINDEX.PERIOD0OVER.ordinal()] = "g" + originalDetailsData.elementAt(i)[TYPEINDEX.PERIOD0OVER.ordinal()];
 				}
 			}
+			
+			scoreDetails = StoneAge.score.getFinalScoresDetails();
 			
 			updateShowItem();
 			
@@ -758,6 +783,63 @@ public class EventsDetailsWindow extends JFrame
 				
 			}
 		}
+		
+		
+		if(showItemVec.size()!= 0){
+			showItemVec.clear();
+		}
+		
+		
+		//合并score
+		for(int i = 0; i < detailsData.size(); i++){
+			
+			String[] olditem = detailsData.elementAt(i).clone();
+			
+			String p8hometaem = olditem[TYPEINDEX.EVENTNAMNE.ordinal()].split("-vs-")[0];
+			String p8awaytaem = olditem[TYPEINDEX.EVENTNAMNE.ordinal()].split("-vs-")[1];
+			
+			String[] item = {Integer.toString(i+1), olditem[TYPEINDEX.LEAGUENAME.ordinal()], olditem[TYPEINDEX.TIME.ordinal()], olditem[TYPEINDEX.EVENTNAMNE.ordinal()], "", "", "",
+					olditem[TYPEINDEX.PERIOD0HOME.ordinal()], "", "", "", olditem[TYPEINDEX.PERIOD0OVER.ordinal()], ""};
+			
+			String scorehometeam = ScoreMergeManager.findScoreTeam(p8hometaem);
+			if(scorehometeam != null){
+				String scoreawayteam = ScoreMergeManager.findScoreTeam(p8awaytaem);
+				
+				
+				
+				if(scoreawayteam != null){
+					
+					int indexinscoredetails = -1;
+					for(int j = 0; j < scoreDetails.size(); j++){
+						if(scoreDetails.elementAt(j)[SCORENEWINDEX.EVENTNAMNE.ordinal()].equals(scorehometeam + " vs " + scoreawayteam) ){
+							indexinscoredetails = j;
+							break;
+						}
+					}
+					
+					if(indexinscoredetails != -1){
+						item[P8TABLEHEADINDEX.RQCHUPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.RQCHUPAN.ordinal()];
+						item[P8TABLEHEADINDEX.RQZHONGPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.RQZHONGPAN.ordinal()];
+						item[P8TABLEHEADINDEX.RQPANAS.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.RQPANAS.ordinal()];
+						item[P8TABLEHEADINDEX.DXQCHUPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.DXQCHUPAN.ordinal()];
+						item[P8TABLEHEADINDEX.DXQZHONGPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.DXQZHONGPAN.ordinal()];
+						item[P8TABLEHEADINDEX.DXQPANAS.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.DXQPANAS.ordinal()];
+						item[P8TABLEHEADINDEX.SCORE.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.SCORE.ordinal()];
+					}
+					
+					
+				}
+				
+			}
+			
+			showItemVec.add(item);
+			
+		}
+		
+		
+		
+		
+		
 		
 		tableMode.updateTable();
 		
@@ -1127,12 +1209,23 @@ public class EventsDetailsWindow extends JFrame
         });  
         
         
-	    table.getColumnModel().getColumn(2).setPreferredWidth(240);
+	    
 	    
 	    table.setRowHeight(30);
 	    
 	    table.setFont(new java.awt.Font("黑体", Font.PLAIN, 15));
 	    
+	    
+	    
+        table.getColumnModel().getColumn(P8TABLEHEADINDEX.INDEX.ordinal()).setPreferredWidth(40);//序号
+        table.getColumnModel().getColumn(P8TABLEHEADINDEX.LEAGUE.ordinal()).setPreferredWidth(180);;//联赛
+        table.getColumnModel().getColumn(P8TABLEHEADINDEX.TIME.ordinal()).setPreferredWidth(140);//时间
+        table.getColumnModel().getColumn(P8TABLEHEADINDEX.EVENTNAME.ordinal()).setPreferredWidth(270);//球队
+        table.getColumnModel().getColumn(P8TABLEHEADINDEX.P0HOME.ordinal()).setPreferredWidth(300);
+        table.getColumnModel().getColumn(P8TABLEHEADINDEX.P0OVER.ordinal()).setPreferredWidth(300);
+        
+        table.getColumnModel().getColumn(P8TABLEHEADINDEX.RQCHUPAN.ordinal()).setPreferredWidth(110);
+        table.getColumnModel().getColumn(P8TABLEHEADINDEX.RQZHONGPAN.ordinal()).setPreferredWidth(110);
 	    
 	    
 	    //table.setColumnModel(columnModel);
@@ -1347,7 +1440,7 @@ public class EventsDetailsWindow extends JFrame
          * 这里和刚才一样，定义列名和每个数据的值 
          */  
         String[] columnNames =  
-        { "联赛", "时间", "球队", "全场让球", "全场大小"};  
+        { "序号", "联赛", "时间", "球队", "让球初盘", "终盘", "盘口分析", "全场让球", "大小球初盘", "终盘", "盘口分析","全场大小", "比分"};  
         
 
         
@@ -1390,10 +1483,10 @@ public class EventsDetailsWindow extends JFrame
         @Override  
         public int getRowCount()  
         {         
-	        if(null == detailsData){
+	        if(null == showItemVec){
 	    		return 0;
 	    	}
-            return detailsData.size();  
+            return showItemVec.size();  
         }  
   
         /** 
@@ -1403,7 +1496,7 @@ public class EventsDetailsWindow extends JFrame
         public Object getValueAt(int rowIndex, int columnIndex)  
         {  
             //return data[rowIndex][columnIndex];
-        	return detailsData.elementAt(rowIndex)[columnIndex+1];
+        	return showItemVec.elementAt(rowIndex)[columnIndex];
         }  
   
         /** 
@@ -1412,7 +1505,7 @@ public class EventsDetailsWindow extends JFrame
         @Override  
         public Class<?> getColumnClass(int columnIndex)  
         {  
-            return detailsData.elementAt(0)[columnIndex].getClass();
+            return showItemVec.elementAt(0)[columnIndex].getClass();
         }  
   
         /** 

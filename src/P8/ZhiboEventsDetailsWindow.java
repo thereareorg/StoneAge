@@ -61,7 +61,37 @@ import java.util.Stack;
 
 
 
+
+
+
+
+
 import P8.EventsDetailsWindow.MyTableModel;
+
+
+
+
+enum ZHIBOTABLEHEADINDEX{
+	INDEX,
+	LEAGUE,
+	TIME,
+	EVENTNAME,
+	RQCHUPAN,
+	RQZHONGPAN,
+	RQPANAS,
+	P0HOME,
+	DXQCHUPAN,
+	DXQZHONGPAN,
+	DXQPANAS,
+	P0OVER,
+	SCORE
+	
+}
+
+
+
+
+
 
 public class ZhiboEventsDetailsWindow  extends JFrame{
 	  
@@ -72,6 +102,11 @@ public class ZhiboEventsDetailsWindow  extends JFrame{
 		private  Vector<String[]> originalDetailsData = new Vector<String[]>();
 		
 		private  Vector<String[]> detailsData = null;
+		
+		
+		private Vector<String[]> showItemVec = new Vector<String[]>();
+		
+		private Vector<String[]> scoreDetails = new Vector<String[]>();
 		
 		private Vector<Integer> hightlightRows = new Vector<Integer>();
 		
@@ -308,6 +343,9 @@ public class ZhiboEventsDetailsWindow  extends JFrame{
 				for(int i = 0; i< eventDetailsVec.size(); i++){
 					originalDetailsData.add(eventDetailsVec.elementAt(i).clone());
 				}
+				
+				
+				scoreDetails = StoneAge.score.getFinalScoresDetails();
 
 				updateShowItem();
 
@@ -393,6 +431,63 @@ public class ZhiboEventsDetailsWindow  extends JFrame{
 			}
 			
 			detailsData = (Vector<String[]>)DetailsDatatmp2.clone();
+			
+			
+			
+			
+			if(showItemVec.size()!= 0){
+				showItemVec.clear();
+			}
+			
+			
+			//合并score
+			for(int i = 0; i < detailsData.size(); i++){
+				
+				String[] olditem = detailsData.elementAt(i).clone();
+				
+				String zhibohometeam = olditem[TYPEINDEX.EVENTNAMNE.ordinal()].split(" vs ")[0];
+				String zhiboawayteam = olditem[TYPEINDEX.EVENTNAMNE.ordinal()].split(" vs ")[1];
+				
+				String[] item = {Integer.toString(i+1), olditem[TYPEINDEX.LEAGUENAME.ordinal()], olditem[TYPEINDEX.TIME.ordinal()], olditem[TYPEINDEX.EVENTNAMNE.ordinal()], "", "", "",
+						olditem[TYPEINDEX.PERIOD0HOME.ordinal()], "", "", "", olditem[TYPEINDEX.PERIOD0OVER.ordinal()], ""};
+				
+				String scorehometeam = MergeManager.findScoreTeambyzhiboteam(zhibohometeam);
+				if(scorehometeam != null){
+					
+					String scoreawayteam = MergeManager.findScoreTeambyzhiboteam(zhiboawayteam);
+
+					if(scoreawayteam != null){
+						
+						int indexinscoredetails = -1;
+						for(int j = 0; j < scoreDetails.size(); j++){
+							if(scoreDetails.elementAt(j)[SCORENEWINDEX.EVENTNAMNE.ordinal()].equals(scorehometeam + " vs " + scoreawayteam) ){
+								indexinscoredetails = j;
+								break;
+							}
+						}
+						
+						if(indexinscoredetails != -1){
+							item[ZHIBOTABLEHEADINDEX.RQCHUPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.RQCHUPAN.ordinal()];
+							item[ZHIBOTABLEHEADINDEX.RQZHONGPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.RQZHONGPAN.ordinal()];
+							item[ZHIBOTABLEHEADINDEX.RQPANAS.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.RQPANAS.ordinal()];
+							item[ZHIBOTABLEHEADINDEX.DXQCHUPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.DXQCHUPAN.ordinal()];
+							item[ZHIBOTABLEHEADINDEX.DXQZHONGPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.DXQZHONGPAN.ordinal()];
+							item[ZHIBOTABLEHEADINDEX.DXQPANAS.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.DXQPANAS.ordinal()];
+							item[ZHIBOTABLEHEADINDEX.SCORE.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.SCORE.ordinal()];
+						}
+						
+						
+					}
+					
+				}
+				
+				showItemVec.add(item);
+				
+			}
+			
+			
+			
+			
 			
 			
 			
@@ -655,12 +750,23 @@ public class ZhiboEventsDetailsWindow  extends JFrame{
 	        
 	        
 	        
-		    table.getColumnModel().getColumn(2).setPreferredWidth(240);
+		  
 		    
 		    table.setRowHeight(30);
 		    
 		    table.setFont(new java.awt.Font("黑体", Font.PLAIN, 15));
 		    
+		    
+	        table.getColumnModel().getColumn(ZHIBOTABLEHEADINDEX.INDEX.ordinal()).setPreferredWidth(40);//序号
+	        table.getColumnModel().getColumn(ZHIBOTABLEHEADINDEX.LEAGUE.ordinal()).setPreferredWidth(180);;//联赛
+	        table.getColumnModel().getColumn(ZHIBOTABLEHEADINDEX.TIME.ordinal()).setPreferredWidth(140);//时间
+	        table.getColumnModel().getColumn(ZHIBOTABLEHEADINDEX.EVENTNAME.ordinal()).setPreferredWidth(270);//球队
+	        table.getColumnModel().getColumn(ZHIBOTABLEHEADINDEX.P0HOME.ordinal()).setPreferredWidth(300);
+	        table.getColumnModel().getColumn(ZHIBOTABLEHEADINDEX.P0OVER.ordinal()).setPreferredWidth(300);
+	        
+	        table.getColumnModel().getColumn(ZHIBOTABLEHEADINDEX.RQCHUPAN.ordinal()).setPreferredWidth(110);
+	        table.getColumnModel().getColumn(ZHIBOTABLEHEADINDEX.RQZHONGPAN.ordinal()).setPreferredWidth(110);
+
 		    
 		    
 		    //table.setColumnModel(columnModel);
@@ -707,8 +813,6 @@ public class ZhiboEventsDetailsWindow  extends JFrame{
 	        DefaultTableCellRenderer p0oRender = new DefaultTableCellRenderer() {   
 
 	            public void setValue(Object value) { //重写setValue方法，从而可以动态设置列单元字体颜色   
-
-	               
 	            	String str = value.toString();
 					Double betAmt = Double.parseDouble(str);
 					
@@ -820,8 +924,11 @@ public class ZhiboEventsDetailsWindow  extends JFrame{
 	        /* 
 	         * 这里和刚才一样，定义列名和每个数据的值 
 	         */  
+	    	
+	    	// { "联赛", "时间", "球队", "全场让球", "全场大小"};  
 	        String[] columnNames =  
-	        { "联赛", "时间", "球队", "全场让球", "全场大小"};  
+	       
+	        { "序号", "联赛", "时间", "球队", "让球初盘", "终盘", "盘口分析", "全场让球", "大小球初盘", "终盘", "盘口分析","全场大小", "比分"};  
 	        
 
 	        
@@ -864,10 +971,10 @@ public class ZhiboEventsDetailsWindow  extends JFrame{
 	        @Override  
 	        public int getRowCount()  
 	        {  
-	        	if(detailsData == null){
+	        	if(showItemVec == null){
 	        		return 0;
 	        	}
-	            return detailsData.size();  
+	            return showItemVec.size();  
 	        }  
 	  
 	        /** 
@@ -877,7 +984,7 @@ public class ZhiboEventsDetailsWindow  extends JFrame{
 	        public Object getValueAt(int rowIndex, int columnIndex)  
 	        {  
 	            //return data[rowIndex][columnIndex];
-	        	return detailsData.elementAt(rowIndex)[columnIndex+1];
+	        	return showItemVec.elementAt(rowIndex)[columnIndex];
 	        }  
 	  
 	        /** 
@@ -886,7 +993,7 @@ public class ZhiboEventsDetailsWindow  extends JFrame{
 	        @Override  
 	        public Class<?> getColumnClass(int columnIndex)  
 	        {  
-	            return detailsData.elementAt(0)[columnIndex].getClass();
+	            return showItemVec.elementAt(0)[columnIndex].getClass();
 	        }  
 	  
 	        /** 

@@ -505,6 +505,16 @@ public class P8Http {
             	return false;
             
             
+            /*String codehtmluri = ADDRESS + "/partner/resources/app/components/code/code.html";
+            
+            res = doGet(codehtmluri, "", "");
+            
+            String codejson = ADDRESS + "/partner/resources/assets/locale/code/code-zh_CN.json";
+            
+            res = doGet(codejson, "", "");*/
+            
+            
+            
             String codeGetUri = ADDRESS + "/partner/page/navigation?t=" + Long.toString(System.currentTimeMillis());
             
             
@@ -521,15 +531,18 @@ public class P8Http {
             	
                 JSONObject codeParams = new JSONObject(true);
                 
+               // int t = (int)(620+Math.random()*(500-1+1));
+                
                 int t = (int)(120+Math.random()*(500-1+1));
+                //t = 86;
                 
                 codeParams.put("securityCode", SECURITYCODE);
                 codeParams.put("t", t);
             	
-            	res = doPost(codePostUri, codeParams.toString(), "", "");
+            	res = doPost(codePostUri, codeParams.toString(), "", "https://www.p88agent.com/partner/zh-cn/code");
             	
             	if(res == null){
-            		res = doPost(codePostUri, codeParams.toString(), "", "");
+            		res = doPost(codePostUri, codeParams.toString(), "", "https://www.p88agent.com/partner/zh-cn/code");
             	}
             	
             	//System.out.println("codePostUri res:" + res);
@@ -1466,7 +1479,7 @@ public class P8Http {
         return null;
     }
     
-    public  CloseableHttpResponse  execute(HttpUriRequest request) throws IOException, ClientProtocolException{
+    public  CloseableHttpResponse  execute(HttpUriRequest request) throws Exception{
     	
     	long time1 = System.currentTimeMillis();
     	long time2 = System.currentTimeMillis();
@@ -1476,6 +1489,7 @@ public class P8Http {
     	try{
     		response = httpclient.execute(request);    		
     		time2 = System.currentTimeMillis();    		
+    		Thread.sleep(300);
     		calcRequestAveTime(time2 - time1);
     		
     	}catch(Exception e){
@@ -1557,6 +1571,9 @@ public class P8Http {
                if(url.contains("code/validate"))
                {
             	   //System.out.println("kkkkk");
+            	   
+            	   System.out.println(strCookies);
+            	   
                }
             	   
             	   
@@ -1632,9 +1649,17 @@ public class P8Http {
 		}
 		String cookies[] = cookie.split(";");
 		
+		
+		
+		//System.out.println("add cookie:" + Arrays.toString(cookies));
+		
+		
+		
 		for (String c : cookies)
 		{
-			if((strCookies.contains("JSESSIONID") && c.contains("JSESSIONID")) || c.indexOf("Path=") != -1 ||c.indexOf("path=") != -1 || c.indexOf("expires=") != -1||c.indexOf("Expires=") != -1 || c.indexOf("domain=") != -1 ||c.indexOf("Domain=") != -1 || c.indexOf("HttpOnly") != -1)
+			if((strCookies.contains("JSESSIONID") && c.contains("JSESSIONID")) ||c.contains("ADRUM")|| c.indexOf("Path=") != -1 ||c.indexOf("path=") != -1 || c.indexOf("expires=") != -1||c.indexOf("Expires=") != -1 || c.indexOf("domain=") != -1 ||c.indexOf("Domain=") != -1 || c.indexOf("HttpOnly") != -1)
+			//if((strCookies.contains("JSESSIONID") && c.contains("JSESSIONID")) || c.indexOf("Path=") != -1 ||c.indexOf("path=") != -1 || c.indexOf("expires=") != -1||c.indexOf("Expires=") != -1 || c.indexOf("domain=") != -1 ||c.indexOf("Domain=") != -1 || c.indexOf("HttpOnly") != -1)
+
 				continue;
 			strCookies += c;
 			strCookies += ";";
@@ -1799,7 +1824,7 @@ public class P8Http {
                 
                 //自动输入验证码
                 
-                Thread.currentThread().sleep(1000);
+                Thread.sleep(1*1000);
                 
                 //System.out.println("请输入验证码:");
                 

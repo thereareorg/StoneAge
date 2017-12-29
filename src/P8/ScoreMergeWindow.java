@@ -77,9 +77,9 @@ public class ScoreMergeWindow extends JFrame{
 			
 			if(event == null)
 				return;
-			textFieldScoreleague.setText(event[SCOREINDEX.LEAGUENAME.ordinal()]);
-			textFieldScoreTime.setText(event[SCOREINDEX.TIME.ordinal()]);
-			textFieldScoreEvent.setText(event[SCOREINDEX.EVENTNAMNE.ordinal()]);
+			textFieldScoreleague.setText(event[SCORENEWINDEX.LEAGUENAME.ordinal()]);
+			textFieldScoreTime.setText(event[SCORENEWINDEX.TIME.ordinal()]);
+			textFieldScoreEvent.setText(event[SCORENEWINDEX.EVENTNAMNE.ordinal()]);
 		}catch(Exception e){
 			e.printStackTrace();
 		}

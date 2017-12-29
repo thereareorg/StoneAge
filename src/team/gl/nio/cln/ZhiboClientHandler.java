@@ -51,10 +51,7 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
        
        time1 = System.currentTimeMillis();
        
-       //System.out.println(res);
-           
-       
-       //ZhiboManager.setStateText("		连接成功");
+
        
        
        if(firstTime == true){
@@ -100,10 +97,6 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
                
                
                ZhiboManager.saveEvents();
-               
-               
-               
-               
                
                ZhiboManager.setStateText("		连接成功");
                
@@ -163,6 +156,9 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
                 while(ZhiboClient.connect() == false) {
                 	
                 	try{  					
+                		
+                		grabStat = false;
+                		
     					Thread.currentThread().sleep(5000);
     					
     				}catch(Exception e){
@@ -244,13 +240,13 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
              
              
              
-             MergeNewManager.clearMergeData();
+/*             MergeNewManager.clearMergeData();
              MergeNewManager.constructMergeRes();
              MergeNewManager.saveEvents();
            //可以做一些改变显示的事情
              MergeNewManager.updateEventsDetails();
              
-             MergeNewManager.copyTofinalEventsDetails();
+             MergeNewManager.copyTofinalEventsDetails();*/
            
              
              

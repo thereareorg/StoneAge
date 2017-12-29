@@ -1,6 +1,7 @@
 package P8;
 
-
+import java.awt.Color;
+import java.text.SimpleDateFormat;
 
 public class ScoreThread extends Thread{
 	
@@ -12,13 +13,16 @@ public class ScoreThread extends Thread{
 	@Override
     public void run() {
 		try{
+			
+			SimpleDateFormat dfSec = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			
 			while(true){
 				try{
 					
-					StoneAge.score.clearScoredetails();
-					
-					
-					if(StoneAge.score.getScores() == true){
+					if(StoneAge.score.getScorePankou() == true){
+						
+						StoneAge.score.setnewwndstatetxt("更新于:"+ dfSec.format(System.currentTimeMillis()));
+						StoneAge.score.setnewwndstatecor(Color.green);
 						
 						StoneAge.bScoreLogin = true;
 						
@@ -26,16 +30,14 @@ public class ScoreThread extends Thread{
 						
 						StoneAge.score.copyTofinalScoresDetails();
 						
-						if(StoneAge.showScore == true){
-							StoneAge.score.showscoredetailswnd();
-							StoneAge.showScore = false;
-						}
 						
-						
-						
-						Thread.currentThread().sleep(10*1000);
+
+						Thread.sleep(2*1000);
 					}else{
-						Thread.currentThread().sleep(2*1000);
+						
+						StoneAge.score.setnewwndstatecor(Color.red);
+						
+						Thread.sleep(2*1000);
 					}
 					
 					

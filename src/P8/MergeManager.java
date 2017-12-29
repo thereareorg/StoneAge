@@ -17,6 +17,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -331,7 +332,13 @@ public class MergeManager {
 				
 				//old save method
 				if(mergeEventDetailsVec.elementAt(i)[ZHIBOINDEX.SAVED.ordinal()].equals("1")){
-					//mergeEventDetailsVec.elementAt(i)[ZHIBOINDEX.SAVED.ordinal()] = "1";					
+					//mergeEventDetailsVec.elementAt(i)[ZHIBOINDEX.SAVED.ordinal()] = "1";				
+					
+					
+					
+
+					
+					
 					String[] item = mergeEventDetailsVec.elementAt(i).clone();
 
 					boolean find = false;
@@ -345,7 +352,18 @@ public class MergeManager {
 						mergebeforegoaldetails.add(item);
 					}
 					
-				}/*else if(pass > passMinutes){					
+					
+					item[ZHIBOINDEX.TIME.ordinal()] = timeStr;
+					boolean saveRes = pDataManager.saveTofile(item);	
+					
+					
+					if(saveRes == true){
+						System.out.println("already have goal, save success:" + Arrays.toString(item));
+
+					}
+					
+					
+				}else if(pass > passMinutes){					
 					String[] item = mergeEventDetailsVec.elementAt(i).clone();
 					item[ZHIBOINDEX.TIME.ordinal()] = timeStr;
 					boolean saveRes = pDataManager.saveTofile(item);	
@@ -355,9 +373,9 @@ public class MergeManager {
 					
 				}
 				//old save method
-*/
+
 				
-				String inplaytimestr = mergeEventDetailsVec.elementAt(i)[MERGEINDEX.PERIOD1HOME.ordinal()];
+/*				String inplaytimestr = mergeEventDetailsVec.elementAt(i)[MERGEINDEX.PERIOD1HOME.ordinal()];
 				
 				if(null != inplaytimestr && (inplaytimestr.contains("'") || inplaytimestr.contains("中"))){
 					continue;
@@ -387,7 +405,7 @@ public class MergeManager {
 					
 					
 					
-				}
+				}*/
 				
 				
 			}
@@ -786,9 +804,13 @@ public class MergeManager {
 										
 										for(int k = 0; k < mergebeforegoaldetails.size(); k++){
 											if(mergeItem[MERGEINDEX.EVENTNAMNE.ordinal()].equals(mergebeforegoaldetails.elementAt(k)[MERGEINDEX.EVENTNAMNE.ordinal()])){
+												
+												
 												mergeItem[MERGEINDEX.ZHIBOHRES.ordinal()] = mergebeforegoaldetails.elementAt(k)[MERGEINDEX.ZHIBOHRES.ordinal()];
 												mergeItem[MERGEINDEX.ZHIBOORES.ordinal()] = mergebeforegoaldetails.elementAt(k)[MERGEINDEX.ZHIBOORES.ordinal()];
 												break;
+												
+												
 											}
 										}
 										
@@ -1130,6 +1152,8 @@ public class MergeManager {
 												
 												for(int k = 0; k < mergebeforegoaldetails.size(); k++){
 													if(mergeEventDetailsVec.elementAt(danshiIndex)[MERGEINDEX.EVENTNAMNE.ordinal()].equals(mergebeforegoaldetails.elementAt(k)[MERGEINDEX.EVENTNAMNE.ordinal()])){
+														
+														
 														mergeEventDetailsVec.elementAt(danshiIndex)[MERGEINDEX.ZHIBOHRES.ordinal()] = mergebeforegoaldetails.elementAt(k)[MERGEINDEX.ZHIBOHRES.ordinal()];
 														mergeEventDetailsVec.elementAt(danshiIndex)[MERGEINDEX.ZHIBOORES.ordinal()] = mergebeforegoaldetails.elementAt(k)[MERGEINDEX.ZHIBOORES.ordinal()];
 														
@@ -1385,9 +1409,7 @@ public class MergeManager {
             	
             	
             	if(mergeEventDetailsVec.size() != 0){
-            		
-            		
-            		
+
             		Collections.sort(mergeEventDetailsVec, ct);
             	}
             	
@@ -1435,6 +1457,30 @@ public class MergeManager {
 		
 		return zhiboteam;
 		
+	}
+	
+	
+	public static String findScoreTeambyzhiboteam(String zhiboteam){
+		
+		try{
+			Set<String>kset=checkList.keySet();
+			for(String ks:kset){
+			    if(zhiboteam.equals(checkList.get(ks))){
+			    	String scoreteam =  findScoreTeam(ks);
+			    	if(null != scoreteam){
+			    		return scoreteam;
+			    	}
+			    }
+			}
+			
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		
+		
+		return null;
 	}
 	
 	
