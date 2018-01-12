@@ -33,6 +33,8 @@ import java.awt.Color;
 
 
 
+
+
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;  
@@ -58,6 +60,8 @@ import javax.swing.Timer;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+
 
 
 
@@ -138,6 +142,11 @@ public class ZhiboPreviousDataWindow extends PreviousDataWindow{
 	    private boolean bonlyShow5Big = false;
 	    private boolean bonlyShowInplay = false;
 	    private boolean bonlyShowNotInplay = false;
+	    
+	    private JCheckBox chupanrescb = new JCheckBox("初盘输赢");
+	    private boolean bchupanres = false;
+	    private JCheckBox zhongpanrescb = new JCheckBox("终盘输赢");
+	    private boolean bzhongpanres = true;
 	    
 	    private JLabel labelGrabStat= new JLabel("状态:");
 	    private JTextField textFieldGrabStat = new JTextField(15);  
@@ -418,16 +427,21 @@ public class ZhiboPreviousDataWindow extends PreviousDataWindow{
 										System.out.println(Arrays.toString(item));
 										
 										
+										String calRespan = "";
+										if(bchupanres == true){
+											calRespan = item[ZHIBOPRETABLEHEADINDEX.RQCHUPAN.ordinal()];
+										}else{
+											calRespan = item[ZHIBOPRETABLEHEADINDEX.RQZHONGPAN.ordinal()];
+										}
 										
 										
-										
-										double rqzhongpan = rqpmap.get(item[ZHIBOPRETABLEHEADINDEX.RQZHONGPAN.ordinal()].replace("受让", ""));
+										double calPan = rqpmap.get(calRespan.replace("受让", ""));
 										double scoreh = Double.parseDouble(item[ZHIBOPRETABLEHEADINDEX.SCORE.ordinal()].split(":")[0]);
 										double scorec = Double.parseDouble(item[ZHIBOPRETABLEHEADINDEX.SCORE.ordinal()].split(":")[1]);
 										
 										String rqres = "";
-										if(item[ZHIBOPRETABLEHEADINDEX.RQZHONGPAN.ordinal()].contains("受让")){
-											rqzhongpan = 0.0 - rqzhongpan;
+										if(calRespan.contains("受让")){
+											calPan = 0.0 - calPan;
 										}
 										
 										
@@ -435,7 +449,7 @@ public class ZhiboPreviousDataWindow extends PreviousDataWindow{
 										
 										p0home = Integer.parseInt(item[ZHIBOPRETABLEHEADINDEX.P0HOME.ordinal()]);
 
-										if((scoreh - scorec-rqzhongpan) >=0.5){
+										if((scoreh - scorec-calPan) >=0.5){
 											if(p0home > 0){
 												rqres = "全输";
 											}else if(p0home == 0){
@@ -444,7 +458,7 @@ public class ZhiboPreviousDataWindow extends PreviousDataWindow{
 												rqres = "全赢";
 											}
 											
-										}else if((scoreh - scorec-rqzhongpan) == 0.25){
+										}else if((scoreh - scorec-calPan) == 0.25){
 											
 											if(p0home > 0){
 												rqres = "输半";
@@ -454,7 +468,7 @@ public class ZhiboPreviousDataWindow extends PreviousDataWindow{
 												rqres = "赢半";
 											}
 											
-										}else if((scoreh - scorec-rqzhongpan) == -0.25){
+										}else if((scoreh - scorec-calPan) == -0.25){
 											
 											if(p0home > 0){
 												rqres = "赢半";
@@ -464,7 +478,7 @@ public class ZhiboPreviousDataWindow extends PreviousDataWindow{
 												rqres = "输半";
 											}
 
-										}else if((scoreh - scorec-rqzhongpan) <= -0.5){
+										}else if((scoreh - scorec-calPan) <= -0.5){
 											
 											if(p0home > 0){
 												rqres = "全赢";
@@ -475,12 +489,32 @@ public class ZhiboPreviousDataWindow extends PreviousDataWindow{
 											}
 											
 											
-										}else if((scoreh - scorec-rqzhongpan) == 0.0){
+										}else if((scoreh - scorec-calPan) == 0.0){
 											rqres = "走水";
 										}
 										
 										
 										
+										//只统计赌降的那一边
+										if(item[ZHIBOPRETABLEHEADINDEX.RQPANAS.ordinal()].contains("降") && 
+												item[ZHIBOPRETABLEHEADINDEX.RQCHUPAN.ordinal()].contains("受让")&&
+												Integer.parseInt(item[ZHIBOPRETABLEHEADINDEX.P0HOME.ordinal()])  < 0){
+											rqres = "";
+										}else if(item[ZHIBOPRETABLEHEADINDEX.RQPANAS.ordinal()].contains("降") && 
+												!item[ZHIBOPRETABLEHEADINDEX.RQCHUPAN.ordinal()].contains("受让")&&
+												Integer.parseInt(item[ZHIBOPRETABLEHEADINDEX.P0HOME.ordinal()])  > 0){
+											rqres = "";
+										}else if(item[ZHIBOPRETABLEHEADINDEX.RQPANAS.ordinal()].contains("升") && 
+												item[ZHIBOPRETABLEHEADINDEX.RQCHUPAN.ordinal()].contains("受让")&&
+												Integer.parseInt(item[ZHIBOPRETABLEHEADINDEX.P0HOME.ordinal()])  > 0){
+											rqres = "";
+										}else if(item[ZHIBOPRETABLEHEADINDEX.RQPANAS.ordinal()].contains("升") && 
+												!item[ZHIBOPRETABLEHEADINDEX.RQCHUPAN.ordinal()].contains("受让")&&
+												Integer.parseInt(item[ZHIBOPRETABLEHEADINDEX.P0HOME.ordinal()])  < 0){
+											rqres = "";
+										}else if(item[ZHIBOPRETABLEHEADINDEX.RQPANAS.ordinal()].equals("")){
+											rqres = "";
+										}
 										
 										
 										item[ZHIBOPRETABLEHEADINDEX.RQPRES.ordinal()] = rqres;
@@ -489,7 +523,7 @@ public class ZhiboPreviousDataWindow extends PreviousDataWindow{
 									
 									//大小球盘结果分析
 									if(!item[ZHIBOPRETABLEHEADINDEX.DXQZHONGPAN.ordinal()].equals("") && !item[ZHIBOPRETABLEHEADINDEX.DXQZHONGPAN.ordinal()].equals("-")){
-										double dxqzhongpan = 0.0;
+										double calPan = 0.0;
 										
 										
 										
@@ -497,11 +531,22 @@ public class ZhiboPreviousDataWindow extends PreviousDataWindow{
 										double scorec = Double.parseDouble(item[ZHIBOPRETABLEHEADINDEX.SCORE.ordinal()].split(":")[1]);
 										
 										String dxqres = "";
-										if(item[ZHIBOPRETABLEHEADINDEX.DXQZHONGPAN.ordinal()].contains("/")){
-											dxqzhongpan = (Double.parseDouble(item[ZHIBOPRETABLEHEADINDEX.DXQZHONGPAN.ordinal()].split("/")[0]) + 
-													Double.parseDouble(item[ZHIBOPRETABLEHEADINDEX.DXQZHONGPAN.ordinal()].split("/")[1]))/2;
+										
+										String calRespan ="";
+										
+										if(bchupanres == true){
+											calRespan = item[ZHIBOPRETABLEHEADINDEX.DXQCHUPAN.ordinal()];
 										}else{
-											dxqzhongpan = Double.parseDouble(item[ZHIBOPRETABLEHEADINDEX.DXQZHONGPAN.ordinal()]);
+											calRespan = item[ZHIBOPRETABLEHEADINDEX.DXQZHONGPAN.ordinal()];
+										}
+										
+										
+										
+										if(calRespan.contains("/")){
+											calPan = (Double.parseDouble(calRespan.split("/")[0]) + 
+													Double.parseDouble(calRespan.split("/")[1]))/2;
+										}else{
+											calPan = Double.parseDouble(calRespan);
 										}
 										
 										
@@ -509,7 +554,7 @@ public class ZhiboPreviousDataWindow extends PreviousDataWindow{
 										p0over = Integer.parseInt(item[ZHIBOPRETABLEHEADINDEX.P0OVER.ordinal()]);
 										
 										
-										if((scoreh + scorec-dxqzhongpan) >=0.5){
+										if((scoreh + scorec-calPan) >=0.5){
 											if(p0over > 0){
 												dxqres = "全输";
 											}else if(p0over == 0){
@@ -519,7 +564,7 @@ public class ZhiboPreviousDataWindow extends PreviousDataWindow{
 											}
 
 											
-										}else if((scoreh + scorec-dxqzhongpan) == 0.25){
+										}else if((scoreh + scorec-calPan) == 0.25){
 											if(p0over > 0){
 												dxqres = "输半";
 											}else if(p0over == 0){
@@ -527,7 +572,7 @@ public class ZhiboPreviousDataWindow extends PreviousDataWindow{
 											}else{
 												dxqres = "赢半";
 											}
-										}else if((scoreh + scorec-dxqzhongpan) == -0.25){
+										}else if((scoreh + scorec-calPan) == -0.25){
 											
 											if(p0over > 0){
 												dxqres = "赢半";
@@ -538,7 +583,7 @@ public class ZhiboPreviousDataWindow extends PreviousDataWindow{
 											}
 											
 
-										}else if((scoreh + scorec-dxqzhongpan) <= -0.5){
+										}else if((scoreh + scorec-calPan) <= -0.5){
 											
 											if(p0over > 0){
 												dxqres = "全赢";
@@ -548,8 +593,20 @@ public class ZhiboPreviousDataWindow extends PreviousDataWindow{
 												dxqres = "全输";
 											}
 
-										}else if((scoreh + scorec-dxqzhongpan) == 0.0){
+										}else if((scoreh + scorec-calPan) == 0.0){
 											dxqres = "走水";
+										}
+										
+										
+										//只统计赌降的一边
+										if(item[ZHIBOPRETABLEHEADINDEX.DXQPANAS.ordinal()].contains("降") && 
+												Integer.parseInt(item[ZHIBOPRETABLEHEADINDEX.P0OVER.ordinal()])  > 0){
+											dxqres = "";
+										}else if(item[ZHIBOPRETABLEHEADINDEX.DXQPANAS.ordinal()].contains("升") && 
+												Integer.parseInt(item[ZHIBOPRETABLEHEADINDEX.P0OVER.ordinal()])  < 0){
+											dxqres = "";
+										}else if(item[ZHIBOPRETABLEHEADINDEX.DXQPANAS.ordinal()].equals("")){
+											dxqres = "";
 										}
 										
 										
@@ -792,6 +849,51 @@ public class ZhiboPreviousDataWindow extends PreviousDataWindow{
 	        });
 	        
 	        
+	        
+	        chupanrescb.setSelected(false);
+	        
+	        chupanrescb.addItemListener(new ItemListener() {
+
+
+				@Override
+				public void itemStateChanged(ItemEvent e) {
+					// TODO Auto-generated method stub
+	               // int index = jcb.getSelectedIndex();
+					if(e.getStateChange() == ItemEvent.DESELECTED){
+						bchupanres = false;
+					}else{
+						bchupanres = true;
+						bzhongpanres = false;
+						zhongpanrescb.setSelected(false);
+					}
+					
+					updateShowItem();
+				}
+	        });
+	        
+	        zhongpanrescb.setSelected(true);
+	        
+	        zhongpanrescb.addItemListener(new ItemListener() {
+
+
+				@Override
+				public void itemStateChanged(ItemEvent e) {
+					// TODO Auto-generated method stub
+	               // int index = jcb.getSelectedIndex();
+					if(e.getStateChange() == ItemEvent.DESELECTED){
+						bzhongpanres = false;
+					}else{
+						bzhongpanres = true;
+						bchupanres = false;
+						chupanrescb.setSelected(false);
+					}
+					
+					updateShowItem();
+				}
+	        });
+	        
+	        
+	        
 	        panelNorth.add(labelInterval);
 	        panelNorth.add(mp);
 
@@ -815,8 +917,9 @@ public class ZhiboPreviousDataWindow extends PreviousDataWindow{
 
 	        
 	        
-	        panelNorth.add(labelGrabStat);
-	        panelNorth.add(textFieldGrabStat);
+	        panelNorth.add(chupanrescb);
+	        panelNorth.add(zhongpanrescb);
+
 	        
 	        
 	        

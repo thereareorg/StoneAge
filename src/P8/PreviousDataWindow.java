@@ -58,6 +58,8 @@ import java.awt.Color;
 
 
 
+
+
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;  
@@ -84,6 +86,8 @@ import javax.swing.Timer;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+
 
 
 
@@ -185,6 +189,13 @@ public class PreviousDataWindow extends JFrame
     private boolean bonlyShow5Big = false;
     private boolean bonlyShowInplay = false;
     private boolean bonlyShowNotInplay = false;
+    
+    
+    
+    private JCheckBox chupanrescb = new JCheckBox("初盘输赢");
+    private boolean bchupanres = false;
+    private JCheckBox zhongpanrescb = new JCheckBox("终盘输赢");
+    private boolean bzhongpanres = true;
     
     private JLabel labelGrabStat= new JLabel("状态:");
     private JTextField textFieldGrabStat = new JTextField(15);  
@@ -726,15 +737,20 @@ public class PreviousDataWindow extends JFrame
 									
 									
 									
+									String calRespan = "";
+									if(bchupanres == true){
+										calRespan = item[P8PRETABLEHEADINDEX.RQCHUPAN.ordinal()];
+									}else{
+										calRespan = item[P8PRETABLEHEADINDEX.RQZHONGPAN.ordinal()];
+									}
 									
-									
-									double rqzhongpan = rqpmap.get(item[P8PRETABLEHEADINDEX.RQZHONGPAN.ordinal()].replace("受让", ""));
+									double calcpan = rqpmap.get(calRespan.replace("受让", ""));
 									double scoreh = Double.parseDouble(item[P8PRETABLEHEADINDEX.SCORE.ordinal()].split(":")[0]);
 									double scorec = Double.parseDouble(item[P8PRETABLEHEADINDEX.SCORE.ordinal()].split(":")[1]);
 									
 									String rqres = "";
-									if(item[P8PRETABLEHEADINDEX.RQZHONGPAN.ordinal()].contains("受让")){
-										rqzhongpan = 0.0 - rqzhongpan;
+									if(calRespan.contains("受让")){
+										calcpan = 0.0 - calcpan;
 									}
 									
 									
@@ -744,7 +760,7 @@ public class PreviousDataWindow extends JFrame
 									}
 									
 									
-									if((scoreh - scorec-rqzhongpan) >=0.5){
+									if((scoreh - scorec-calcpan) >=0.5){
 										if(p0home > 0){
 											rqres = "全输";
 										}else if(p0home == 0){
@@ -753,7 +769,7 @@ public class PreviousDataWindow extends JFrame
 											rqres = "全赢";
 										}
 										
-									}else if((scoreh - scorec-rqzhongpan) == 0.25){
+									}else if((scoreh - scorec-calcpan) == 0.25){
 										
 										if(p0home > 0){
 											rqres = "输半";
@@ -763,7 +779,7 @@ public class PreviousDataWindow extends JFrame
 											rqres = "赢半";
 										}
 										
-									}else if((scoreh - scorec-rqzhongpan) == -0.25){
+									}else if((scoreh - scorec-calcpan) == -0.25){
 										
 										if(p0home > 0){
 											rqres = "赢半";
@@ -773,7 +789,7 @@ public class PreviousDataWindow extends JFrame
 											rqres = "输半";
 										}
 
-									}else if((scoreh - scorec-rqzhongpan) <= -0.5){
+									}else if((scoreh - scorec-calcpan) <= -0.5){
 										
 										if(p0home > 0){
 											rqres = "全赢";
@@ -784,11 +800,30 @@ public class PreviousDataWindow extends JFrame
 										}
 										
 										
-									}else if((scoreh - scorec-rqzhongpan) == 0.0){
+									}else if((scoreh - scorec-calcpan) == 0.0){
 										rqres = "走水";
 									}
 									
-									
+									//只统计赌降的那一边
+									if(item[P8PRETABLEHEADINDEX.RQPANAS.ordinal()].contains("降") && 
+											item[P8PRETABLEHEADINDEX.RQCHUPAN.ordinal()].contains("受让")&&
+											p0home  < 0){
+										rqres = "";
+									}else if(item[P8PRETABLEHEADINDEX.RQPANAS.ordinal()].contains("降") && 
+											!item[P8PRETABLEHEADINDEX.RQCHUPAN.ordinal()].contains("受让")&&
+											p0home  > 0){
+										rqres = "";
+									}else if(item[P8PRETABLEHEADINDEX.RQPANAS.ordinal()].contains("升") && 
+											item[P8PRETABLEHEADINDEX.RQCHUPAN.ordinal()].contains("受让")&&
+											p0home  > 0){
+										rqres = "";
+									}else if(item[P8PRETABLEHEADINDEX.RQPANAS.ordinal()].contains("升") && 
+											!item[P8PRETABLEHEADINDEX.RQCHUPAN.ordinal()].contains("受让")&&
+											p0home  < 0){
+										rqres = "";
+									}else if(item[P8PRETABLEHEADINDEX.RQPANAS.ordinal()].equals("")){
+										rqres = "";
+									}
 									
 									
 									
@@ -798,30 +833,38 @@ public class PreviousDataWindow extends JFrame
 								
 								//大小球盘结果分析
 								if(!item[P8PRETABLEHEADINDEX.DXQZHONGPAN.ordinal()].equals("") && !item[P8PRETABLEHEADINDEX.DXQZHONGPAN.ordinal()].equals("-")){
-									double dxqzhongpan = 0.0;
 									
+									double calpan = 0.0;
+									
+									String calRespan = "";
+									
+									if(bchupanres == true){
+										calRespan = item[P8PRETABLEHEADINDEX.DXQCHUPAN.ordinal()];
+									}else{
+										calRespan = item[P8PRETABLEHEADINDEX.DXQZHONGPAN.ordinal()];
+									}
 									
 									
 									double scoreh = Double.parseDouble(item[P8PRETABLEHEADINDEX.SCORE.ordinal()].split(":")[0]);
 									double scorec = Double.parseDouble(item[P8PRETABLEHEADINDEX.SCORE.ordinal()].split(":")[1]);
 									
 									String dxqres = "";
-									if(item[P8PRETABLEHEADINDEX.DXQZHONGPAN.ordinal()].contains("/")){
-										dxqzhongpan = (Double.parseDouble(item[P8PRETABLEHEADINDEX.DXQZHONGPAN.ordinal()].split("/")[0]) + 
-												Double.parseDouble(item[P8PRETABLEHEADINDEX.DXQZHONGPAN.ordinal()].split("/")[1]))/2;
+									if(calRespan.contains("/")){
+										calpan = (Double.parseDouble(calRespan.split("/")[0]) + 
+												Double.parseDouble(calRespan.split("/")[1]))/2;
 									}else{
-										dxqzhongpan = Double.parseDouble(item[P8PRETABLEHEADINDEX.DXQZHONGPAN.ordinal()]);
+										calpan = Double.parseDouble(calRespan);
 									}
 									
 									
 									int p0over = 0;
 									if(item[P8PRETABLEHEADINDEX.P0OVER.ordinal()].contains("=")){
-										p0over = Integer.parseInt(item[P8PRETABLEHEADINDEX.P0HOME.ordinal()].split("=")[1]);
+										p0over = Integer.parseInt(item[P8PRETABLEHEADINDEX.P0OVER.ordinal()].split("=")[1]);
 									}
 									
 									
 									
-									if((scoreh + scorec-dxqzhongpan) >=0.5){
+									if((scoreh + scorec-calpan) >=0.5){
 										if(p0over > 0){
 											dxqres = "全输";
 										}else if(p0over == 0){
@@ -831,7 +874,7 @@ public class PreviousDataWindow extends JFrame
 										}
 
 										
-									}else if((scoreh + scorec-dxqzhongpan) == 0.25){
+									}else if((scoreh + scorec-calpan) == 0.25){
 										if(p0over > 0){
 											dxqres = "输半";
 										}else if(p0over == 0){
@@ -839,7 +882,7 @@ public class PreviousDataWindow extends JFrame
 										}else{
 											dxqres = "赢半";
 										}
-									}else if((scoreh + scorec-dxqzhongpan) == -0.25){
+									}else if((scoreh + scorec-calpan) == -0.25){
 										
 										if(p0over > 0){
 											dxqres = "赢半";
@@ -850,7 +893,7 @@ public class PreviousDataWindow extends JFrame
 										}
 										
 
-									}else if((scoreh + scorec-dxqzhongpan) <= -0.5){
+									}else if((scoreh + scorec-calpan) <= -0.5){
 										
 										if(p0over > 0){
 											dxqres = "全赢";
@@ -860,9 +903,21 @@ public class PreviousDataWindow extends JFrame
 											dxqres = "全输";
 										}
 
-									}else if((scoreh + scorec-dxqzhongpan) == 0.0){
+									}else if((scoreh + scorec-calpan) == 0.0){
 										dxqres = "走水";
 									}
+									
+									//只统计赌降的一边
+									if(item[P8PRETABLEHEADINDEX.DXQPANAS.ordinal()].contains("降") && 
+											p0over  > 0){
+										dxqres = "";
+									}else if(item[P8PRETABLEHEADINDEX.DXQPANAS.ordinal()].contains("升") && 
+											p0over  < 0){
+										dxqres = "";
+									}else if(item[P8PRETABLEHEADINDEX.DXQPANAS.ordinal()].equals("")){
+										dxqres = "";
+									}
+
 									
 									
 									
@@ -1234,6 +1289,50 @@ public class PreviousDataWindow extends JFrame
         });
         
         
+        chupanrescb.setSelected(false);
+        
+        chupanrescb.addItemListener(new ItemListener() {
+
+
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				// TODO Auto-generated method stub
+               // int index = jcb.getSelectedIndex();
+				if(e.getStateChange() == ItemEvent.DESELECTED){
+					bchupanres = false;
+				}else{
+					bchupanres = true;
+					bzhongpanres = false;
+					zhongpanrescb.setSelected(false);
+				}
+				
+				updateShowItem();
+			}
+        });
+        
+        zhongpanrescb.setSelected(true);
+        
+        zhongpanrescb.addItemListener(new ItemListener() {
+
+
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				// TODO Auto-generated method stub
+               // int index = jcb.getSelectedIndex();
+				if(e.getStateChange() == ItemEvent.DESELECTED){
+					bzhongpanres = false;
+				}else{
+					bzhongpanres = true;
+					bchupanres = false;
+					chupanrescb.setSelected(false);
+				}
+				
+				updateShowItem();
+			}
+        });
+        
+        
+        
         panelNorth.add(labelInterval);
         panelNorth.add(mp);
 
@@ -1266,10 +1365,11 @@ public class PreviousDataWindow extends JFrame
         panelNorth.add(onlyShowInplay);
         panelNorth.add(onlyShowNotInplay);
 
+        panelNorth.add(chupanrescb);
+        panelNorth.add(zhongpanrescb);
         
-        
-        panelNorth.add(labelGrabStat);
-        panelNorth.add(textFieldGrabStat);
+/*        panelNorth.add(labelGrabStat);
+        panelNorth.add(textFieldGrabStat);*/
         
         
         

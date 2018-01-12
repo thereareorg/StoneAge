@@ -15,10 +15,13 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.JCheckBox;
@@ -37,17 +40,49 @@ import javax.swing.table.TableColumnModel;
 
 
 
+enum MERGEPRETABLEHEADINDEX{
+	INDEX,
+	LEAGUE,
+	TIME,
+	EVENTNAME,
+	RQCHUPAN,
+	RQZHONGPAN,
+	RQPANAS,
+	P8HOMERES,
+	P8HOMEINPLAYRES,
+	ZHIBOHOMERES,
+	P0HOME,
+	DXQCHUPAN,
+	DXQZHONGPAN,
+	DXQPANAS,
+	P8OVERRES,
+	P8OVERINPLAYRES,
+	ZHIBOOVERRES,
+	P0OVER,
+	SCORE,
+	RQPRES,
+	DXQRES	
+	
+}
+
+
 public class MergePreviousDataWindow extends PreviousDataWindow  
 {  
   
    
 	private static final long serialVersionUID = 538685999515369544L;
 	
+	Map<String, Double> rqpmap = new HashMap<String, Double>();
+	
 	private  Vector<String[]> detailsData = null;
 	
 	private Vector<String[]> originalDetailsData = new Vector<String[]>();
 	
 	private Vector<Integer> hightlightRows = new Vector<Integer>();
+	
+	private Vector<String[]> showItemVec = new Vector<String[]>();
+	
+	private Vector<String[]> scoreDetails = new Vector<String[]>();
 	
 	
     private JLabel labelHighlightNum = new JLabel("让球总金额:");
@@ -98,6 +133,15 @@ public class MergePreviousDataWindow extends PreviousDataWindow
     private boolean bonlyShowInplay = false;
     private boolean bonlyShowNotInplay = false;
     
+    
+    
+    private JCheckBox chupanrescb = new JCheckBox("初盘输赢");
+    private boolean bchupanres = false;
+    private JCheckBox zhongpanrescb = new JCheckBox("终盘输赢");
+    private boolean bzhongpanres = true;
+    
+    
+    
     private JLabel labelGrabStat= new JLabel("");
     private JTextField textFieldGrabStat = new JTextField(15);  
     
@@ -138,7 +182,50 @@ public class MergePreviousDataWindow extends PreviousDataWindow
 		
         intiComponent();  
         
-        hideAbandonedcols();
+		rqpmap.put("平手", 0.0);
+		rqpmap.put("平手/半球", 0.25);
+		rqpmap.put("半球", 0.5);
+		rqpmap.put("半球/一球", 0.75);
+		rqpmap.put("一球", 1.0);
+		rqpmap.put("一球/球半", 1.25);
+		rqpmap.put("球半", 1.5);
+		rqpmap.put("球半/两球", 1.75);
+		rqpmap.put("两球", 2.0);
+		rqpmap.put("两球/两球半", 2.25);
+		rqpmap.put("两球半", 2.5);
+		rqpmap.put("两球半/三球", 2.75);
+		rqpmap.put("三球", 3.0);
+		rqpmap.put("三球/三球半", 3.25);
+		rqpmap.put("三球半", 3.5);
+		rqpmap.put("三球半/四球", 3.75);
+		rqpmap.put("四球", 4.0);
+		rqpmap.put("四球/四球半", 4.25);
+		rqpmap.put("四球半", 4.5);
+		rqpmap.put("四球半/五球", 4.75);
+		rqpmap.put("五球", 5.0);
+		rqpmap.put("五球/五球半", 5.25);
+		rqpmap.put("五球半", 5.5);
+		rqpmap.put("五球半/六球", 5.75);
+		rqpmap.put("六球", 6.0);
+		rqpmap.put("六球/六球半", 6.25);
+		rqpmap.put("六球半", 6.5);
+		rqpmap.put("六球半/七球", 6.75);
+		rqpmap.put("七球", 7.0);
+		rqpmap.put("七球/七球半", 7.25);
+		rqpmap.put("七球半", 7.5);
+		rqpmap.put("七球半/八球", 7.75);
+		rqpmap.put("八球", 8.0);
+		rqpmap.put("八球/八球半", 8.25);
+		rqpmap.put("八球半", 8.5);
+		rqpmap.put("八球半/九球", 8.75);
+		rqpmap.put("九球", 9.0);
+		rqpmap.put("九球/九球半", 9.25);
+		rqpmap.put("九球半", 9.5);
+		rqpmap.put("九球半/十球", 9.75);
+		rqpmap.put("十球", 10.0);
+        
+        
+      //  hideAbandonedcols();
         
     }  
 	
@@ -146,7 +233,6 @@ public class MergePreviousDataWindow extends PreviousDataWindow
 	public void setStateText(String txt){
 		textFieldGrabStat.setText(txt);
 	}
-	
 	
 	
 	
@@ -159,23 +245,21 @@ public class MergePreviousDataWindow extends PreviousDataWindow
 			
 			if(ballgames == false){
 				if(bp8side == false){
-					hidecol.add(MERGEINDEX.P8HRES.ordinal());
-					hidecol.add(MERGEINDEX.P8ORES.ordinal());
+					hidecol.add(MERGEPRETABLEHEADINDEX.P8HOMERES.ordinal());
+					hidecol.add(MERGEPRETABLEHEADINDEX.P8OVERRES.ordinal());
 				}
 				
 				if(bzhiboside == false){
-					hidecol.add(MERGEINDEX.ZHIBOHRES.ordinal());
-					hidecol.add(MERGEINDEX.ZHIBOORES.ordinal());
+					hidecol.add(MERGEPRETABLEHEADINDEX.ZHIBOHOMERES.ordinal());
+					hidecol.add(MERGEPRETABLEHEADINDEX.ZHIBOOVERRES.ordinal());
 				}
 				
 				if(bp8inplayside == false){
-					hidecol.add(MERGEINDEX.INP8HRES.ordinal());
-					hidecol.add(MERGEINDEX.INP8ORES.ordinal());
+					hidecol.add(MERGEPRETABLEHEADINDEX.P8HOMEINPLAYRES.ordinal());
+					hidecol.add(MERGEPRETABLEHEADINDEX.P8OVERINPLAYRES.ordinal());
 				}
 			}
 			
-
-			
 			
 			
 
@@ -183,13 +267,13 @@ public class MergePreviousDataWindow extends PreviousDataWindow
 			
 		
 		
-			Vector<Integer> keepsizecols = new Vector<Integer>();
-			keepsizecols.add(MERGEINDEX.P8HRES.ordinal());
-			keepsizecols.add(MERGEINDEX.P8ORES.ordinal());
-			keepsizecols.add(MERGEINDEX.INP8HRES.ordinal());
-			keepsizecols.add(MERGEINDEX.INP8ORES.ordinal());
-			keepsizecols.add(MERGEINDEX.ZHIBOHRES.ordinal());
-			keepsizecols.add(MERGEINDEX.ZHIBOORES.ordinal());
+				Vector<Integer> keepsizecols = new Vector<Integer>();
+			keepsizecols.add(MERGEPRETABLEHEADINDEX.P8HOMEINPLAYRES.ordinal());
+			keepsizecols.add(MERGEPRETABLEHEADINDEX.P8HOMERES.ordinal());
+			keepsizecols.add(MERGEPRETABLEHEADINDEX.P8OVERINPLAYRES.ordinal());
+			keepsizecols.add(MERGEPRETABLEHEADINDEX.P8OVERRES.ordinal());
+			keepsizecols.add(MERGEPRETABLEHEADINDEX.ZHIBOHOMERES.ordinal());
+			keepsizecols.add(MERGEPRETABLEHEADINDEX.ZHIBOOVERRES.ordinal());
 			
 			
 			
@@ -485,16 +569,7 @@ public class MergePreviousDataWindow extends PreviousDataWindow
 						betp8inplay1 = Double.parseDouble(str1);
 					}
 					
-					str1 = DetailsDatatmp1.elementAt(i)[MERGEINDEX.HGHRES.ordinal()];
 					
-					
-					if(str1.contains("=")){
-						String[] tmp = str1.split("=");
-						bethg1 = Double.parseDouble(tmp[1]);
-
-					}else{
-						bethg1 = Double.parseDouble(str1);
-					}
 					
 					
 					
@@ -738,6 +813,273 @@ public class MergePreviousDataWindow extends PreviousDataWindow
 			detailsData = (Vector<String[]>)DetailsDatatmp2.clone();
 			
 	
+			getscoresdetails();
+			
+			if(showItemVec.size()!= 0){
+				showItemVec.clear();
+			}
+			
+			//合并score
+			for(int i = 0; i < detailsData.size(); i++){
+				
+				String[] olditem = detailsData.elementAt(i).clone();
+				
+				String zhibohometeam = olditem[MERGEPRETABLEHEADINDEX.EVENTNAME.ordinal()].split(" vs ")[0];
+				String zhiboawayteam = olditem[MERGEPRETABLEHEADINDEX.EVENTNAME.ordinal()].split(" vs ")[1];
+				
+				String[] item = {Integer.toString(i+1), olditem[MERGEINDEX.LEAGUENAME.ordinal()], olditem[MERGEINDEX.TIME.ordinal()], olditem[MERGEINDEX.EVENTNAMNE.ordinal()], "", "", "",
+						olditem[MERGEINDEX.P8HRES.ordinal()], olditem[MERGEINDEX.INP8HRES.ordinal()], olditem[MERGEINDEX.ZHIBOHRES.ordinal()], olditem[MERGEINDEX.PERIOD0HOME.ordinal()],
+						"", "","", olditem[MERGEINDEX.P8ORES.ordinal()],olditem[MERGEINDEX.INP8ORES.ordinal()],olditem[MERGEINDEX.ZHIBOORES.ordinal()], olditem[MERGEINDEX.PERIOD0OVER.ordinal()],"", "", ""};
+				
+				String scorehometeam = MergeManager.findScoreTeambyzhiboteam(zhibohometeam);
+				if(scorehometeam != null){
+					String scoreawayteam = MergeManager.findScoreTeambyzhiboteam(zhiboawayteam);
+					
+					
+					
+					if(scoreawayteam != null){
+						
+						int indexinscoredetails = -1;
+						for(int j = 0; j < scoreDetails.size(); j++){
+							if(scoreDetails.elementAt(j)[SCORENEWINDEX.EVENTNAMNE.ordinal()].equals(scorehometeam + " vs " + scoreawayteam) ){
+								indexinscoredetails = j;
+								break;
+							}
+						}
+						
+						if(indexinscoredetails != -1){
+							item[MERGEPRETABLEHEADINDEX.RQCHUPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.RQCHUPAN.ordinal()];
+							item[MERGEPRETABLEHEADINDEX.RQZHONGPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.RQZHONGPAN.ordinal()];
+							item[MERGEPRETABLEHEADINDEX.RQPANAS.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.RQPANAS.ordinal()];
+							item[MERGEPRETABLEHEADINDEX.DXQCHUPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.DXQCHUPAN.ordinal()];
+							item[MERGEPRETABLEHEADINDEX.DXQZHONGPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.DXQZHONGPAN.ordinal()];
+							item[MERGEPRETABLEHEADINDEX.DXQPANAS.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.DXQPANAS.ordinal()];
+							item[MERGEPRETABLEHEADINDEX.SCORE.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.SCORE.ordinal()];
+
+							
+							
+							
+							
+							if(scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.STATUS.ordinal()].contains("完")){
+								
+								item[MERGEPRETABLEHEADINDEX.SCORE.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.SCORE.ordinal()];
+								
+								//让球盘结果分析
+								if(!item[MERGEPRETABLEHEADINDEX.RQZHONGPAN.ordinal()].equals("") && !item[MERGEPRETABLEHEADINDEX.RQZHONGPAN.ordinal()].equals("-")){
+									
+									System.out.println(Arrays.toString(item));
+									
+									
+									String calRespan = "";
+									if(bchupanres == true){
+										calRespan = item[MERGEPRETABLEHEADINDEX.RQCHUPAN.ordinal()];
+									}else{
+										calRespan = item[MERGEPRETABLEHEADINDEX.RQZHONGPAN.ordinal()];
+									}
+									
+									
+									double calPan = rqpmap.get(calRespan.replace("受让", ""));
+									double scoreh = Double.parseDouble(item[MERGEPRETABLEHEADINDEX.SCORE.ordinal()].split(":")[0]);
+									double scorec = Double.parseDouble(item[MERGEPRETABLEHEADINDEX.SCORE.ordinal()].split(":")[1]);
+									
+									String rqres = "";
+									if(calRespan.contains("受让")){
+										calPan = 0.0 - calPan;
+									}
+									
+									
+									int p0home = 0;
+									if(item[MERGEPRETABLEHEADINDEX.P0HOME.ordinal()].contains("=")){
+										p0home = Integer.parseInt(item[MERGEPRETABLEHEADINDEX.P0HOME.ordinal()].split("=")[1]);
+									}
+									
+									
+									if((scoreh - scorec-calPan) >=0.5){
+										if(p0home > 0){
+											rqres = "全输";
+										}else if(p0home == 0){
+											rqres = "-";
+										}else{
+											rqres = "全赢";
+										}
+										
+									}else if((scoreh - scorec-calPan) == 0.25){
+										
+										if(p0home > 0){
+											rqres = "输半";
+										}else if(p0home == 0){
+											rqres = "-";
+										}else{
+											rqres = "赢半";
+										}
+										
+									}else if((scoreh - scorec-calPan) == -0.25){
+										
+										if(p0home > 0){
+											rqres = "赢半";
+										}else if(p0home == 0){
+											rqres = "-";
+										}else{
+											rqres = "输半";
+										}
+
+									}else if((scoreh - scorec-calPan) <= -0.5){
+										
+										if(p0home > 0){
+											rqres = "全赢";
+										}else if(p0home == 0){
+											rqres = "-";
+										}else{
+											rqres = "全输";
+										}
+										
+										
+									}else if((scoreh - scorec-calPan) == 0.0){
+										rqres = "走水";
+									}
+									
+									
+									//只统计赌降的那一边
+									if(item[MERGEPRETABLEHEADINDEX.RQPANAS.ordinal()].contains("降") && 
+											item[MERGEPRETABLEHEADINDEX.RQCHUPAN.ordinal()].contains("受让")&&
+											p0home  < 0){
+										rqres = "";
+									}else if(item[MERGEPRETABLEHEADINDEX.RQPANAS.ordinal()].contains("降") && 
+											!item[MERGEPRETABLEHEADINDEX.RQCHUPAN.ordinal()].contains("受让")&&
+											p0home  > 0){
+										rqres = "";
+									}else if(item[MERGEPRETABLEHEADINDEX.RQPANAS.ordinal()].contains("升") && 
+											item[MERGEPRETABLEHEADINDEX.RQCHUPAN.ordinal()].contains("受让")&&
+											p0home  > 0){
+										rqres = "";
+									}else if(item[MERGEPRETABLEHEADINDEX.RQPANAS.ordinal()].contains("升") && 
+											!item[MERGEPRETABLEHEADINDEX.RQCHUPAN.ordinal()].contains("受让")&&
+											p0home  < 0){
+										rqres = "";
+									}else if(item[MERGEPRETABLEHEADINDEX.RQPANAS.ordinal()].equals("")){
+										rqres = "";
+									}
+									
+									
+									
+									
+									item[MERGEPRETABLEHEADINDEX.RQPRES.ordinal()] = rqres;
+									
+								}
+								
+								//大小球盘结果分析
+								if(!item[MERGEPRETABLEHEADINDEX.DXQZHONGPAN.ordinal()].equals("") && !item[MERGEPRETABLEHEADINDEX.DXQZHONGPAN.ordinal()].equals("-")){
+									double calPan = 0.0;
+									
+									String calRespan = "";
+									
+									if(bchupanres == true){
+										calRespan = item[MERGEPRETABLEHEADINDEX.DXQCHUPAN.ordinal()];
+									}else{
+										calRespan = item[MERGEPRETABLEHEADINDEX.DXQZHONGPAN.ordinal()];
+									}
+									
+									double scoreh = Double.parseDouble(item[MERGEPRETABLEHEADINDEX.SCORE.ordinal()].split(":")[0]);
+									double scorec = Double.parseDouble(item[MERGEPRETABLEHEADINDEX.SCORE.ordinal()].split(":")[1]);
+									
+									String dxqres = "";
+									if(calRespan.contains("/")){
+										calPan = (Double.parseDouble(calRespan.split("/")[0]) + 
+												Double.parseDouble(calRespan.split("/")[1]))/2;
+									}else{
+										calPan = Double.parseDouble(calRespan);
+									}
+									
+									
+									int p0over = 0;
+									if(item[MERGEPRETABLEHEADINDEX.P0OVER.ordinal()].contains("=")){
+										
+										p0over = Integer.parseInt(item[MERGEPRETABLEHEADINDEX.P0OVER.ordinal()].split("=")[1]);
+									}
+									
+									
+									
+									if((scoreh + scorec-calPan) >=0.5){
+										if(p0over > 0){
+											dxqres = "全输";
+										}else if(p0over == 0){
+											dxqres = "-";
+										}else{
+											dxqres = "全赢";
+										}
+
+										
+									}else if((scoreh + scorec-calPan) == 0.25){
+										if(p0over > 0){
+											dxqres = "输半";
+										}else if(p0over == 0){
+											dxqres = "-";
+										}else{
+											dxqres = "赢半";
+										}
+									}else if((scoreh + scorec-calPan) == -0.25){
+										
+										if(p0over > 0){
+											dxqres = "赢半";
+										}else if(p0over == 0){
+											dxqres = "-";
+										}else{
+											dxqres = "输半";
+										}
+										
+
+									}else if((scoreh + scorec-calPan) <= -0.5){
+										
+										if(p0over > 0){
+											dxqres = "全赢";
+										}else if(p0over == 0){
+											dxqres = "-";
+										}else{
+											dxqres = "全输";
+										}
+
+									}else if((scoreh + scorec-calPan) == 0.0){
+										dxqres = "走水";
+									}
+									
+									
+									//只统计赌降的一边
+									if(item[MERGEPRETABLEHEADINDEX.DXQPANAS.ordinal()].contains("降") && 
+											p0over  > 0){
+										dxqres = "";
+									}else if(item[MERGEPRETABLEHEADINDEX.DXQPANAS.ordinal()].contains("升") && 
+											p0over  < 0){
+										dxqres = "";
+									}else if(item[MERGEPRETABLEHEADINDEX.DXQPANAS.ordinal()].equals("")){
+										dxqres = "";
+									}
+									
+									
+									item[MERGEPRETABLEHEADINDEX.DXQRES.ordinal()] = dxqres;
+									
+								}
+							}
+							
+							
+							
+
+							
+							
+
+							
+						}
+						
+						
+					}
+					
+				}
+				
+				showItemVec.add(item);
+				
+			}
+			
+			
+			
         	
 			tableMode.updateTable();
 			
@@ -759,7 +1101,9 @@ public class MergePreviousDataWindow extends PreviousDataWindow
 	
 	
 
-	
+    public void getscoresdetails(){
+    	scoreDetails = StoneAge.score.getpreviousdetailsbyday(mp.getChooseDate());
+    }
 	
 	
   
@@ -1063,7 +1407,47 @@ public class MergePreviousDataWindow extends PreviousDataWindow
         
 
         
+        chupanrescb.setSelected(false);
         
+        chupanrescb.addItemListener(new ItemListener() {
+
+
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				// TODO Auto-generated method stub
+               // int index = jcb.getSelectedIndex();
+				if(e.getStateChange() == ItemEvent.DESELECTED){
+					bchupanres = false;
+				}else{
+					bchupanres = true;
+					bzhongpanres = false;
+					zhongpanrescb.setSelected(false);
+				}
+				
+				updateShowItem();
+			}
+        });
+        
+        zhongpanrescb.setSelected(true);
+        
+        zhongpanrescb.addItemListener(new ItemListener() {
+
+
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				// TODO Auto-generated method stub
+               // int index = jcb.getSelectedIndex();
+				if(e.getStateChange() == ItemEvent.DESELECTED){
+					bzhongpanres = false;
+				}else{
+					bzhongpanres = true;
+					bchupanres = false;
+					chupanrescb.setSelected(false);
+				}
+				
+				updateShowItem();
+			}
+        });
         
         
 
@@ -1095,8 +1479,8 @@ public class MergePreviousDataWindow extends PreviousDataWindow
 
         
         
-        panelNorth.add(labelGrabStat);
-        panelNorth.add(textFieldGrabStat);
+        panelNorth.add(chupanrescb);
+        panelNorth.add(zhongpanrescb);
         
         
         
@@ -1460,7 +1844,7 @@ public class MergePreviousDataWindow extends PreviousDataWindow
          * 这里和刚才一样，定义列名和每个数据的值 
          */  
         String[] columnNames =  
-        	{ "序号", "联赛", "时间", "球队", "让球盘", "平博" , "平博滚动盘", "智博","皇冠",  "全场让球", "大小盘", "平博 ", "平博滚动盘 ", "智博 ","皇冠 ", "全场大小"};  
+        	{ "序号", "联赛", "时间", "球队", "让球初盘", "终盘", "盘口分析", "平博", "平博滚动盘", "智博",  "全场让球", "大小初盘", "终盘","盘口分析","平博 ", "平博滚动盘 ", "智博 ", "全场大小", "比分", "盘口结果", "大小结果"};  
 
         
 
@@ -1505,12 +1889,10 @@ public class MergePreviousDataWindow extends PreviousDataWindow
         public int getRowCount()  
         {  
         	
-        	
-        	if(null == detailsData){
+        	if(null == showItemVec){
         		return 0;
         	}
-        	
-            return detailsData.size();  
+        	return showItemVec.size();  
         }  
   
         /** 
@@ -1519,21 +1901,10 @@ public class MergePreviousDataWindow extends PreviousDataWindow
         @Override  
         public Object getValueAt(int rowIndex, int columnIndex)  
         {  
-            //return data[rowIndex][columnIndex];
-        	//return detailsData.elementAt(rowIndex)[columnIndex+1];
-        	if(columnIndex == MERGEINDEX.EVENTID.ordinal()){
-        		return Integer.toString(rowIndex + 1);
-        	}
         	
-        	//return detailsData.elementAt(rowIndex)[columnIndex];
-        	
-        	
-        	
-        	
-        	
-        	if(columnIndex == MERGEINDEX.P8HRES.ordinal()){
+        	if(columnIndex == MERGEPRETABLEHEADINDEX.P8HOMERES.ordinal()){
         		
-        		String res = detailsData.elementAt(rowIndex)[columnIndex];
+        		String res = showItemVec.elementAt(rowIndex)[columnIndex];
         		if(res.contains("=")){
             		String[] resA = res.split("=");
             		res = resA[1];
@@ -1544,9 +1915,9 @@ public class MergePreviousDataWindow extends PreviousDataWindow
         		}
 
         		
-        	}else if(columnIndex == MERGEINDEX.INP8HRES.ordinal()){
+        	}else if(columnIndex == MERGEPRETABLEHEADINDEX.P8HOMEINPLAYRES.ordinal()){
         		
-        		String res = detailsData.elementAt(rowIndex)[columnIndex];
+        		String res = showItemVec.elementAt(rowIndex)[columnIndex];
         		if(res.contains("=")){
             		String[] resA = res.split("=");
             		res = resA[1];
@@ -1557,28 +1928,9 @@ public class MergePreviousDataWindow extends PreviousDataWindow
         		}
 
         		
-        	}else if(columnIndex == MERGEINDEX.HGHRES.ordinal()){
-        		int newRow = 0;
-        		newRow = (int)(rowIndex/2);
-        		String res = detailsData.elementAt(newRow)[columnIndex];
-        		if(res.contains("=")){
-            		String[] resA = res.split("=");
-            		res = resA[0];
-            		resA = res.split("-");
-            		res = resA[rowIndex%2];
-            		res = res.replace("(", "");
-            		res = res.replace(")", "");
-            		if(rowIndex%2 == 1)
-            			res = "-" + res;
-            		return res;
-        		}else{
-        			return res;
-        		}
-
+        	}else if(columnIndex == MERGEPRETABLEHEADINDEX.P8OVERRES.ordinal()){
         		
-        	}else if(columnIndex == MERGEINDEX.P8ORES.ordinal()){
-        		
-        		String res = detailsData.elementAt(rowIndex)[columnIndex];
+        		String res = showItemVec.elementAt(rowIndex)[columnIndex];
         		if(res.contains("=")){
             		String[] resA = res.split("=");
             		res = resA[1];
@@ -1589,32 +1941,13 @@ public class MergePreviousDataWindow extends PreviousDataWindow
         		}
 
         		
-        	}else if(columnIndex == MERGEINDEX.INP8ORES.ordinal()){
+        	}else if(columnIndex == MERGEPRETABLEHEADINDEX.P8OVERINPLAYRES.ordinal()){
         		
-        		String res = detailsData.elementAt(rowIndex)[columnIndex];
+        		String res = showItemVec.elementAt(rowIndex)[columnIndex];
         		if(res.contains("=")){
             		String[] resA = res.split("=");
             		res = resA[1];
             		
-            		return res;
-        		}else{
-        			return res;
-        		}
-
-        		
-        	}else if(columnIndex == MERGEINDEX.HGORES.ordinal()){
-        		int newRow = 0;
-        		newRow = (int)(rowIndex/2);
-        		String res = detailsData.elementAt(newRow)[columnIndex];
-        		if(res.contains("=")){
-            		String[] resA = res.split("=");
-            		res = resA[0];
-            		resA = res.split("-");
-            		res = resA[rowIndex%2];
-            		res = res.replace("(", "");
-            		res = res.replace(")", "");
-            		if(rowIndex%2 == 1)
-            			res = "-" + res;
             		return res;
         		}else{
         			return res;
@@ -1622,7 +1955,7 @@ public class MergePreviousDataWindow extends PreviousDataWindow
 
         		
         	}else{
-        		return detailsData.elementAt(rowIndex)[columnIndex];
+        		return showItemVec.elementAt(rowIndex)[columnIndex];
         	}
         	
         	
@@ -1634,7 +1967,7 @@ public class MergePreviousDataWindow extends PreviousDataWindow
         @Override  
         public Class<?> getColumnClass(int columnIndex)  
         {  
-            return detailsData.elementAt(0)[columnIndex].getClass();
+            return showItemVec.elementAt(0)[columnIndex].getClass();
         }  
   
         /** 

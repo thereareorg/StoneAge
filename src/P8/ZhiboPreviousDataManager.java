@@ -228,6 +228,11 @@ public class ZhiboPreviousDataManager {
 	}
 	
 	
+	public Vector<String[]> getpreviousdata(){
+		return pEventsDetails;
+	}
+	
+	
 	public void constructPmergeData(){
 		
 		try{

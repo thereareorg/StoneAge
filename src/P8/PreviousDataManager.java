@@ -256,6 +256,9 @@ public class PreviousDataManager {
 	}
 	
 	
+	public Vector<String[]> getpreviousdata(){
+		return pEventsDetails;
+	}
 	
 	
 	

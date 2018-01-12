@@ -97,7 +97,12 @@ public class StoneAge {
 	
 	public static JButton btnNewMergeWnd;
 	
+	
+	public static JButton btnpankouans;
+	
 	public static Vector<String> mailList = new Vector<String>();
+	
+	public static PankouAnsWindow pankouansWnd = new PankouAnsWindow();
 	
 	
 	public static boolean zhiboConnected = false;
@@ -581,6 +586,27 @@ public class StoneAge {
 		
 		
 		contain.add(btnMergepData);
+		
+
+		
+		
+		btnpankouans = new JButton("盘口分析");
+		btnpankouans.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				pankouansWnd.setVisible(true);;
+
+			}
+		});
+		
+		
+		btnpankouans.setSize(120, 25);
+		btnpankouans.setLocation(Xposition + 150, Yposition + 40);
+		
+		
+		contain.add(btnpankouans);
+		
+		
+		
 		
 		
 		

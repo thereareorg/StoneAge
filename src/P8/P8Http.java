@@ -261,6 +261,12 @@ public class P8Http {
 
     	
 
+    public static Vector<String[]> getpreviouseventsdata(){
+    	return pDataManager.getpreviousdata();
+    }
+    
+    
+    
     
     
     

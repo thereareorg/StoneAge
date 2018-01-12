@@ -1,5 +1,7 @@
 package P8;
 
+
+
 import javax.swing.table.JTableHeader;
 
 import CTable.*;
@@ -43,6 +45,28 @@ import javax.swing.table.TableColumnModel;
 import MergeNew.NEWMERGEINDEX;
 import P8.EventsDetailsWindow.MyTableModel;
 
+
+enum MERGETABLEHEADINDEX{
+	INDEX,
+	LEAGUE,
+	TIME,
+	EVENTNAME,
+	RQCHUPAN,
+	RQZHONGPAN,
+	RQPANAS,
+	P8HOMERES,
+	P8HOMEINPLAYRES,
+	ZHIBOHOMERES,
+	P0HOME,
+	DXQCHUPAN,
+	DXQZHONGPAN,
+	DXQPANAS,
+	P8OVERRES,
+	P8OVERINPLAYRES,
+	ZHIBOOVERRES,
+	P0OVER
+}
+
 public class MergeDetailsWindow extends JFrame{
 	  
 	  
@@ -52,6 +76,11 @@ public class MergeDetailsWindow extends JFrame{
 		private  Vector<String[]> originalDetailsData = new Vector<String[]>();
 		
 		private  Vector<String[]> detailsData = null;
+		
+		private Vector<String[]> showItemVec = new Vector<String[]>();
+		
+		private Vector<String[]> scoreDetails = new Vector<String[]>();
+
 		
 		private Vector<Integer> hightlightRows = new Vector<Integer>();
 		
@@ -158,7 +187,7 @@ public class MergeDetailsWindow extends JFrame{
 			
 	        intiComponent();  
 	        
-	        hideAbandonedcols();
+	        //hideAbandonedcols();
 	        
 	        
 	        
@@ -275,6 +304,7 @@ public class MergeDetailsWindow extends JFrame{
 					originalDetailsData.add(eventDetailsVec.elementAt(i).clone());
 				}
 				
+				scoreDetails = StoneAge.score.getFinalScoresDetails();
 				
 				
 				updateShowItem();
@@ -289,22 +319,6 @@ public class MergeDetailsWindow extends JFrame{
 			
 		}
 		
-		public  void addData(Object[] a){
-			
-	/*		try{
-				detailsData.push(a);
-				
-		    	Comparator ct = new CompareStr();
-		    	
-		    	Collections.sort(detailsData, ct);
-				
-				tableMode.updateTable();
-			}catch(Exception e){
-				e.printStackTrace();
-			}*/
-			
-
-		}
 		
 		
 		public void updateShowItem(){
@@ -333,8 +347,7 @@ public class MergeDetailsWindow extends JFrame{
 			
 			
 			if(DetailsDatatmp.size() == 0){
-				//DetailsDatatmp = (Vector<String[]>)originalDetailsData.clone();
-				
+
 				for(int i = 0; i < originalDetailsData.size();i++){
 					DetailsDatatmp.add(originalDetailsData.elementAt(i).clone());
 				}
@@ -680,7 +693,60 @@ public class MergeDetailsWindow extends JFrame{
 			
 			detailsData = (Vector<String[]>)DetailsDatatmp2.clone();
 			
+			
+			if(showItemVec.size()!= 0){
+				showItemVec.clear();
+			}
 
+			
+			//合并score
+			for(int i = 0; i < detailsData.size(); i++){
+				
+				String[] olditem = detailsData.elementAt(i).clone();
+				
+				String zhibohometeam = olditem[MERGEINDEX.EVENTNAMNE.ordinal()].split(" vs ")[0];
+				String zhiboawayteam = olditem[MERGEINDEX.EVENTNAMNE.ordinal()].split(" vs ")[1];
+				
+				//{ "序号", "联赛", "时间", "球队", "让球初盘", "终盘", "盘口分析", "平博", "平博滚动盘", "智博",  "全场让球", "大小初盘", "终盘","盘口分析","平博 ", "平博滚动盘 ", "智博 ", "全场大小"};  
+				
+				String[] item = {Integer.toString(i+1), olditem[MERGEINDEX.LEAGUENAME.ordinal()], olditem[MERGEINDEX.TIME.ordinal()], olditem[MERGEINDEX.EVENTNAMNE.ordinal()], "", "", "",
+						olditem[MERGEINDEX.P8HRES.ordinal()], olditem[MERGEINDEX.INP8HRES.ordinal()], olditem[MERGEINDEX.ZHIBOHRES.ordinal()], olditem[MERGEINDEX.PERIOD0HOME.ordinal()],
+						"", "","", olditem[MERGEINDEX.P8ORES.ordinal()],olditem[MERGEINDEX.INP8ORES.ordinal()],olditem[MERGEINDEX.ZHIBOORES.ordinal()],olditem[MERGEINDEX.PERIOD0OVER.ordinal()]};
+				
+				String scorehometeam = MergeManager.findScoreTeambyzhiboteam(zhibohometeam);
+				if(scorehometeam != null){
+					String scoreawayteam = MergeManager.findScoreTeambyzhiboteam(zhiboawayteam);
+					
+					
+					
+					if(scoreawayteam != null){
+						
+						int indexinscoredetails = -1;
+						for(int j = 0; j < scoreDetails.size(); j++){
+							if(scoreDetails.elementAt(j)[SCORENEWINDEX.EVENTNAMNE.ordinal()].equals(scorehometeam + " vs " + scoreawayteam) ){
+								indexinscoredetails = j;
+								break;
+							}
+						}
+						
+						if(indexinscoredetails != -1){
+							item[MERGETABLEHEADINDEX.RQCHUPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.RQCHUPAN.ordinal()];
+							item[MERGETABLEHEADINDEX.RQZHONGPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.RQZHONGPAN.ordinal()];
+							item[MERGETABLEHEADINDEX.RQPANAS.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.RQPANAS.ordinal()];
+							item[MERGETABLEHEADINDEX.DXQCHUPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.DXQCHUPAN.ordinal()];
+							item[MERGETABLEHEADINDEX.DXQZHONGPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.DXQZHONGPAN.ordinal()];
+							item[MERGETABLEHEADINDEX.DXQPANAS.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.DXQPANAS.ordinal()];
+							
+						}
+						
+						
+					}
+					
+				}
+				
+				showItemVec.add(item);
+				
+			}
 			
 			
 			tableMode.updateTable();
@@ -1399,18 +1465,18 @@ public class MergeDetailsWindow extends JFrame{
 				
 				if(ballgames == false){
 					if(bp8side == false){
-						hidecol.add(MERGEINDEX.P8HRES.ordinal());
-						hidecol.add(MERGEINDEX.P8ORES.ordinal());
+						hidecol.add(MERGETABLEHEADINDEX.P8HOMERES.ordinal());
+						hidecol.add(MERGETABLEHEADINDEX.P8OVERRES.ordinal());
 					}
 					
 					if(bzhiboside == false){
-						hidecol.add(MERGEINDEX.ZHIBOHRES.ordinal());
-						hidecol.add(MERGEINDEX.ZHIBOORES.ordinal());
+						hidecol.add(MERGETABLEHEADINDEX.ZHIBOHOMERES.ordinal());
+						hidecol.add(MERGETABLEHEADINDEX.ZHIBOOVERRES.ordinal());
 					}
 					
 					if(bp8inplayside == false){
-						hidecol.add(MERGEINDEX.INP8HRES.ordinal());
-						hidecol.add(MERGEINDEX.INP8ORES.ordinal());
+						hidecol.add(MERGETABLEHEADINDEX.P8HOMEINPLAYRES.ordinal());
+						hidecol.add(MERGETABLEHEADINDEX.P8OVERINPLAYRES.ordinal());
 					}
 				}
 				
@@ -1422,25 +1488,25 @@ public class MergeDetailsWindow extends JFrame{
 			
 			
 				Vector<Integer> keepsizecols = new Vector<Integer>();
-				keepsizecols.add(MERGEINDEX.P8HRES.ordinal());
-				keepsizecols.add(MERGEINDEX.P8ORES.ordinal());
-				keepsizecols.add(MERGEINDEX.INP8HRES.ordinal());
-				keepsizecols.add(MERGEINDEX.INP8ORES.ordinal());
-				keepsizecols.add(MERGEINDEX.ZHIBOHRES.ordinal());
-				keepsizecols.add(MERGEINDEX.ZHIBOORES.ordinal());
-				
-				
-				
-				for(int i = 0;i < keepsizecols.size(); i++ ){
-				    
-				    TableColumn   column=columnModel.getColumn(keepsizecols.elementAt(i));   
-				    column.setMinWidth(0);   
-				    column.setMaxWidth(500);
-				    column.setWidth(80);
-				    column.setPreferredWidth(80);
-		
-				    
-				}
+			keepsizecols.add(MERGETABLEHEADINDEX.P8HOMEINPLAYRES.ordinal());
+			keepsizecols.add(MERGETABLEHEADINDEX.P8HOMERES.ordinal());
+			keepsizecols.add(MERGETABLEHEADINDEX.P8OVERINPLAYRES.ordinal());
+			keepsizecols.add(MERGETABLEHEADINDEX.P8OVERRES.ordinal());
+			keepsizecols.add(MERGETABLEHEADINDEX.ZHIBOHOMERES.ordinal());
+			keepsizecols.add(MERGETABLEHEADINDEX.ZHIBOOVERRES.ordinal());
+			
+			
+			
+			for(int i = 0;i < keepsizecols.size(); i++ ){
+			    
+			    TableColumn   column=columnModel.getColumn(keepsizecols.elementAt(i));   
+			    column.setMinWidth(0);   
+			    column.setMaxWidth(500);
+			    column.setWidth(80);
+			    column.setPreferredWidth(80);
+	
+			    
+			}
 				
 				
 				for(int i = 0;i < hidecol.size(); i++ ){
@@ -1520,7 +1586,9 @@ public class MergeDetailsWindow extends JFrame{
 	         * 这里和刚才一样，定义列名和每个数据的值 
 	         */  
 	        String[] columnNames =  
-	        	{ "序号", "联赛", "时间", "球队", "让球盘", "平博" , "平博滚动盘", "智博","皇冠",  "全场让球", "大小盘", "平博 ", "平博滚动盘 ", "智博 ","皇冠 ", "全场大小"};  
+	        	//{ "序号", "联赛", "时间", "球队", "让球盘", "平博" , "平博滚动盘", "智博","皇冠",  "全场让球", "大小盘", "平博 ", "平博滚动盘 ", "智博 ","皇冠 ", "全场大小"};  
+	        	{ "序号", "联赛", "时间", "球队", "让球初盘", "终盘", "盘口分析", "平博", "平博滚动盘", "智博",  "全场让球", "大小初盘", "终盘","盘口分析","平博 ", "平博滚动盘 ", "智博 ", "全场大小"};  
+
 	        
 
 	  
@@ -1557,10 +1625,10 @@ public class MergeDetailsWindow extends JFrame{
 	        @Override  
 	        public int getRowCount()  
 	        {  
-	        	if(null == detailsData){
+	        	if(null == showItemVec){
 	        		return 0;
 	        	}
-	        	return detailsData.size();  
+	        	return showItemVec.size();  
 	        }  
 	  
 	        /** 
@@ -1569,21 +1637,15 @@ public class MergeDetailsWindow extends JFrame{
 	        @Override  
 	        public Object getValueAt(int rowIndex, int columnIndex)  
 	        {  
-	            //return data[rowIndex][columnIndex];
-	        	//return detailsData.elementAt(rowIndex)[columnIndex+1];
-	        	if(columnIndex == MERGEINDEX.EVENTID.ordinal()){
-	        		return Integer.toString(rowIndex + 1);
-	        	}
-	        	
-	        	//return detailsData.elementAt(rowIndex)[columnIndex];
+	           
 	        	
 	        	
 	        	
 	        	
 	        	
-	        	if(columnIndex == MERGEINDEX.P8HRES.ordinal()){
+	        	if(columnIndex == MERGETABLEHEADINDEX.P8HOMERES.ordinal()){
 	        		
-	        		String res = detailsData.elementAt(rowIndex)[columnIndex];
+	        		String res = showItemVec.elementAt(rowIndex)[columnIndex];
 	        		if(res.contains("=")){
 	            		String[] resA = res.split("=");
 	            		res = resA[1];
@@ -1594,9 +1656,9 @@ public class MergeDetailsWindow extends JFrame{
 	        		}
 
 	        		
-	        	}else if(columnIndex == MERGEINDEX.INP8HRES.ordinal()){
+	        	}else if(columnIndex == MERGETABLEHEADINDEX.P8HOMEINPLAYRES.ordinal()){
 	        		
-	        		String res = detailsData.elementAt(rowIndex)[columnIndex];
+	        		String res = showItemVec.elementAt(rowIndex)[columnIndex];
 	        		if(res.contains("=")){
 	            		String[] resA = res.split("=");
 	            		res = resA[1];
@@ -1607,28 +1669,9 @@ public class MergeDetailsWindow extends JFrame{
 	        		}
 
 	        		
-	        	}else if(columnIndex == MERGEINDEX.HGHRES.ordinal()){
-	        		int newRow = 0;
-	        		newRow = (int)(rowIndex/2);
-	        		String res = detailsData.elementAt(newRow)[columnIndex];
-	        		if(res.contains("=")){
-	            		String[] resA = res.split("=");
-	            		res = resA[0];
-	            		resA = res.split("-");
-	            		res = resA[rowIndex%2];
-	            		res = res.replace("(", "");
-	            		res = res.replace(")", "");
-	            		if(rowIndex%2 == 1)
-	            			res = "-" + res;
-	            		return res;
-	        		}else{
-	        			return res;
-	        		}
-
+	        	}else if(columnIndex == MERGETABLEHEADINDEX.P8OVERRES.ordinal()){
 	        		
-	        	}else if(columnIndex == MERGEINDEX.P8ORES.ordinal()){
-	        		
-	        		String res = detailsData.elementAt(rowIndex)[columnIndex];
+	        		String res = showItemVec.elementAt(rowIndex)[columnIndex];
 	        		if(res.contains("=")){
 	            		String[] resA = res.split("=");
 	            		res = resA[1];
@@ -1639,32 +1682,13 @@ public class MergeDetailsWindow extends JFrame{
 	        		}
 
 	        		
-	        	}else if(columnIndex == MERGEINDEX.INP8ORES.ordinal()){
+	        	}else if(columnIndex == MERGETABLEHEADINDEX.P8OVERINPLAYRES.ordinal()){
 	        		
-	        		String res = detailsData.elementAt(rowIndex)[columnIndex];
+	        		String res = showItemVec.elementAt(rowIndex)[columnIndex];
 	        		if(res.contains("=")){
 	            		String[] resA = res.split("=");
 	            		res = resA[1];
 	            		
-	            		return res;
-	        		}else{
-	        			return res;
-	        		}
-
-	        		
-	        	}else if(columnIndex == MERGEINDEX.HGORES.ordinal()){
-	        		int newRow = 0;
-	        		newRow = (int)(rowIndex/2);
-	        		String res = detailsData.elementAt(newRow)[columnIndex];
-	        		if(res.contains("=")){
-	            		String[] resA = res.split("=");
-	            		res = resA[0];
-	            		resA = res.split("-");
-	            		res = resA[rowIndex%2];
-	            		res = res.replace("(", "");
-	            		res = res.replace(")", "");
-	            		if(rowIndex%2 == 1)
-	            			res = "-" + res;
 	            		return res;
 	        		}else{
 	        			return res;
@@ -1672,7 +1696,7 @@ public class MergeDetailsWindow extends JFrame{
 
 	        		
 	        	}else{
-	        		return detailsData.elementAt(rowIndex)[columnIndex];
+	        		return showItemVec.elementAt(rowIndex)[columnIndex];
 	        	}
 	        }  
 	  
@@ -1682,7 +1706,7 @@ public class MergeDetailsWindow extends JFrame{
 	        @Override  
 	        public Class<?> getColumnClass(int columnIndex)  
 	        {  
-	            return detailsData.elementAt(0)[columnIndex].getClass();
+	            return showItemVec.elementAt(0)[columnIndex].getClass();
 	        }  
 	  
 	        /** 
@@ -1700,7 +1724,7 @@ public class MergeDetailsWindow extends JFrame{
 	        @Override  
 	        public void setValueAt(Object aValue, int rowIndex, int columnIndex)  
 	        {  
-	            detailsData.elementAt(rowIndex)[columnIndex] = (String)aValue;  
+	        	showItemVec.elementAt(rowIndex)[columnIndex] = (String)aValue;  
 	            /*通知监听器数据单元数据已经改变*/  
 	            fireTableCellUpdated(rowIndex, columnIndex);  
 	        }  

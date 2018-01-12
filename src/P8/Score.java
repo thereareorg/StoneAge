@@ -49,9 +49,16 @@ public class Score {
 	
 	public Vector<String[]> scoresPreviousDetailsVec = new Vector<String[]>();
 	
+	public Vector<String[]> scoresDaysDetailsVec = new Vector<String[]>();
+ 	
     private ReadWriteLock lockeFinalScoreDetails = new ReentrantReadWriteLock();
     
     String lastgetpredatatime = "";
+    
+    
+    String laststartday = "";
+    String lastendday = "";
+    
     
     public Vector<String[]> finalScoreDetailsVec = new Vector<String[]>();
     
@@ -475,6 +482,7 @@ public class Score {
 	
 	
 	public Vector<String[]> getpreviousdetailsbyday(String date){
+		
 		try{
 			
 			if(lastgetpredatatime.equals(date)){
@@ -532,6 +540,137 @@ public class Score {
 			lastgetpredatatime = date;
 			
 			return scoresPreviousDetailsVec;
+			
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	
+	public Vector<String[]> getpreviousdetailsbyperiod(String startdate, String enddate){
+		try{
+			
+			if(laststartday.equals(startdate) && lastendday.equals(enddate)){
+				return scoresDaysDetailsVec;
+			}
+			
+			
+			
+			String orgsdate = startdate;
+			String orgedate = enddate;
+			
+			
+			
+			
+			SimpleDateFormat dfday = new SimpleDateFormat("yyyy-MM-dd");
+			
+			String todaystr = dfday.format(System.currentTimeMillis());
+			
+			
+			Calendar currentTime = Calendar.getInstance();
+			
+			Calendar endTime = Calendar.getInstance();
+			endTime.setTime(dfday.parse(enddate));
+			
+			endTime.add(Calendar.DAY_OF_YEAR, 1);
+			enddate = dfday.format(endTime.getTimeInMillis());
+			
+			java.util.Date currentdate = dfday.parse(enddate);
+			
+			java.util.Date sdate = dfday.parse(startdate);
+			
+			if(sdate.getTime() > currentdate.getTime()){
+				return scoresDaysDetailsVec;
+			}
+			
+			
+			currentTime.setTime(currentdate);
+			
+			String date = startdate;
+			
+			if(scoresDaysDetailsVec.size() != 0){
+				scoresDaysDetailsVec.clear();
+			}
+			
+			
+			while(!enddate.equals(date)){
+				
+				String folder = date;
+				
+				//读取该目录下所有文件
+
+				//读取改目录下所有文件:
+				File filefolder = new File("data/" + "scoredata/" + date + "/");
+				
+				if(!filefolder.exists()){
+					currentdate = dfday.parse(date);
+					currentTime.setTime(currentdate);
+					currentTime.add(Calendar.DAY_OF_YEAR, 1);
+					
+					date = dfday.format(currentTime.getTimeInMillis());
+					continue;
+				}
+				
+				File flist[] = filefolder.listFiles();
+				
+				int linenum = 0;
+				
+				for(File f : flist){
+					if(f.isDirectory()){
+						//System.out.println("fuck directory here");
+					}else{
+						
+						
+						
+						
+						BufferedReader freader = new BufferedReader(new InputStreamReader(new FileInputStream(f), "UTF-8"));
+						
+						String str = "";
+						
+						linenum = 0;
+						
+						while ((str = freader.readLine()) != null) {
+							String[] contents = str.split(",");
+							
+							if(!contents[SCORENEWINDEX.STATUS.ordinal()].contains("完") && contents[SCORENEWINDEX.TIME.ordinal()].contains(todaystr)){
+								continue;
+							}
+							
+							scoresDaysDetailsVec.add(contents);													
+						}
+						
+						
+						
+						
+						if(null != freader){
+							freader.close();
+						}
+						
+						
+					}
+					
+					
+					
+					
+				}
+				
+				
+				currentdate = dfday.parse(date);
+				currentTime.setTime(currentdate);
+				currentTime.add(Calendar.DAY_OF_YEAR, 1);
+				
+				date = dfday.format(currentTime.getTimeInMillis());
+				
+			}
+			
+			
+			laststartday = orgsdate;
+			lastendday  = orgedate;
+			
+			
+			return scoresDaysDetailsVec;
 			
 			
 		}catch(Exception e){
@@ -661,6 +800,10 @@ public class Score {
 
 				SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 				
+				SimpleDateFormat dfsec = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+				
+				System.out.println("开始抓取比分网时间:" + dfsec.format(System.currentTimeMillis()));
+				
 				Long currenttime2 = System.currentTimeMillis();
 				
 				
@@ -698,7 +841,7 @@ public class Score {
 				
 				
 				
-				if(alias2data == null){
+				if(alias2data == null || !alias2data.contains("﻿var T")){
 					System.out.println("alias2data 拿不到，皇冠队名可能错误");
 				}else{
 					getalias2 = true;
@@ -725,7 +868,7 @@ public class Score {
 						
 						ps =  res.indexOf("\"", ps) + 1;
 						
-						if(-1 == ps){
+						if(-1 == ps || ps < 3){
 							break;
 						}
 						
@@ -745,6 +888,12 @@ public class Score {
 						
 						
 						String id = tmp[0];
+						
+						if(!Common.isNum(id)){
+							System.out.println("res:" + res);
+							System.out.println("id:" + id);
+							break;
+						}
 						
 						
 						String hometeamkey = "nonenone";
@@ -772,6 +921,10 @@ public class Score {
 						
 						
 						String hometeam = tmp[5];
+						
+						/*if(hometeam.contains("布里斯班")){
+							System.out.println("hahhahah");
+						}*/
 
 						if(null != alias2data && alias2data.contains(hometeamkey)){
 							int ps1 = alias2data.indexOf(hometeamkey);
@@ -840,39 +993,10 @@ public class Score {
 						
 						if((findscoreindex != -1) && ((System.currentTimeMillis() - df.parse(scoresDetailsVec.elementAt(findscoreindex)[SCORENEWINDEX.TIME.ordinal()]).getTime()) > 180*60*1000) && 
 								(scoresDetailsVec.elementAt(findscoreindex)[SCORENEWINDEX.RQCHUPAN.ordinal()].equals("") || scoresDetailsVec.elementAt(findscoreindex)[SCORENEWINDEX.RQCHUPAN.ordinal()].equals("-"))){
-							scoresDetailsVec.remove(findscoreindex);
+							//scoresDetailsVec.remove(findscoreindex);
 							ps = res.indexOf("A[", pe);
 							continue;
-						}						
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
-
-						
-
+						}	
 						
 						String[] filedArry = timedate.split(",");
 						
@@ -880,6 +1004,45 @@ public class Score {
 
 						
 						String correcttime = timeStr;
+						
+						
+						
+						if(findscoreindex == -1 && ((System.currentTimeMillis() - df.parse(correcttime).getTime()) > 180*60*1000)){
+							ps = res.indexOf("A[", pe);
+							continue;
+						}
+						
+						
+						
+						//没有盘口
+						if(tmp[46].equals("")){
+							ps = res.indexOf("A[", pe);
+							continue;
+						}
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+
+						
+
+						
+
 						
 						
 						if(findscoreindex != -1){
@@ -1006,7 +1169,8 @@ public class Score {
 
 						
 						if(findscoreindex != -1 && !scoresDetailsVec.elementAt(findscoreindex)[SCORENEWINDEX.RQZHONGPAN.ordinal()].equals("") 
-								&& !scoresDetailsVec.elementAt(findscoreindex)[SCORENEWINDEX.DXQZHONGPAN.ordinal()].equals("")){
+								&& !scoresDetailsVec.elementAt(findscoreindex)[SCORENEWINDEX.DXQZHONGPAN.ordinal()].equals("")
+								&& !scoresDetailsVec.elementAt(findscoreindex)[SCORENEWINDEX.STATUS.ordinal()].equals("")){
 							//scoresDetailsVec.elementAt(findscoreindex)[SCORENEWINDEX.TIME.ordinal()] = item[SCORENEWINDEX.TIME.ordinal()];
 							scoresDetailsVec.elementAt(findscoreindex)[SCORENEWINDEX.STATUS.ordinal()] = item[SCORENEWINDEX.STATUS.ordinal()];
 							scoresDetailsVec.elementAt(findscoreindex)[SCORENEWINDEX.SCORE.ordinal()] = item[SCORENEWINDEX.SCORE.ordinal()];
@@ -1023,8 +1187,8 @@ public class Score {
 						}
 						
 						
-						//未开赛
-						if(tmp[13].equals("0")){
+						//不抓取未开赛的盘口
+						/*if(tmp[13].equals("0")){
 							if(findscoreindex == -1){
 								scoresDetailsVec.add(item);
 							}else if(getalias2 == true){
@@ -1033,7 +1197,7 @@ public class Score {
 
 							ps = res.indexOf("A[", pe);
 							continue;
-						}
+						}*/
 						
 						
 						Thread.sleep(avoidfrequencysleep*1000);
@@ -1061,7 +1225,7 @@ public class Score {
 							
 							
 							
-							int ps1 = onegameres.indexOf(">SB ");
+							int ps1 = onegameres.indexOf(">Crown ");
 							if(ps1 != -1){
 								
 
@@ -1171,7 +1335,7 @@ public class Score {
 							System.out.println("parse DXQ:" + item[SCORENEWINDEX.EVENTNAMNE.ordinal()]);
 							
 							
-							int ps1 = onegameres.indexOf(">SB ");
+							int ps1 = onegameres.indexOf(">Crown ");
 							if(ps1 != -1){
 								ps1= onegameres.indexOf("<td", ps1) + 1;
 								ps1 = onegameres.indexOf("<td", ps1) + 1;
@@ -1349,435 +1513,7 @@ public class Score {
 					}
 
 					
-				}
-				
-			}
-			
-			
-			
-			
-			
-			
-			return true;
-			
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		
-
-		
-		return false;
-	}
-	
-
-	
-	
-	
-	
-	public  boolean getScores(){
-		
-		try{
-			String res = doGet("http://live.titan007.com", "", "");
-			
-			if(res == null){
-				res = doGet("http://live.titan007.com", "", "");
-			}
-			
-			if(null != res){
-				
-				Calendar calCurrent = Calendar.getInstance();
-				calCurrent.setTimeInMillis(System.currentTimeMillis());
-				
-				//int month = ;
-				
-				String monStr = String.format("%03d", calCurrent.get(Calendar.MONTH) + 1);
-				
-				monStr = "007";
-				
-				String yearStr = Integer.toString(calCurrent.get(Calendar.YEAR));
-				
-				String dataUri = "http://live.titan007.com/vbsxml/bfdata.js?r=" + monStr + Long.toString(System.currentTimeMillis());
-				
-				res = doGet(dataUri, "", "http://live.titan007.com/");
-				
-				//System.out.println(res);
-				
-				Calendar calDeadline = Calendar.getInstance();  
-				
-				calDeadline.set(Calendar.HOUR_OF_DAY, 13);
-				
-				int hour = calCurrent.get(Calendar.HOUR_OF_DAY);  
-				
-				if(hour >= 13){
-					calDeadline.add(Calendar.DAY_OF_MONTH, 1);
-				}
-				
-				long deadlineTime = calDeadline.getTimeInMillis();
-				
-				
-				if(res.contains("A[")){
-					int ps = -1;
-					int pe = -1;
-
-					ps = res.indexOf("A[");
-					
-					String goaluri = "http://live.titan007.com/vbsxml/goalBf3.xml?r=" + monStr + Long.toString(System.currentTimeMillis());
-					String goalres = doGet(goaluri, "", "http://live.titan007.com/");
-					
-					if(goalres == null){
-						goalres = doGet(goaluri, "", "http://live.titan007.com/");
-					}
-					
-					if(goalres == null){
-						return false;
-					}
-					
-					String sDatauri = "http://live.titan007.com/vbsxml/sbOddsData.js?r=" + monStr + Long.toString(System.currentTimeMillis());
-					String sData = doGet(sDatauri, "", "http://live.titan007.com/");
-					
-					
-					
-					String alias2uri = "http://bf.win007.com/vbsxml/alias2.js";
-					String alias2data = doGet(alias2uri, "", "");
-					
-					if(alias2data == null){
-						alias2data = doGet(alias2uri, "", "");
-					}
-					
-					if(sData == null){
-						sData = doGet(sDatauri, "", "http://live.titan007.com/");
-					}
-					
-					if(sData == null){
-						return false;
-					}
-					
-					
-					while(ps!= -1){
-						
-						ps =  res.indexOf("\"", ps) + 1;
-						
-						if(-1 == ps){
-							break;
-						}
-						
-						pe = res.indexOf("\".", ps);
-						
-						if(-1 == pe){
-							break;
-						}
-						
-						String[] tmp = res.substring(ps, pe).split("\\^");
-						
-						SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-						
-						String timemin = tmp[11];
-						String timedate = tmp[12];
-						
-						
-						
-						String id = tmp[0];
-						
-						
-						String hometeamkey = "nonenone";
-						if(!tmp[37].equals("")){
-							hometeamkey = "\"" + tmp[37] + "_" + "3"+ "\"";
-						}
-						String awayteamkey = "nonenone";
-						if(!tmp[38].equals("")){
-							awayteamkey = "\"" + tmp[38] + "_" + "3"+ "\"";
-						}
-
-						
-						String[] goalpk = null;
-						
-						if(goalres.contains(id)){
-							
-							int ps1 = goalres.indexOf(id);
-							int pe1 = goalres.indexOf("<", ps1);
-							
-							goalpk = goalres.substring(ps1, pe1).split(",");
-							
-						}
-						
-						
-						String[] item = new String[SCOREINDEX.SIZE.ordinal()];
-						
-						for(int ii = 0; ii < item.length; ii++){
-							item[ii] = "";
-						}
-						
-						if(sData.contains(id)){
-							int ps1 = sData.indexOf(id);
-							ps1 = sData.indexOf("=", ps1) + 2;
-							int pe1 = sData.indexOf(";", ps1);
-							
-							String dataStr = sData.substring(ps1, pe1);
-				
-							
-			                /*String input = "\\[.*\\]";
-
-			                
-			                Pattern p = Pattern.compile(input);
-			                Matcher m = p.matcher(dataStr);
-			                
-			                int j = 0;*/
-			                
-			                ps1 = dataStr.indexOf("[") + 1;
-			                pe1 = dataStr.indexOf("]");
-			                    
-			                    
-		                    String data = dataStr.substring(ps1, pe1);
-		                    
-		                    //让球盘
-	                    	data = data.replace("[", "");
-	                    	data = data.replace("]", "");
-
-	                    	String[] dataArry = data.split(",");
-	                    	
-
-	                    	
-	                    	//即时指数
-							int index = (int)(Double.parseDouble(dataArry[4])*4);
-							if(index < 0){
-								item[SCOREINDEX.RQPANKOU.ordinal()] = "受" + rqpankou[Math.abs(index)];
-							}else{
-								item[SCOREINDEX.RQPANKOU.ordinal()] = rqpankou[index];
-							}
-
-	                    	item[SCOREINDEX.RQHOMESHUI.ordinal()] = dataArry[3];
-	                    	item[SCOREINDEX.RQAWAYSHUI.ordinal()] = dataArry[5];
-	                    	
-	                    	
-	                    	if(dataArry.length < 8){
-	                    		//System.out.println(dataStr);
-	                    	}else{
-		                    	//滚球指数
-		                    	index = (int)(Double.parseDouble(dataArry[7])*4);
-								if(index < 0){
-									item[SCOREINDEX.GQRQPANKOU.ordinal()] = "受" + rqpankou[Math.abs(index)];
-								}else{
-									item[SCOREINDEX.GQRQPANKOU.ordinal()] = rqpankou[index];
-								}
-
-		                    	item[SCOREINDEX.GQRQHOMESHUI.ordinal()] = dataArry[6];
-		                    	item[SCOREINDEX.GQRQAWAYSHUI.ordinal()] = dataArry[8];
-	                    	}
-	                    	
-
-		                    	
-		                    	
-		                    	
-		                    
-		                    
-		                    //大小盘
-	                    	
-			                ps1 = dataStr.indexOf("[", pe1)+1;
-			                ps1 = dataStr.indexOf("[", ps1) + 1;
-			                pe1 = dataStr.indexOf("]", ps1);
-			                
-			                data = dataStr.substring(ps1, pe1);
-	                    	
-		                    	data = data.replace("[", "");
-		                    	data = data.replace("]", "");
-
-		                    	dataArry = data.split(",");
-		                    	
-
-		                    	
-		                    	//即时指数
-								item[SCOREINDEX.DXQPANKOU.ordinal()] = dxqpankou[(int)(Double.parseDouble(dataArry[4])*4)];
-
-		                    	item[SCOREINDEX.DXQHOMESHUI.ordinal()] = dataArry[3];
-		                    	item[SCOREINDEX.DXQAWAYSHUI.ordinal()] = dataArry[5];
-		                    	
-		                    	
-		                    	if(dataArry.length < 8){
-		                    		//System.out.println(dataStr);
-		                    	}else{
-			                    	//滚球指数
-									item[SCOREINDEX.GQDXQPANKOU.ordinal()] = dxqpankou[(int)(Double.parseDouble(dataArry[7])*4)];
-
-			                    	item[SCOREINDEX.GQDXQHOMESHUI.ordinal()] = dataArry[6];
-			                    	item[SCOREINDEX.GQDXQAWAYSHUI.ordinal()] = dataArry[8];
-		                    	}
-		                    	
-
-		                    	
-		                    	
-		                    }
-			                    
-			                    
-							
-						
-						
-						
-						
-
-						
-						String[] filedArry = timedate.split(",");
-						
-						String timeStr = filedArry[0] + "-" + String.format("%02d", Integer.parseInt(filedArry[1]) + 1) + "-" + String.format("%02d", Integer.parseInt(filedArry[2])) + " " + timemin;
-						
-						
-						
-						
-						
-						
-						long eventtime = df.parse(timeStr).getTime();
-						
-/*						if((System.currentTimeMillis() - eventtime > 180 *60*1000) || eventtime >= deadlineTime){
-							ps = res.indexOf("A[", pe);
-							continue;
-						}*/
-						
-						
-						
-						 if(tmp[13].equals("1")){
-							 Calendar beginTime = Calendar.getInstance();
-							 beginTime.set(Integer.parseInt(filedArry[0]), Integer.parseInt(filedArry[1]), Integer.parseInt(filedArry[2]),
-									 Integer.parseInt(filedArry[3]), Integer.parseInt(filedArry[4]));
-							 
-							 int time = (int)((System.currentTimeMillis() - beginTime.getTimeInMillis())/60000);
-							 
-							 if(time < 1){
-								 time = 1;
-							 }
-							 
-							 
-							 if(time > 45){
-								 timeStr = "45'+";
-							 }else{
-								 timeStr = Integer.toString(time) + "'";
-							 }
-							 
-						 }else if(tmp[13].equals("3")){
-							 Calendar beginTime = Calendar.getInstance();
-							 beginTime.set(Integer.parseInt(filedArry[0]), Integer.parseInt(filedArry[1]), Integer.parseInt(filedArry[2]),
-									 Integer.parseInt(filedArry[3]), Integer.parseInt(filedArry[4]));
-							 
-							 int time = (int)((System.currentTimeMillis() - beginTime.getTimeInMillis())/60000);
-							 time = time + 46;
-							 
-							 
-							 
-							 if(time > 90){
-								 timeStr = "90'+";
-							 }else{
-								 timeStr = Integer.toString(time) + "'";
-							 }
-						 }else if(tmp[13].equals("2")){
-							 timeStr = "中";
-						 }else if(tmp[13].equals("-1")){
-							 ps = res.indexOf("A[", pe);
-							 continue;
-						 }
-					      
-						
-						
-						
-						
-						String leaguename = tmp[2];
-						
-						if(leaguename.contains("<")){
-							int tmpps = leaguename.indexOf("<");
-							int tmppe = leaguename.indexOf(">",tmpps);
-							
-							String str = leaguename.substring(tmpps, leaguename.length());
-							
-							leaguename = leaguename.replace(str, "");
-						}
-						
-						//精简赛事
-						int leagps = res.indexOf("B[");
-						leagps = res.indexOf(leaguename, leagps);
-						//leagps = res.indexOf("\"", leagps);
-						int leagpe = res.indexOf("\".", leagps);
-						
-						String Barrystr = res.substring(leagps, leagpe);
-						
-						String[] Barry = Barrystr.split("\\^");
-						
-						if(Barry[5].equals("1")){
-							item[SCOREINDEX.IMPORTANTCUP.ordinal()] = "1";
-						}else{
-							item[SCOREINDEX.IMPORTANTCUP.ordinal()] = "0";
-						}
-						//精简赛事
-						
-						String hometeam = tmp[5];
-						
-						if(null != alias2data && alias2data.contains(hometeamkey)){
-							int ps1 = alias2data.indexOf(hometeamkey);
-							ps1 = alias2data.indexOf("[", ps1) + 2;
-							int pe1 = alias2data.indexOf("]",ps1) - 1;
-							hometeam = alias2data.substring(ps1, pe1);
-						}
-						
-						
-						
-						
-						if(hometeam.contains("<")){
-							int tmpps = hometeam.indexOf("<");
-							int tmppe = hometeam.indexOf(">",tmpps);
-							
-							String str = hometeam.substring(tmpps, hometeam.length());
-							
-							hometeam = hometeam.replace(str, "");
-						}
-						
-						String awayteam = tmp[8];
-						if(null != alias2data && alias2data.contains(awayteamkey)){
-							int ps1 = alias2data.indexOf(awayteamkey);
-							ps1 = alias2data.indexOf("[", ps1) + 2;
-							int pe1 = alias2data.indexOf("]",ps1) - 1;
-							awayteam = alias2data.substring(ps1, pe1);
-						}
-						
-						if(awayteam.contains("<")){
-							int tmpps = awayteam.indexOf("<");
-							int tmppe = awayteam.indexOf(">",tmpps);
-							
-							String str = awayteam.substring(tmpps, awayteam.length());
-							
-							awayteam = awayteam.replace(str, "");
-						}
-						
-						String score = tmp[14] + ":" + tmp[15];
-						
-						
-						
-						item[SCOREINDEX.PLACEHODE.ordinal()] = "";
-						item[SCOREINDEX.LEAGUENAME.ordinal()] = leaguename;
-						item[SCOREINDEX.EVENTNAMNE.ordinal()] = hometeam + " vs " + awayteam;
-						
-						SimpleDateFormat dfDay = new SimpleDateFormat("yyyy-MM-dd");
-						String todayStr = dfDay.format(System.currentTimeMillis());
-						
-						if(timeStr.contains(todayStr)){
-							timeStr = timeStr.replace(todayStr + " ", "");
-						}
-						
-						item[SCOREINDEX.TIME.ordinal()] = timeStr;
-						item[SCOREINDEX.SCORE.ordinal()] = score;
-
-						
-						scoresDetailsVec.add(item);
-						
-						ps = res.indexOf("A[", pe);
-						
-
-					}
-					
-					
-					
-					for(int i = 0; i < scoresDetailsVec.size(); i++){
-						
-						//System.out.println(Arrays.toString(scoresDetailsVec.elementAt(i)));
-						
-						
-					}
-
+					System.out.println("成功抓取比分网时间:" + dfsec.format(System.currentTimeMillis()));
 					
 				}
 				
@@ -1799,7 +1535,12 @@ public class Score {
 		return false;
 	}
 	
+
 	
+	
+	
+	
+
 	
 	
 	int defaultTimeout = 20*1000;

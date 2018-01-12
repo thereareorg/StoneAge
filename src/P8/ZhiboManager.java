@@ -128,6 +128,10 @@ public class ZhiboManager {
     	return pDataManager.getpSubevents();
     }
 	
+    
+    public static Vector<String[]> getpreviouseventsdata(){
+    	return pDataManager.getpreviousdata();
+    }
 	
     
     public static void constructEventsVec(String eventsStr){
