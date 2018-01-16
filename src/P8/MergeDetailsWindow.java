@@ -737,6 +737,119 @@ public class MergeDetailsWindow extends JFrame{
 							item[MERGETABLEHEADINDEX.DXQZHONGPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.DXQZHONGPAN.ordinal()];
 							item[MERGETABLEHEADINDEX.DXQPANAS.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.DXQPANAS.ordinal()];
 							
+							
+							
+							
+							
+							//给出赌哪边的提示
+							
+							//让球盘结果分析
+							if(!item[MERGETABLEHEADINDEX.RQZHONGPAN.ordinal()].equals("") && !item[MERGETABLEHEADINDEX.RQZHONGPAN.ordinal()].equals("-")
+									&& !item[MERGETABLEHEADINDEX.RQPANAS.ordinal()].equals("")){
+								
+								System.out.println("p8 events:" + Arrays.toString(item));
+								
+								
+								
+
+								
+								String betside = "";
+								
+								
+								
+								int p0home = 0;
+								if(item[MERGETABLEHEADINDEX.P0HOME.ordinal()].contains("=")){
+									p0home = Integer.parseInt(item[MERGETABLEHEADINDEX.P0HOME.ordinal()].split("=")[1]);
+								}
+								
+								
+								
+								
+								//只统计赌降的那一边
+								if(item[MERGETABLEHEADINDEX.RQPANAS.ordinal()].contains("降") && 
+										item[MERGETABLEHEADINDEX.RQCHUPAN.ordinal()].contains("受让")&&
+										p0home  > 0){
+									betside = "right";
+								}else if(item[MERGETABLEHEADINDEX.RQPANAS.ordinal()].contains("降") && 
+										!item[MERGETABLEHEADINDEX.RQCHUPAN.ordinal()].contains("受让")&&
+										p0home  < 0){
+									betside = "left";
+								}else if(item[MERGETABLEHEADINDEX.RQPANAS.ordinal()].contains("升") && 
+										item[MERGETABLEHEADINDEX.RQCHUPAN.ordinal()].contains("受让")&&
+										p0home  < 0){
+									betside = "left";
+								}else if(item[MERGETABLEHEADINDEX.RQPANAS.ordinal()].contains("升") && 
+										!item[MERGETABLEHEADINDEX.RQCHUPAN.ordinal()].contains("受让")&&
+										p0home  > 0){
+									betside = "right";
+								}
+								
+								String[] oldteams = item[MERGETABLEHEADINDEX.EVENTNAME.ordinal()].split(" vs ");
+								
+								if(betside.equals("right")){
+									
+									item[MERGETABLEHEADINDEX.EVENTNAME.ordinal()] = "<html>" + oldteams[0] + " vs " +  "<font color='red'>" + oldteams[1] + "</font>";
+								}else if(betside.equals("left")){
+									item[MERGETABLEHEADINDEX.EVENTNAME.ordinal()] = "<html>" +"<font color='red'>" + oldteams[0] + "</font>" + " vs " + oldteams[1];
+								}
+
+								
+							}
+							
+							
+							
+							//大小球盘结果分析
+							if(!item[MERGETABLEHEADINDEX.DXQZHONGPAN.ordinal()].equals("") && !item[MERGETABLEHEADINDEX.DXQZHONGPAN.ordinal()].equals("-")
+									&& !item[MERGETABLEHEADINDEX.DXQPANAS.ordinal()].equals("")){
+								
+								
+								
+								
+								int p0over = 0;
+								if(item[MERGETABLEHEADINDEX.P0OVER.ordinal()].contains("=")){
+									p0over = Integer.parseInt(item[MERGETABLEHEADINDEX.P0OVER.ordinal()].split("=")[1]);
+								}
+								
+								
+								
+
+								String bet = "";
+								
+								//只统计赌降的一边
+								if(item[MERGETABLEHEADINDEX.DXQPANAS.ordinal()].contains("降") && 
+										p0over  < 0){
+									bet = "大";
+								}else if(item[MERGETABLEHEADINDEX.DXQPANAS.ordinal()].contains("升") && 
+										p0over  > 0){
+									bet = "小";
+								}
+
+								
+								
+								
+								if(!bet.equals("")){
+									
+									item[MERGETABLEHEADINDEX.DXQPANAS.ordinal()] = "<html>" + "<font color='red'>" + item[MERGETABLEHEADINDEX.DXQPANAS.ordinal()] + "</font>";
+								}
+								
+							}
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
 						}
 						
 						

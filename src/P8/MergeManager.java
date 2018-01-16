@@ -111,6 +111,10 @@ public class MergeManager {
 		mergeDetailsWnd.setVisible(flag);
 	}
 	
+    public static Vector<String[]> getpreviouseventsdata(){
+    	return pDataManager.getpreviousdata();
+    }
+	
 	
 	
 	public static void updateEventsDetails(){

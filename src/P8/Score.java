@@ -55,6 +55,8 @@ public class Score {
     
     String lastgetpredatatime = "";
     
+    private Vector<String> showLeagueName = new Vector<String>();
+    
     
     String laststartday = "";
     String lastendday = "";
@@ -81,6 +83,18 @@ public class Score {
 	int avoidfrequencysleep = 5;
 	
 	public Score(){
+		
+		showLeagueName.add("英超");
+		showLeagueName.add("意甲");
+		showLeagueName.add("法甲");
+		showLeagueName.add("西甲");
+		showLeagueName.add("德甲");
+		showLeagueName.add("欧冠杯");
+		showLeagueName.add("欧罗巴杯");
+		showLeagueName.add("荷甲");
+		showLeagueName.add("挪超");
+		
+		
 		initializeRqpmap();
 		recoverscoresDetailsVecfromefile();
 	}
@@ -918,6 +932,12 @@ public class Score {
 						}
 						
 						
+						if(!showLeagueName.contains(leaguename)){
+							ps = res.indexOf("A[", pe);
+							continue;
+						}
+						
+						
 						
 						
 						String hometeam = tmp[5];
@@ -1305,6 +1325,9 @@ public class Score {
 							
 							
 							
+						}else{
+							ps = res.indexOf("A[", pe);
+							continue;
 						}
 						
 						
@@ -1401,6 +1424,9 @@ public class Score {
 							
 							
 							
+						}else{
+							ps = res.indexOf("A[", pe);
+							continue;
 						}
 						
 						

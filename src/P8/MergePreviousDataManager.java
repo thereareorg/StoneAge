@@ -88,6 +88,11 @@ public class MergePreviousDataManager {
 	}
 	
 	
+	public Vector<String[]> getpreviousdata(){
+		return pEventsDetails;
+	} 
+	
+	
 	public boolean saveTofile(String[] item){
 		
 		try{

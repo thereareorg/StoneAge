@@ -48,6 +48,8 @@ import java.awt.Color;
 
 
 
+
+
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;  
@@ -825,7 +827,124 @@ public class EventsDetailsWindow extends JFrame
 						item[P8TABLEHEADINDEX.DXQZHONGPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.DXQZHONGPAN.ordinal()];
 						item[P8TABLEHEADINDEX.DXQPANAS.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.DXQPANAS.ordinal()];
 						item[P8TABLEHEADINDEX.SCORE.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.SCORE.ordinal()];
+						
+						
+						
+						
+						
+						
+						
+						//给出赌哪边的提示
+						
+						//让球盘结果分析
+						if(!item[P8TABLEHEADINDEX.RQZHONGPAN.ordinal()].equals("") && !item[P8TABLEHEADINDEX.RQZHONGPAN.ordinal()].equals("-")
+								&& !item[P8TABLEHEADINDEX.RQPANAS.ordinal()].equals("")){
+							
+							System.out.println("p8 events:" + Arrays.toString(item));
+							
+							
+							
+
+							
+							String betside = "";
+							
+							
+							
+							int p0home = 0;
+							if(item[P8TABLEHEADINDEX.P0HOME.ordinal()].contains("=")){
+								p0home = Integer.parseInt(item[P8TABLEHEADINDEX.P0HOME.ordinal()].split("=")[1]);
+							}
+							
+							
+							
+							
+							//只统计赌降的那一边
+							if(item[P8TABLEHEADINDEX.RQPANAS.ordinal()].contains("降") && 
+									item[P8TABLEHEADINDEX.RQCHUPAN.ordinal()].contains("受让")&&
+									p0home  > 0){
+								betside = "right";
+							}else if(item[P8TABLEHEADINDEX.RQPANAS.ordinal()].contains("降") && 
+									!item[P8TABLEHEADINDEX.RQCHUPAN.ordinal()].contains("受让")&&
+									p0home  < 0){
+								betside = "left";
+							}else if(item[P8TABLEHEADINDEX.RQPANAS.ordinal()].contains("升") && 
+									item[P8TABLEHEADINDEX.RQCHUPAN.ordinal()].contains("受让")&&
+									p0home  < 0){
+								betside = "left";
+							}else if(item[P8TABLEHEADINDEX.RQPANAS.ordinal()].contains("升") && 
+									!item[P8TABLEHEADINDEX.RQCHUPAN.ordinal()].contains("受让")&&
+									p0home  > 0){
+								betside = "right";
+							}
+							
+							String[] oldteams = item[P8TABLEHEADINDEX.EVENTNAME.ordinal()].split("-vs-");
+							
+							if(betside.equals("right")){
+								
+								item[P8TABLEHEADINDEX.EVENTNAME.ordinal()] = "<html>" + oldteams[0] + "-vs-" +  "<font color='red'>" + oldteams[1] + "</font>";
+							}else if(betside.equals("left")){
+								item[P8TABLEHEADINDEX.EVENTNAME.ordinal()] = "<html>" +"<font color='red'>" + oldteams[0] + "</font>" + "-vs-" + oldteams[1];
+							}
+
+							
+						}
+						
+						
+						
+						//大小球盘结果分析
+						if(!item[P8TABLEHEADINDEX.DXQZHONGPAN.ordinal()].equals("") && !item[P8TABLEHEADINDEX.DXQZHONGPAN.ordinal()].equals("-")
+								&& !item[P8TABLEHEADINDEX.DXQPANAS.ordinal()].equals("")){
+							
+							
+							
+							
+							int p0over = 0;
+							if(item[P8TABLEHEADINDEX.P0OVER.ordinal()].contains("=")){
+								p0over = Integer.parseInt(item[P8TABLEHEADINDEX.P0OVER.ordinal()].split("=")[1]);
+							}
+							
+							
+							
+
+							String bet = "";
+							
+							//只统计赌降的一边
+							if(item[P8TABLEHEADINDEX.DXQPANAS.ordinal()].contains("降") && 
+									p0over  < 0){
+								bet = "大";
+							}else if(item[P8TABLEHEADINDEX.DXQPANAS.ordinal()].contains("升") && 
+									p0over  > 0){
+								bet = "小";
+							}
+
+							
+							
+							
+							if(!bet.equals("")){
+								
+								item[P8TABLEHEADINDEX.DXQPANAS.ordinal()] = "<html>" + "<font color='red'>" + item[P8TABLEHEADINDEX.DXQPANAS.ordinal()] + "</font>";
+							}
+							
+						}
+						
+						
+						
+						
 					}
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
 					
 					
 				}
@@ -835,12 +954,7 @@ public class EventsDetailsWindow extends JFrame
 			showItemVec.add(item);
 			
 		}
-		
-		
-		
-		
-		
-		
+
 		tableMode.updateTable();
 		
 	}
@@ -1356,6 +1470,13 @@ public class EventsDetailsWindow extends JFrame
         p0oColumn.setCellRenderer(p0oRender);   
 
       //设置列单元格渲染模式  结束
+        
+        
+        //队名渲染
+        //队名渲染
+        
+        
+        
 
 	    
         DefaultTableCellRenderer tcr = new DefaultTableCellRenderer();// 设置table内容居中

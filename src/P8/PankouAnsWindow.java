@@ -69,7 +69,7 @@ public class PankouAnsWindow extends JFrame{
 	PankouAnsWindow(){
 		
 		//llcb.setEnabled(false);
-		mergecb.setEnabled(false);
+		//mergecb.setEnabled(false);
 		
 		
 		rqpmap.put("平手", 0.0);
@@ -161,8 +161,14 @@ public class PankouAnsWindow extends JFrame{
     
     private boolean bll = false;
 
-    private JCheckBox mergecb = new JCheckBox("合并");
+    private JCheckBox mergecb = new JCheckBox("合并(P+L)");
     private boolean bmerge = false;
+
+    private JLabel mergesidegoldlb = new JLabel("合并占边金额");
+    private JTextField mergesidegoldtxt = new JTextField();
+    int mergesidegold = 100000;
+
+    
     
     private JLabel mingoldlb = new JLabel("最低金额");
     private JTextField mingoldtxt = new JTextField();
@@ -354,14 +360,12 @@ public class PankouAnsWindow extends JFrame{
 				
 				String[] olditem = DetailsDatatmp.elementAt(i).clone();
 				
-				String p8DayTime = olditem[TYPEINDEX.TIME.ordinal()].split(" ")[0];
+				String p8DayTime = olditem[TYPEINDEX.TIME.ordinal()];
 				
 				String p8hometaem = olditem[TYPEINDEX.EVENTNAMNE.ordinal()].split("-vs-")[0];
 				String p8awaytaem = olditem[TYPEINDEX.EVENTNAMNE.ordinal()].split("-vs-")[1];
 				
-				if(p8hometaem.contains("史云斯")){
-					System.out.println("11111");
-				}
+				
 				
 				String[] item = {Integer.toString(i+1), olditem[TYPEINDEX.LEAGUENAME.ordinal()], olditem[TYPEINDEX.TIME.ordinal()], olditem[TYPEINDEX.EVENTNAMNE.ordinal()], "", "", "",
 						olditem[TYPEINDEX.PERIOD0HOME.ordinal()], "", "", "", olditem[TYPEINDEX.PERIOD0OVER.ordinal()], "", "", ""};
@@ -375,14 +379,16 @@ public class PankouAnsWindow extends JFrame{
 						int indexinscoredetails = -1;
 						for(int j = 0; j < scoreDetails.size(); j++){
 							
-							String scoreDayTime = scoreDetails.elementAt(j)[SCORENEWINDEX.TIME.ordinal()].split(" ")[0];
+							String scoreDayTime = scoreDetails.elementAt(j)[SCORENEWINDEX.TIME.ordinal()];
 							
 							if(scoreDetails.elementAt(j)[SCORENEWINDEX.EVENTNAMNE.ordinal()].equals(scorehometeam + " vs " + scoreawayteam) 
-									&& p8DayTime.equals(scoreDayTime)){
+									&& (Math.abs((dfMin.parse(p8DayTime).getTime() - dfMin.parse(scoreDayTime).getTime())) < 100*60*1000) ){
 								indexinscoredetails = j;
 								break;
 							}
 						}
+						
+						
 						
 						if(indexinscoredetails != -1){
 							item[P8PRETABLEHEADINDEX.RQCHUPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.RQCHUPAN.ordinal()];
@@ -410,6 +416,11 @@ public class PankouAnsWindow extends JFrame{
 									
 									//大小球盘结果分析
 									if(!item[P8PRETABLEHEADINDEX.DXQZHONGPAN.ordinal()].equals("") && !item[P8PRETABLEHEADINDEX.DXQZHONGPAN.ordinal()].equals("-")){
+										
+										
+										System.out.println("dxq ans:" + Arrays.toString(item));
+										
+										
 										
 										double calpan = 0.0;
 										
@@ -934,6 +945,8 @@ public class PankouAnsWindow extends JFrame{
 				
 				String[] olditem = DetailsDatatmp.elementAt(i).clone();
 				
+				String zhibotime = olditem[TYPEINDEX.TIME.ordinal()];
+				
 				String zhibohometeam = olditem[TYPEINDEX.EVENTNAMNE.ordinal()].split(" vs ")[0];
 				String zhiboawayteam = olditem[TYPEINDEX.EVENTNAMNE.ordinal()].split(" vs ")[1];
 				
@@ -947,7 +960,11 @@ public class PankouAnsWindow extends JFrame{
 					if(scoreawayteam != null){							
 						int indexinscoredetails = -1;
 						for(int j = 0; j < scoreDetails.size(); j++){
-							if(scoreDetails.elementAt(j)[SCORENEWINDEX.EVENTNAMNE.ordinal()].equals(scorehometeam + " vs " + scoreawayteam) ){
+							
+							String scoreTime = scoreDetails.elementAt(j)[SCORENEWINDEX.TIME.ordinal()];
+							
+							if(scoreDetails.elementAt(j)[SCORENEWINDEX.EVENTNAMNE.ordinal()].equals(scorehometeam + " vs " + scoreawayteam) 
+									&& (Math.abs((dfMin.parse(zhibotime).getTime() - dfMin.parse(scoreTime).getTime())) < 100*60*1000) ){
 								indexinscoredetails = j;
 								break;
 							}
@@ -1349,7 +1366,607 @@ public class PankouAnsWindow extends JFrame{
 
 	
 
+
 	
+	public void showbymerge(){
+		
+		try{
+			
+
+			String startdate = mpstart.getChooseDate();
+			String enddate = mpend.getChooseDate();
+			Vector<String[]> eventsdetails = MergeManager.getpreviouseventsdata();
+			
+			
+			
+			Vector<String[]> Vectmp = new Vector<String[]>();
+			
+			String startTimeStr = startdate + " " + "13:00";
+			String endTimeStr = enddate + " " + "13:00";
+			
+			SimpleDateFormat dfMin = new SimpleDateFormat("yyyy-MM-dd HH:mm");// 设置日期格式
+			
+			SimpleDateFormat dfDay = new SimpleDateFormat("yyyy-MM-dd");// 设置日期格式
+			
+			
+			java.util.Date startTimeDate = dfMin.parse(startTimeStr);
+			
+			Calendar startTime = Calendar.getInstance();  
+			startTime.setTime(startTimeDate);
+
+			java.util.Date endTimeDate = dfMin.parse(endTimeStr);
+			Calendar endTime = Calendar.getInstance();
+			endTime.setTime(endTimeDate);
+			
+			if(startTime.getTimeInMillis() > endTime.getTimeInMillis()){
+				return;
+			}
+			
+			endTime.add(Calendar.DAY_OF_YEAR, 1);
+
+			
+
+			
+			for(int i = 0; i < eventsdetails.size(); i++){
+
+				String timeStr = eventsdetails.elementAt(i)[MERGEINDEX.TIME.ordinal()];
+				
+				if(eventsdetails.elementAt(i)[MERGEINDEX.EVENTNAMNE.ordinal()].contains("滚动盘")){
+					continue;
+				}
+				
+				java.util.Date timeDate = dfMin.parse(timeStr);
+				
+				Calendar time = Calendar.getInstance();  
+				time.setTime(timeDate);
+				
+				
+				if(time.getTimeInMillis() >= startTime.getTimeInMillis() && time.getTimeInMillis() < endTime.getTimeInMillis()){
+					Vectmp.add(eventsdetails.elementAt(i));
+				}
+							
+			}
+			
+			Vector<String[]> DetailsDatatmp = new Vector<String[]>();
+			
+			if(bonlybig5 == true){
+				for(int i = 0; i < Vectmp.size(); i++){
+					if(P8Http.isInShowLeagueName(Vectmp.elementAt(i)[MERGEINDEX.LEAGUENAME.ordinal()])){
+						DetailsDatatmp.add(Vectmp.elementAt(i));
+					}
+				}
+			}else{
+				for(int i = 0; i < Vectmp.size(); i++){
+					
+						DetailsDatatmp.add(Vectmp.elementAt(i));
+					
+				}
+			}
+			
+			
+			
+			
+			
+			
+			if(DetailsDatatmp.size() == 0){
+				
+				if(classifyItemVec.size() != 0){
+					classifyItemVec.clear();
+				}
+				
+				
+				if(showItemVec.size()!= 0){
+					showItemVec.clear();
+				}
+				
+				
+				return;
+			}
+			
+			
+			Vector<String[]> scoreDetails = StoneAge.score.getpreviousdetailsbyperiod(startdate, enddate);
+
+			if(scoreDetails == null){
+
+				if(classifyItemVec.size() != 0){
+					classifyItemVec.clear();
+				}
+				
+				
+				if(showItemVec.size()!= 0){
+					showItemVec.clear();
+				}
+				
+				
+				return;
+
+				
+			}
+			
+			
+			
+			
+			for(int k = 0; k < scoreDetails.size(); k++){
+				System.out.println(Arrays.toString(scoreDetails.elementAt(k)));
+			}
+			
+			
+			System.out.println("Merge队:");
+			
+			for(int k = 0; k < DetailsDatatmp.size(); k++){
+				System.out.println(Arrays.toString(DetailsDatatmp.elementAt(k)));
+			}
+			
+			
+			if(classifyItemVec.size() != 0){
+				classifyItemVec.clear();
+			}
+			
+			
+			if(showItemVec.size()!= 0){
+				showItemVec.clear();
+			}
+			
+			
+			//合并score
+			for(int i = 0; i < DetailsDatatmp.size(); i++){
+				
+				String[] olditem = DetailsDatatmp.elementAt(i).clone();
+				
+				String mergetime = olditem[MERGEPRETABLEHEADINDEX.TIME.ordinal()];
+				
+				String zhibohometeam = olditem[MERGEPRETABLEHEADINDEX.EVENTNAME.ordinal()].split(" vs ")[0];
+				String zhiboawayteam = olditem[MERGEPRETABLEHEADINDEX.EVENTNAME.ordinal()].split(" vs ")[1];
+				
+				String[] item = {Integer.toString(i+1), olditem[MERGEINDEX.LEAGUENAME.ordinal()], olditem[MERGEINDEX.TIME.ordinal()], olditem[MERGEINDEX.EVENTNAMNE.ordinal()], "", "", "",
+						olditem[MERGEINDEX.P8HRES.ordinal()], olditem[MERGEINDEX.INP8HRES.ordinal()], olditem[MERGEINDEX.ZHIBOHRES.ordinal()], olditem[MERGEINDEX.PERIOD0HOME.ordinal()],
+						"", "","", olditem[MERGEINDEX.P8ORES.ordinal()],olditem[MERGEINDEX.INP8ORES.ordinal()],olditem[MERGEINDEX.ZHIBOORES.ordinal()], olditem[MERGEINDEX.PERIOD0OVER.ordinal()],"", "", ""};
+				
+				String scorehometeam = MergeManager.findScoreTeambyzhiboteam(zhibohometeam);
+				if(scorehometeam != null){
+					String scoreawayteam = MergeManager.findScoreTeambyzhiboteam(zhiboawayteam);
+					
+					
+					
+					if(scoreawayteam != null){
+						
+						int indexinscoredetails = -1;
+						for(int j = 0; j < scoreDetails.size(); j++){
+							
+							String scoreTime = scoreDetails.elementAt(j)[SCORENEWINDEX.TIME.ordinal()];
+							
+							if(scoreDetails.elementAt(j)[SCORENEWINDEX.EVENTNAMNE.ordinal()].equals(scorehometeam + " vs " + scoreawayteam) 
+									&&(Math.abs((dfMin.parse(mergetime).getTime() - dfMin.parse(scoreTime).getTime())) < 100*60*1000)){
+								indexinscoredetails = j;
+								break;
+							}
+						}
+						
+						if(indexinscoredetails != -1){
+							item[MERGEPRETABLEHEADINDEX.RQCHUPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.RQCHUPAN.ordinal()];
+							item[MERGEPRETABLEHEADINDEX.RQZHONGPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.RQZHONGPAN.ordinal()];
+							item[MERGEPRETABLEHEADINDEX.RQPANAS.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.RQPANAS.ordinal()];
+							item[MERGEPRETABLEHEADINDEX.DXQCHUPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.DXQCHUPAN.ordinal()];
+							item[MERGEPRETABLEHEADINDEX.DXQZHONGPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.DXQZHONGPAN.ordinal()];
+							item[MERGEPRETABLEHEADINDEX.DXQPANAS.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.DXQPANAS.ordinal()];
+							item[MERGEPRETABLEHEADINDEX.SCORE.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.SCORE.ordinal()];
+
+							
+							
+							
+							
+							if(scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.STATUS.ordinal()].contains("完")){
+								
+								item[MERGEPRETABLEHEADINDEX.SCORE.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.SCORE.ordinal()];
+								
+								
+								
+								if(bdxqpan == true){
+									
+								
+									if(item[MERGEPRETABLEHEADINDEX.DXQPANAS.ordinal()].equals("")){
+										continue;
+									}
+									
+									
+									//大小球盘结果分析
+									if(!item[MERGEPRETABLEHEADINDEX.DXQZHONGPAN.ordinal()].equals("") && !item[MERGEPRETABLEHEADINDEX.DXQZHONGPAN.ordinal()].equals("-")){
+										double calPan = 0.0;
+										
+										String calRespan = "";
+										
+										if(bchupanres == true){
+											calRespan = item[MERGEPRETABLEHEADINDEX.DXQCHUPAN.ordinal()];
+										}else{
+											calRespan = item[MERGEPRETABLEHEADINDEX.DXQZHONGPAN.ordinal()];
+										}
+										
+										double scoreh = Double.parseDouble(item[MERGEPRETABLEHEADINDEX.SCORE.ordinal()].split(":")[0]);
+										double scorec = Double.parseDouble(item[MERGEPRETABLEHEADINDEX.SCORE.ordinal()].split(":")[1]);
+										
+										String dxqres = "";
+										if(calRespan.contains("/")){
+											calPan = (Double.parseDouble(calRespan.split("/")[0]) + 
+													Double.parseDouble(calRespan.split("/")[1]))/2;
+										}else{
+											calPan = Double.parseDouble(calRespan);
+										}
+										
+										
+										int p0over = 0;
+										
+										int pp = 0;
+										if(item[MERGEPRETABLEHEADINDEX.P8OVERRES.ordinal()].contains("=")){
+											pp = Integer.parseInt(item[MERGEPRETABLEHEADINDEX.P8OVERRES.ordinal()].split("=")[1]);
+										}
+										
+										int ll = 0;
+										ll = Integer.parseInt(item[MERGEPRETABLEHEADINDEX.ZHIBOOVERRES.ordinal()]);
+										
+										if((Math.abs(pp) + Math.abs(ll)) != Math.abs(pp + ll)){
+											continue;
+										}
+										
+										if(Math.abs(pp) < mergesidegold || Math.abs(ll) < mergesidegold){
+											continue;
+										}
+										
+										p0over = pp + ll;
+										
+										
+										
+										
+										
+										if((scoreh + scorec-calPan) >=0.5){
+											if(p0over > 0){
+												dxqres = "全输";
+											}else if(p0over == 0){
+												dxqres = "-";
+											}else{
+												dxqres = "全赢";
+											}
+
+											
+										}else if((scoreh + scorec-calPan) == 0.25){
+											if(p0over > 0){
+												dxqres = "输半";
+											}else if(p0over == 0){
+												dxqres = "-";
+											}else{
+												dxqres = "赢半";
+											}
+										}else if((scoreh + scorec-calPan) == -0.25){
+											
+											if(p0over > 0){
+												dxqres = "赢半";
+											}else if(p0over == 0){
+												dxqres = "-";
+											}else{
+												dxqres = "输半";
+											}
+											
+
+										}else if((scoreh + scorec-calPan) <= -0.5){
+											
+											if(p0over > 0){
+												dxqres = "全赢";
+											}else if(p0over == 0){
+												dxqres = "-";
+											}else{
+												dxqres = "全输";
+											}
+
+										}else if((scoreh + scorec-calPan) == 0.0){
+											dxqres = "走水";
+										}
+										
+										
+										//只统计赌降的一边
+										if(item[MERGEPRETABLEHEADINDEX.DXQPANAS.ordinal()].contains("降") && 
+												p0over  > 0){
+											dxqres = "不计";
+										}else if(item[MERGEPRETABLEHEADINDEX.DXQPANAS.ordinal()].contains("升") && 
+												p0over  < 0){
+											dxqres = "不计";
+										}else if(item[MERGEPRETABLEHEADINDEX.DXQPANAS.ordinal()].equals("")){
+											dxqres = "不计";
+										}
+										
+										
+										if(dxqres.equals("不计")){
+											continue;
+										}
+										
+										item[MERGEPRETABLEHEADINDEX.DXQRES.ordinal()] = dxqres;
+										
+									}
+								}else{
+									
+									
+									//让球盘结果分析
+									if(!item[MERGEPRETABLEHEADINDEX.RQZHONGPAN.ordinal()].equals("") && !item[MERGEPRETABLEHEADINDEX.RQZHONGPAN.ordinal()].equals("-")){
+										
+										System.out.println(Arrays.toString(item));
+										
+										
+										if(item[MERGEPRETABLEHEADINDEX.RQPANAS.ordinal()].equals("")){
+											continue;
+										}
+										
+										
+										String calRespan = "";
+										if(bchupanres == true){
+											calRespan = item[MERGEPRETABLEHEADINDEX.RQCHUPAN.ordinal()];
+										}else{
+											calRespan = item[MERGEPRETABLEHEADINDEX.RQZHONGPAN.ordinal()];
+										}
+										
+										
+										double calPan = rqpmap.get(calRespan.replace("受让", ""));
+										double scoreh = Double.parseDouble(item[MERGEPRETABLEHEADINDEX.SCORE.ordinal()].split(":")[0]);
+										double scorec = Double.parseDouble(item[MERGEPRETABLEHEADINDEX.SCORE.ordinal()].split(":")[1]);
+										
+										String rqres = "";
+										if(calRespan.contains("受让")){
+											calPan = 0.0 - calPan;
+										}
+										
+										
+										int p0home = 0;
+										
+										int pp = 0;
+										if(item[MERGEPRETABLEHEADINDEX.P8HOMERES.ordinal()].contains("=")){
+											pp = Integer.parseInt(item[MERGEPRETABLEHEADINDEX.P8HOMERES.ordinal()].split("=")[1]);
+										}
+										
+										int ll = 0;
+										ll = Integer.parseInt(item[MERGEPRETABLEHEADINDEX.ZHIBOHOMERES.ordinal()]);
+										
+										if((Math.abs(pp) + Math.abs(ll)) != Math.abs(pp + ll)){
+											continue;
+										}
+										
+										if(Math.abs(pp) < mergesidegold || Math.abs(ll) < mergesidegold){
+											continue;
+										}
+										
+										p0home = pp + ll;
+										
+										
+										if((scoreh - scorec-calPan) >=0.5){
+											if(p0home > 0){
+												rqres = "全输";
+											}else if(p0home == 0){
+												rqres = "-";
+											}else{
+												rqres = "全赢";
+											}
+											
+										}else if((scoreh - scorec-calPan) == 0.25){
+											
+											if(p0home > 0){
+												rqres = "输半";
+											}else if(p0home == 0){
+												rqres = "-";
+											}else{
+												rqres = "赢半";
+											}
+											
+										}else if((scoreh - scorec-calPan) == -0.25){
+											
+											if(p0home > 0){
+												rqres = "赢半";
+											}else if(p0home == 0){
+												rqres = "-";
+											}else{
+												rqres = "输半";
+											}
+
+										}else if((scoreh - scorec-calPan) <= -0.5){
+											
+											if(p0home > 0){
+												rqres = "全赢";
+											}else if(p0home == 0){
+												rqres = "-";
+											}else{
+												rqres = "全输";
+											}
+											
+											
+										}else if((scoreh - scorec-calPan) == 0.0){
+											rqres = "走水";
+										}
+										
+										
+										//只统计赌降的那一边
+										if(item[MERGEPRETABLEHEADINDEX.RQPANAS.ordinal()].contains("降") && 
+												item[MERGEPRETABLEHEADINDEX.RQCHUPAN.ordinal()].contains("受让")&&
+												p0home  < 0){
+											rqres = "不计";
+										}else if(item[MERGEPRETABLEHEADINDEX.RQPANAS.ordinal()].contains("降") && 
+												!item[MERGEPRETABLEHEADINDEX.RQCHUPAN.ordinal()].contains("受让")&&
+												p0home  > 0){
+											rqres = "不计";
+										}else if(item[MERGEPRETABLEHEADINDEX.RQPANAS.ordinal()].contains("升") && 
+												item[MERGEPRETABLEHEADINDEX.RQCHUPAN.ordinal()].contains("受让")&&
+												p0home  > 0){
+											rqres = "不计";
+										}else if(item[MERGEPRETABLEHEADINDEX.RQPANAS.ordinal()].contains("升") && 
+												!item[MERGEPRETABLEHEADINDEX.RQCHUPAN.ordinal()].contains("受让")&&
+												p0home  < 0){
+											rqres = "不计";
+										}else if(item[MERGEPRETABLEHEADINDEX.RQPANAS.ordinal()].equals("")){
+											rqres = "不计";
+										}
+										
+										
+										if(rqres.equals("不计")){
+											continue;
+										}
+										
+										
+										
+										item[MERGEPRETABLEHEADINDEX.RQPRES.ordinal()] = rqres;
+										
+									}
+									
+									
+								}
+								
+								
+								
+								
+								
+								
+								
+								
+								
+
+								
+								
+								
+
+							}
+							
+							
+							if(bdxqpan == true){
+								
+								boolean find = false;
+								
+								for(int j = 0; j < classifyItemVec.size(); j++){
+									if(item[MERGEPRETABLEHEADINDEX.DXQPANAS.ordinal()].equals(classifyItemVec.elementAt(j).classify)){
+										classifyItemVec.elementAt(j).totalgames++;
+										if(item[MERGEPRETABLEHEADINDEX.SCORE.ordinal()].equals("")){
+											classifyItemVec.elementAt(j).noresgames++;
+										}else if(item[MERGEPRETABLEHEADINDEX.DXQRES.ordinal()].equals("全赢")){
+											classifyItemVec.elementAt(j).wingames++;
+										}else if(item[MERGEPRETABLEHEADINDEX.DXQRES.ordinal()].equals("全输")){
+											classifyItemVec.elementAt(j).losegames++;
+										}else if(item[MERGEPRETABLEHEADINDEX.DXQRES.ordinal()].equals("赢半")){
+											classifyItemVec.elementAt(j).winhalfgames++;
+										}else if(item[MERGEPRETABLEHEADINDEX.DXQRES.ordinal()].equals("输半")){
+											classifyItemVec.elementAt(j).losehalfgames++;
+										}else if(item[MERGEPRETABLEHEADINDEX.DXQRES.ordinal()].equals("走水")){
+											classifyItemVec.elementAt(j).zoushuigames++;
+										}
+										
+										find = true;
+										break;
+									}
+								}
+								
+								if(find == false){
+									pankouClassifyItem newitem = new pankouClassifyItem();
+									newitem.classify = item[MERGEPRETABLEHEADINDEX.DXQPANAS.ordinal()];
+									newitem.totalgames = 1;
+									
+									if(item[MERGEPRETABLEHEADINDEX.SCORE.ordinal()].equals("")){
+										newitem.noresgames++;
+									}else if(item[MERGEPRETABLEHEADINDEX.DXQRES.ordinal()].equals("全赢")){
+										newitem.wingames++;
+									}else if(item[MERGEPRETABLEHEADINDEX.DXQRES.ordinal()].equals("全输")){
+										newitem.losegames++;
+									}else if(item[MERGEPRETABLEHEADINDEX.DXQRES.ordinal()].equals("赢半")){
+										newitem.winhalfgames++;
+									}else if(item[MERGEPRETABLEHEADINDEX.DXQRES.ordinal()].equals("输半")){
+										newitem.losehalfgames++;
+									}else if(item[MERGEPRETABLEHEADINDEX.DXQRES.ordinal()].equals("走水")){
+										newitem.zoushuigames++;
+									}
+									
+									classifyItemVec.add(newitem);
+								}
+								
+							}else{
+							
+								boolean find = false;
+								
+								for(int j = 0; j < classifyItemVec.size(); j++){
+									if(item[MERGEPRETABLEHEADINDEX.RQPANAS.ordinal()].equals(classifyItemVec.elementAt(j).classify)){
+										classifyItemVec.elementAt(j).totalgames++;
+										if(item[MERGEPRETABLEHEADINDEX.SCORE.ordinal()].equals("")){
+											classifyItemVec.elementAt(j).noresgames++;
+										}else if(item[MERGEPRETABLEHEADINDEX.RQPRES.ordinal()].equals("全赢")){
+											classifyItemVec.elementAt(j).wingames++;
+										}else if(item[MERGEPRETABLEHEADINDEX.RQPRES.ordinal()].equals("全输")){
+											classifyItemVec.elementAt(j).losegames++;
+										}else if(item[MERGEPRETABLEHEADINDEX.RQPRES.ordinal()].equals("赢半")){
+											classifyItemVec.elementAt(j).winhalfgames++;
+										}else if(item[MERGEPRETABLEHEADINDEX.RQPRES.ordinal()].equals("输半")){
+											classifyItemVec.elementAt(j).losehalfgames++;
+										}else if(item[MERGEPRETABLEHEADINDEX.RQPRES.ordinal()].equals("走水")){
+											classifyItemVec.elementAt(j).zoushuigames++;
+										}
+										
+										find = true;
+										break;
+									}
+									
+									
+								}
+								
+								if(find == false){
+									pankouClassifyItem newitem = new pankouClassifyItem();
+									newitem.classify = item[MERGEPRETABLEHEADINDEX.RQPANAS.ordinal()];
+									newitem.totalgames = 1;
+									
+									if(item[MERGEPRETABLEHEADINDEX.SCORE.ordinal()].equals("")){
+										newitem.noresgames++;
+									}else if(item[MERGEPRETABLEHEADINDEX.RQPRES.ordinal()].equals("全赢")){
+										newitem.wingames++;
+									}else if(item[MERGEPRETABLEHEADINDEX.RQPRES.ordinal()].equals("全输")){
+										newitem.losegames++;
+									}else if(item[MERGEPRETABLEHEADINDEX.RQPRES.ordinal()].equals("赢半")){
+										newitem.winhalfgames++;
+									}else if(item[MERGEPRETABLEHEADINDEX.RQPRES.ordinal()].equals("输半")){
+										newitem.losehalfgames++;
+									}else if(item[MERGEPRETABLEHEADINDEX.RQPRES.ordinal()].equals("走水")){
+										newitem.zoushuigames++;
+									}
+									
+									classifyItemVec.add(newitem);
+								}
+							}
+
+							
+							
+							
+							
+							
+							
+							
+							
+							
+
+							
+						}
+						
+						
+					}
+					
+				}
+				
+				
+				
+			}
+			
+			
+			for(int i = 0; i < classifyItemVec.size(); i++){
+				String[] item = {Integer.toString(i+1), classifyItemVec.elementAt(i).classify, Integer.toString(classifyItemVec.elementAt(i).totalgames), Integer.toString(classifyItemVec.elementAt(i).wingames)
+						, Integer.toString(classifyItemVec.elementAt(i).winhalfgames), Integer.toString(classifyItemVec.elementAt(i).losegames), Integer.toString(classifyItemVec.elementAt(i).losehalfgames)
+						, Integer.toString(classifyItemVec.elementAt(i).zoushuigames), Integer.toString(classifyItemVec.elementAt(i).noresgames)};
+				
+				showItemVec.add(item);
+			}
+			
+			
+			
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+	}
 	
 	
 	public void updateShowItem(){
@@ -1359,6 +1976,8 @@ public class PankouAnsWindow extends JFrame{
 			showbypp();
 		}else if(bll == true){
 			showbyll();
+		}else if(bmerge == true){
+			showbymerge();
 		}
 		
 		
@@ -1407,6 +2026,11 @@ public class PankouAnsWindow extends JFrame{
 
         panelNorth.add(llcb);
         panelNorth.add(mergecb);
+        
+        
+        panelNorth.add(mergesidegoldlb);
+        panelNorth.add(mergesidegoldtxt);
+        
 
         panelNorth.add(mingoldlb);
 
@@ -1461,6 +2085,47 @@ public class PankouAnsWindow extends JFrame{
 				updateShowItem();
 			}
         });
+        
+        
+        
+        
+        mergesidegoldtxt.setText(Integer.toString(mergesidegold));
+        
+        mergesidegoldtxt.addKeyListener(new KeyListener(){
+            public void keyPressed(KeyEvent e) {  
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {  
+                    String value = mergesidegoldtxt.getText();  
+                    
+                    if(!Common.isNum(value)){
+                    	return;
+                    }else{
+                    	
+                    	JOptionPane.showMessageDialog(null,"合并占边金额:" + value);
+                    	
+                    	mergesidegold = Integer.parseInt(value);
+                    	
+                    	
+                    	if(bmerge == true){
+                    		updateShowItem();
+                    	}
+                    	
+                    	
+                    	//tableMode.updateTable();
+                    }
+                    
+                }  
+                // System.out.println("Text " + value);  
+            }  
+            public void keyReleased(KeyEvent e) {  
+            }  
+            public void keyTyped(KeyEvent e) {  
+            }  
+
+        });
+        
+        
+        
+        
         
         
         mingoldtxt.setText(Integer.toString(mingold));
@@ -1675,6 +2340,31 @@ public class PankouAnsWindow extends JFrame{
  
 
         
+
+        mergecb.setSelected(false);
+        
+        mergecb.addItemListener(new ItemListener() {
+
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				// TODO Auto-generated method stub
+               // int index = jcb.getSelectedIndex();
+				if(e.getStateChange() == ItemEvent.DESELECTED){
+					bmerge = false;
+					
+				}else{
+					bmerge = true;
+					bll = false;
+					bpp = false;
+					ppcb.setSelected(false);
+					
+					llcb.setSelected(false);
+
+				}
+				
+				updateShowItem();	
+			}
+        });
         
 
 

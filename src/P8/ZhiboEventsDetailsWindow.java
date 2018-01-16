@@ -467,6 +467,7 @@ public class ZhiboEventsDetailsWindow  extends JFrame{
 						}
 						
 						if(indexinscoredetails != -1){
+							
 							item[ZHIBOTABLEHEADINDEX.RQCHUPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.RQCHUPAN.ordinal()];
 							item[ZHIBOTABLEHEADINDEX.RQZHONGPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.RQZHONGPAN.ordinal()];
 							item[ZHIBOTABLEHEADINDEX.RQPANAS.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.RQPANAS.ordinal()];
@@ -474,6 +475,117 @@ public class ZhiboEventsDetailsWindow  extends JFrame{
 							item[ZHIBOTABLEHEADINDEX.DXQZHONGPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.DXQZHONGPAN.ordinal()];
 							item[ZHIBOTABLEHEADINDEX.DXQPANAS.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.DXQPANAS.ordinal()];
 							item[ZHIBOTABLEHEADINDEX.SCORE.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.SCORE.ordinal()];
+							
+							
+							
+							
+							
+							//给出赌哪边的提示
+							
+							//让球盘结果分析
+							if(!item[ZHIBOTABLEHEADINDEX.RQZHONGPAN.ordinal()].equals("") && !item[ZHIBOTABLEHEADINDEX.RQZHONGPAN.ordinal()].equals("-")
+									&& !item[ZHIBOTABLEHEADINDEX.RQPANAS.ordinal()].equals("")){
+								
+								System.out.println("p8 events:" + Arrays.toString(item));
+								
+								
+								
+
+								
+								String betside = "";
+								
+								
+								
+								int p0home = 0;
+								if(item[ZHIBOTABLEHEADINDEX.P0HOME.ordinal()].contains("=")){
+									p0home = Integer.parseInt(item[ZHIBOTABLEHEADINDEX.P0HOME.ordinal()].split("=")[1]);
+								}else{
+									p0home = Integer.parseInt(item[ZHIBOTABLEHEADINDEX.P0HOME.ordinal()]);
+								}
+								
+								
+								
+								
+								//只统计赌降的那一边
+								if(item[ZHIBOTABLEHEADINDEX.RQPANAS.ordinal()].contains("降") && 
+										item[ZHIBOTABLEHEADINDEX.RQCHUPAN.ordinal()].contains("受让")&&
+										p0home  > 0){
+									betside = "right";
+								}else if(item[ZHIBOTABLEHEADINDEX.RQPANAS.ordinal()].contains("降") && 
+										!item[ZHIBOTABLEHEADINDEX.RQCHUPAN.ordinal()].contains("受让")&&
+										p0home  < 0){
+									betside = "left";
+								}else if(item[ZHIBOTABLEHEADINDEX.RQPANAS.ordinal()].contains("升") && 
+										item[ZHIBOTABLEHEADINDEX.RQCHUPAN.ordinal()].contains("受让")&&
+										p0home  < 0){
+									betside = "left";
+								}else if(item[ZHIBOTABLEHEADINDEX.RQPANAS.ordinal()].contains("升") && 
+										!item[ZHIBOTABLEHEADINDEX.RQCHUPAN.ordinal()].contains("受让")&&
+										p0home  > 0){
+									betside = "right";
+								}
+								
+								String[] oldteams = item[ZHIBOTABLEHEADINDEX.EVENTNAME.ordinal()].split(" vs ");
+								
+								if(betside.equals("right")){
+									
+									item[ZHIBOTABLEHEADINDEX.EVENTNAME.ordinal()] = "<html>" + oldteams[0] + " vs " +  "<font color='red'>" + oldteams[1] + "</font>";
+								}else if(betside.equals("left")){
+									item[ZHIBOTABLEHEADINDEX.EVENTNAME.ordinal()] = "<html>" +"<font color='red'>" + oldteams[0] + "</font>" + " vs " + oldteams[1];
+								}
+
+								
+							}
+							
+							
+							
+							//大小球盘结果分析
+							if(!item[ZHIBOTABLEHEADINDEX.DXQZHONGPAN.ordinal()].equals("") && !item[ZHIBOTABLEHEADINDEX.DXQZHONGPAN.ordinal()].equals("-")
+									&& !item[ZHIBOTABLEHEADINDEX.DXQPANAS.ordinal()].equals("")){
+								
+								
+								
+								
+								int p0over = 0;
+								if(item[ZHIBOTABLEHEADINDEX.P0OVER.ordinal()].contains("=")){
+									p0over = Integer.parseInt(item[ZHIBOTABLEHEADINDEX.P0OVER.ordinal()].split("=")[1]);
+								}else{
+									p0over = Integer.parseInt(item[ZHIBOTABLEHEADINDEX.P0OVER.ordinal()]);
+								}
+								
+								
+								
+
+								String bet = "";
+								
+								//只统计赌降的一边
+								if(item[ZHIBOTABLEHEADINDEX.DXQPANAS.ordinal()].contains("降") && 
+										p0over  < 0){
+									bet = "大";
+								}else if(item[ZHIBOTABLEHEADINDEX.DXQPANAS.ordinal()].contains("升") && 
+										p0over  > 0){
+									bet = "小";
+								}
+
+								
+								
+								
+								if(!bet.equals("")){
+									
+									item[ZHIBOTABLEHEADINDEX.DXQPANAS.ordinal()] = "<html>" + "<font color='red'>" + item[ZHIBOTABLEHEADINDEX.DXQPANAS.ordinal()] + "</font>";
+								}
+								
+							}
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
 						}
 						
 						
