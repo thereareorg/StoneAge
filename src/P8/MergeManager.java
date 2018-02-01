@@ -44,9 +44,19 @@ public class MergeManager {
 	
 	public static MergeDetailsWindow mergeDetailsWnd = new MergeDetailsWindow();
 	
+	public static Vector<String> sendpankoualready = new Vector<String>();
+	
 	
 	
 	public static Vector<String[]> mergebeforegoaldetails = new Vector<String[]>();
+	
+	
+	public static int sendtotal = 500000;
+	public static int sendside = 100000;
+	
+	
+/*	public static int sendtotal = 500;
+	public static int sendside = 100;*/
 	
 	
 	
@@ -286,6 +296,380 @@ public class MergeManager {
     	return vec;
     }
 	
+    
+    
+    public static void sendpankoumails(){
+		try{
+			
+			
+			boolean bchupanres = false;
+
+			
+			Vector<String[]> Vectmp = new Vector<String[]>();
+			
+
+			
+			for(int i = 0; i < mergeEventDetailsVec.size(); i++){
+
+				String timeStr = mergeEventDetailsVec.elementAt(i)[MERGEINDEX.TIME.ordinal()];
+				
+				if(mergeEventDetailsVec.elementAt(i)[MERGEINDEX.EVENTNAMNE.ordinal()].contains("滚动盘")){
+					continue;
+				}
+
+				Vectmp.add(mergeEventDetailsVec.elementAt(i));
+		
+			}
+			
+			
+
+			
+			
+			
+			Vector<String[]> scoreDetails = StoneAge.score.getFinalScoresDetails();
+
+			if(scoreDetails == null || scoreDetails.size() == 0 || Vectmp.size() == 0){
+
+				return;
+
+				
+			}
+			
+			
+			
+			
+			for(int k = 0; k < scoreDetails.size(); k++){
+				System.out.println(Arrays.toString(scoreDetails.elementAt(k)));
+			}
+			
+			
+			System.out.println("Merge队:");
+			
+			for(int k = 0; k < Vectmp.size(); k++){
+				System.out.println(Arrays.toString(Vectmp.elementAt(k)));
+			}
+			
+			
+			
+			SimpleDateFormat dfMin = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+			
+			SimpleDateFormat dfDay = new SimpleDateFormat("yyyy-MM-dd");// 设置日期格式
+			long currentTimeL = System.currentTimeMillis();
+			
+			String todayStr = dfDay.format(currentTimeL);
+			
+			
+			
+			//合并score
+			for(int i = 0; i < Vectmp.size(); i++){
+				
+				String[] olditem = Vectmp.elementAt(i).clone();
+				
+				String mergetime = olditem[MERGEINDEX.TIME.ordinal()];
+				
+				if(!mergetime.contains("-")){
+					mergetime = todayStr + " " + mergetime;
+				}
+				
+				if(dfMin.parse(mergetime).getTime() - System.currentTimeMillis() > 120 * 1000){
+					continue;
+				}
+				
+				
+				String zhibohometeam = olditem[MERGEINDEX.EVENTNAMNE.ordinal()].split(" vs ")[0];
+				String zhiboawayteam = olditem[MERGEINDEX.EVENTNAMNE.ordinal()].split(" vs ")[1];
+				
+				String[] item = {Integer.toString(i+1), olditem[MERGEINDEX.LEAGUENAME.ordinal()], olditem[MERGEINDEX.TIME.ordinal()], olditem[MERGEINDEX.EVENTNAMNE.ordinal()], "", "", "",
+						olditem[MERGEINDEX.P8HRES.ordinal()], olditem[MERGEINDEX.INP8HRES.ordinal()], olditem[MERGEINDEX.ZHIBOHRES.ordinal()], olditem[MERGEINDEX.PERIOD0HOME.ordinal()],
+						"", "","", olditem[MERGEINDEX.P8ORES.ordinal()],olditem[MERGEINDEX.INP8ORES.ordinal()],olditem[MERGEINDEX.ZHIBOORES.ordinal()], olditem[MERGEINDEX.PERIOD0OVER.ordinal()],"", "", ""};
+				
+				String scorehometeam = MergeManager.findScoreTeambyzhiboteam(zhibohometeam);
+				if(scorehometeam != null){
+					String scoreawayteam = MergeManager.findScoreTeambyzhiboteam(zhiboawayteam);
+					
+					
+					
+					if(scoreawayteam != null){
+						
+						int indexinscoredetails = -1;
+						for(int j = 0; j < scoreDetails.size(); j++){
+							
+							String scoreTime = scoreDetails.elementAt(j)[SCORENEWINDEX.TIME.ordinal()];
+							
+							if(scoreDetails.elementAt(j)[SCORENEWINDEX.EVENTNAMNE.ordinal()].equals(scorehometeam + " vs " + scoreawayteam)){
+								indexinscoredetails = j;
+								break;
+							}
+						}
+						
+						if(indexinscoredetails != -1){
+							item[MERGEPRETABLEHEADINDEX.RQCHUPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.RQCHUPAN.ordinal()];
+							item[MERGEPRETABLEHEADINDEX.RQZHONGPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.RQZHONGPAN.ordinal()];
+							item[MERGEPRETABLEHEADINDEX.RQPANAS.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.RQPANAS.ordinal()];
+							item[MERGEPRETABLEHEADINDEX.DXQCHUPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.DXQCHUPAN.ordinal()];
+							item[MERGEPRETABLEHEADINDEX.DXQZHONGPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.DXQZHONGPAN.ordinal()];
+							item[MERGEPRETABLEHEADINDEX.DXQPANAS.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.DXQPANAS.ordinal()];
+							item[MERGEPRETABLEHEADINDEX.SCORE.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.SCORE.ordinal()];
+
+							
+							
+
+								//发送大小球盘
+								if(!item[MERGEPRETABLEHEADINDEX.DXQPANAS.ordinal()].equals("")){
+									
+								
+									
+									
+									
+									//大小球盘结果分析
+									if(!item[MERGEPRETABLEHEADINDEX.DXQZHONGPAN.ordinal()].equals("") && !item[MERGEPRETABLEHEADINDEX.DXQZHONGPAN.ordinal()].equals("-")){
+									
+										
+										
+										int p0over = 0;
+										
+										int pp = 0;
+										if(item[MERGEPRETABLEHEADINDEX.P8OVERRES.ordinal()].contains("=")){
+											pp = Integer.parseInt(item[MERGEPRETABLEHEADINDEX.P8OVERRES.ordinal()].split("=")[1]);
+										}
+										
+										int ll = 0;
+										ll = Integer.parseInt(item[MERGEPRETABLEHEADINDEX.ZHIBOOVERRES.ordinal()]);
+										
+										boolean addtosend = true;
+										
+										if((Math.abs(pp) + Math.abs(ll)) != Math.abs(pp + ll)){
+											addtosend = false;
+										}
+										
+										if(Math.abs(pp) < sendside || Math.abs(ll) < sendside){
+											addtosend = false;
+										}
+										
+										p0over = pp + ll;
+										
+										String sendgoldstr  = "(" + Integer.toString(pp) + ")+" + "(" + Integer.toString(ll) +")=" + Integer.toString(p0over);
+										
+										
+										if(Math.abs(p0over) < sendtotal){
+											addtosend = false;
+										}
+										
+
+										String bet = "";
+										
+										//只统计赌降的一边
+										if(item[MERGEPRETABLEHEADINDEX.DXQPANAS.ordinal()].contains("降") && 
+												p0over  < 0){
+											bet = "大";
+										}else if(item[MERGEPRETABLEHEADINDEX.DXQPANAS.ordinal()].contains("升") && 
+												p0over  > 0){
+											bet = "小";
+										}
+
+										
+										String sendmark = item[MERGEPRETABLEHEADINDEX.EVENTNAME.ordinal()] + "大小盘";
+										
+										
+										if(!bet.equals("") && addtosend == true && !sendpankoualready.contains(sendmark)){
+											
+											
+											
+											String sendTitle = "合并盘口分析 " + "【" + "大小盘" + "】";
+							    			String sendContent = "联赛:" + item[MERGEPRETABLEHEADINDEX.LEAGUE.ordinal()] + "<br>" +
+							    								 "球队:" + item[MERGEPRETABLEHEADINDEX.EVENTNAME.ordinal()] + "<br>" +
+							    								 "时间:" + item[MERGEPRETABLEHEADINDEX.TIME.ordinal()] + "<br>" +
+							    								 "初盘:" + item[MERGEPRETABLEHEADINDEX.DXQCHUPAN.ordinal()] + "<br>" +
+							    								 "终盘:" + item[MERGEPRETABLEHEADINDEX.DXQZHONGPAN.ordinal()] + "<br>" +
+							    								 "分析:" + item[MERGEPRETABLEHEADINDEX.DXQPANAS.ordinal()] + "<br>" +
+							    								 "金额:" + sendgoldstr;
+											
+											
+											Vector<String> mails = StoneAge.getPankouMailList();
+											
+											for(int k = 0, b = 0; k < mails.size()&& b < 50; b++){
+												String mail = mails.elementAt(k);
+											//	if(true == MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", mail, sendTitle, sendContent)){
+												if(true == MailManager.sendMail("240749322@qq.com", "240749322", "beaqekgmzscocbab", mail, sendTitle, sendContent)){
+													k++;
+												}else{
+													Thread.currentThread().sleep(2000);
+												}
+												
+											}
+											
+											sendpankoualready.add(sendmark);
+											
+										}
+										
+									}
+								}
+
+								
+								//发送让球盘
+								if(!item[MERGEPRETABLEHEADINDEX.RQPANAS.ordinal()].equals("")){
+									
+									
+									//让球盘结果分析
+									if(!item[MERGEPRETABLEHEADINDEX.RQZHONGPAN.ordinal()].equals("") && !item[MERGEPRETABLEHEADINDEX.RQZHONGPAN.ordinal()].equals("-")){
+										
+										System.out.println(Arrays.toString(item));
+										
+										
+										
+										
+										
+
+
+										
+										
+										int p0home = 0;
+										
+										int pp = 0;
+										if(item[MERGEPRETABLEHEADINDEX.P8HOMERES.ordinal()].contains("=")){
+											pp = Integer.parseInt(item[MERGEPRETABLEHEADINDEX.P8HOMERES.ordinal()].split("=")[1]);
+										}
+										
+										int ll = 0;
+										ll = Integer.parseInt(item[MERGEPRETABLEHEADINDEX.ZHIBOHOMERES.ordinal()]);
+										
+										if((Math.abs(pp) + Math.abs(ll)) != Math.abs(pp + ll)){
+											continue;
+										}
+										
+										boolean addtosend = true;
+										
+										if(Math.abs(pp) < sendside || Math.abs(ll) < sendside){
+											addtosend = false;
+										}
+										
+										p0home = pp + ll;
+										
+										String sendgoldstr  = "(" + Integer.toString(pp) + ")+" + "(" + Integer.toString(ll) +")=" + Integer.toString(p0home);
+										
+										if(Math.abs(p0home) < sendtotal){
+											addtosend = false;
+										}
+										
+										
+
+										String betside = "";
+										
+										//只统计赌降的那一边
+										if(item[MERGEPRETABLEHEADINDEX.RQPANAS.ordinal()].contains("降") && 
+												item[MERGEPRETABLEHEADINDEX.RQCHUPAN.ordinal()].contains("受让")&&
+												p0home  > 0){
+											betside = "right";
+										}else if(item[MERGEPRETABLEHEADINDEX.RQPANAS.ordinal()].contains("降") && 
+												!item[MERGEPRETABLEHEADINDEX.RQCHUPAN.ordinal()].contains("受让")&&
+												p0home  < 0){
+											betside = "left";
+										}else if(item[MERGEPRETABLEHEADINDEX.RQPANAS.ordinal()].contains("升") && 
+												item[MERGEPRETABLEHEADINDEX.RQCHUPAN.ordinal()].contains("受让")&&
+												p0home  < 0){
+											betside = "left";
+										}else if(item[MERGEPRETABLEHEADINDEX.RQPANAS.ordinal()].contains("升") && 
+												!item[MERGEPRETABLEHEADINDEX.RQCHUPAN.ordinal()].contains("受让")&&
+												p0home  > 0){
+											betside = "right";
+										}
+										
+										
+										String sendmark = item[MERGEPRETABLEHEADINDEX.EVENTNAME.ordinal()] + "让球盘";
+										
+										String[] oldteams = item[MERGEPRETABLEHEADINDEX.EVENTNAME.ordinal()].split(" vs ");
+										
+										if(betside.equals("right")){
+											
+											item[MERGEPRETABLEHEADINDEX.EVENTNAME.ordinal()] = "<html>" + oldteams[0] + " vs " +  "<font color='red'>" + oldteams[1] + "</font>";
+											
+											
+
+											
+										}else if(betside.equals("left")){
+											item[MERGEPRETABLEHEADINDEX.EVENTNAME.ordinal()] = "<html>" +"<font color='red'>" + oldteams[0] + "</font>" + " vs " + oldteams[1];
+											
+											//todo send
+										}else{
+											addtosend = false;
+										}
+										
+
+							
+										if(addtosend == true && !sendpankoualready.contains(sendmark)){
+											String sendTitle = "合并盘口分析 " + "【" + "让球盘" + "】";
+							    			String sendContent = "联赛:" + item[MERGEPRETABLEHEADINDEX.LEAGUE.ordinal()] + "<br>" +
+							    								 "球队:" + item[MERGEPRETABLEHEADINDEX.EVENTNAME.ordinal()] + "<br>" +
+							    								 "时间:" + item[MERGEPRETABLEHEADINDEX.TIME.ordinal()] + "<br>" +
+							    								 "初盘:" + item[MERGEPRETABLEHEADINDEX.RQCHUPAN.ordinal()] + "<br>" +
+							    								 "终盘:" + item[MERGEPRETABLEHEADINDEX.RQZHONGPAN.ordinal()] + "<br>" +
+							    								 "分析:" + item[MERGEPRETABLEHEADINDEX.RQPANAS.ordinal()] + "<br>" +
+							    								 "金额:" + sendgoldstr;
+											
+											
+											Vector<String> mails = StoneAge.getPankouMailList();
+											
+											for(int k = 0, b = 0; k < mails.size()&& b < 50; b++){
+												String mail = mails.elementAt(k);
+											//	if(true == MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", mail, sendTitle, sendContent)){
+												if(true == MailManager.sendMail("240749322@qq.com", "240749322", "beaqekgmzscocbab", mail, sendTitle, sendContent)){
+
+													k++;
+												}else{
+													Thread.currentThread().sleep(2000);
+												}
+												
+											}
+											
+											sendpankoualready.add(sendmark);
+										}
+										
+										
+										
+										
+									}
+									
+									
+								}
+
+
+							
+							
+							
+
+
+							
+							
+							
+							
+							
+							
+							
+							
+							
+
+							
+						}
+						
+						
+					}
+					
+				}
+				
+				
+				
+			}
+			
+			
+			
+			
+			
+			
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+    }
 	
 	
 	

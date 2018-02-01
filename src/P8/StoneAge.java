@@ -102,6 +102,8 @@ public class StoneAge {
 	
 	public static Vector<String> mailList = new Vector<String>();
 	
+	public static Vector<String> pankoumaillist = new Vector<String>();
+	
 	public static PankouAnsWindow pankouansWnd = new PankouAnsWindow();
 	
 	
@@ -150,18 +152,27 @@ public class StoneAge {
 	
 	public static void initMailList(){
 		
-		mailList.add("490207143@qq.com");
+		//pankoumaillist.add("490207143@qq.com");
 		
-		mailList.add("1131894627@qq.com");
+		pankoumaillist.add("1131894627@qq.com");
 		
-		mailList.add("tongjigujinlong@126.com");
 		
-		mailList.add("2503706418@qq.com");
 		
-		mailList.add("2195876152@qq.com");
+		pankoumaillist.add("2503706418@qq.com");
 		
-		mailList.add("1361861555@qq.com");
+		pankoumaillist.add("2195876152@qq.com");
 		
+		pankoumaillist.add("1361861555@qq.com");
+		
+		pankoumaillist.add("24378055@qq.com");
+		
+		pankoumaillist.add("490207143@qq.com");
+		pankoumaillist.add("tongjigujinlong@126.com");
+		
+		
+		
+		
+		//pankoumaillist.add("tongjigujinlong@126.com");
 		
 		
 /*		mailList.add("43069453@qq.com");
@@ -180,6 +191,10 @@ public class StoneAge {
 	
 	public static Vector<String> getMailList(){
 		return mailList;
+	}
+	
+	public static Vector<String> getPankouMailList(){
+		return pankoumaillist;
 	}
 	
 	

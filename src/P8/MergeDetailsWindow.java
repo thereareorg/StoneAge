@@ -25,6 +25,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Vector;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -76,6 +78,12 @@ public class MergeDetailsWindow extends JFrame{
 		private  Vector<String[]> originalDetailsData = new Vector<String[]>();
 		
 		private  Vector<String[]> detailsData = null;
+		
+		
+		//private  ReadWriteLock lockshowItem = new ReentrantReadWriteLock();
+		
+		
+		
 		
 		private Vector<String[]> showItemVec = new Vector<String[]>();
 		
@@ -179,7 +187,10 @@ public class MergeDetailsWindow extends JFrame{
 	    
 	    
 	    
-		
+
+	    
+	    
+	    
 
 		public MergeDetailsWindow()  
 	    {  
@@ -322,6 +333,10 @@ public class MergeDetailsWindow extends JFrame{
 		
 		
 		public void updateShowItem(){
+			
+		try{
+			
+			
 			
 			Vector<String[]> DetailsDatatmp = new Vector<String[]>();
 			
@@ -694,6 +709,8 @@ public class MergeDetailsWindow extends JFrame{
 			detailsData = (Vector<String[]>)DetailsDatatmp2.clone();
 			
 			
+			
+			
 			if(showItemVec.size()!= 0){
 				showItemVec.clear();
 			}
@@ -866,14 +883,12 @@ public class MergeDetailsWindow extends JFrame{
 			
 			hideDatacols();
 			
-/*			hideDatacols();
+		}catch(Exception e){
+			e.printStackTrace();
 			
+		}
 			
-			fittable();*/
-			
-			
-			
-			//setOneRowBackgroundColor();
+
 			
 		}
 

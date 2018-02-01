@@ -213,6 +213,8 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
              
              ZhiboManager.updateEventsDetailsData();
              
+             
+             ZhiboManager.sendpankouMails();
         
              SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");// 设置日期格式
      		
@@ -233,10 +235,13 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
              MergeManager.clearMergeData();
              MergeManager.constructMergeRes();
              
+             MergeManager.sendpankoumails();
+             
              MergeManager.saveEvents();
              
              MergeManager.updateEventsDetails();
              MergeManager.copyTofinalEventsDetails();
+             
              
              
              

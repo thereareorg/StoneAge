@@ -32,6 +32,8 @@ public class ZhiboManager {
     
 
     public static Vector<String> alreadSendmailEvents = new Vector<String>();
+    
+    public static Vector<String> sendpankoualready = new Vector<String>();
 	
 	static Vector<String> showLeagueName = new Vector<String>();
 	
@@ -316,137 +318,163 @@ public class ZhiboManager {
     
 
     
-    public static void sendMails(){
+    public static void sendpankouMails(){
     	
-/*    	try{
+    	try{
     		
     		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     		
-        	for(int i = 0; i < eventDetailsVec.size(); i++){
-        		String[] item = eventDetailsVec.elementAt(i).clone();
-        		
-				SimpleDateFormat dfDay = new SimpleDateFormat("yyyy-MM-dd");// 设置日期格式
-				
-				//SimpleDateFormat dfDay = new SimpleDateFormat("yyyy-MM-dd");// 设置日期格式
-				
-				
-				long currentTimeL = System.currentTimeMillis();
-				
-				String todayStr = dfDay.format(currentTimeL);
-				
-
-					
-				String timeStr = item[TYPEINDEX.TIME.ordinal()];
-				
-				if(!timeStr.contains("-")){
+    		for(int i = 0; i< eventDetailsVec.size(); i++){
+    			
+    			String timeStr = eventDetailsVec.elementAt(i)[ZHIBOINDEX.TIME.ordinal()];
+    			
+    			if(timeStr.contains("(")){
+    				continue;
+    			}
+    			
+    			SimpleDateFormat dfDay = new SimpleDateFormat("yyyy-MM-dd");// 设置日期格式
+    			long currentTimeL = System.currentTimeMillis();
+    			
+    			String todayStr = dfDay.format(currentTimeL);
+    			
+    			if(!timeStr.contains("-")){
 					timeStr = todayStr + " " + timeStr;
 				}
-        		
-        		
-        		//long time = Long.parseLong(item[ZHIBOINDEX.TIME.ordinal()]);
-        		
-        		String key = item[ZHIBOINDEX.EVENTNAMNE.ordinal()] + " " + timeStr;
-        		
-        		String saved = item[ZHIBOINDEX.SAVED.ordinal()];
-        		
-        		if(saved.contains("1"))
-        			continue;
-        		
-        		//过滤滚动盘
-        		if(key.contains("滚动盘")){
-        			continue;
-        		}
-        		
-        		if(true != mailRecords.containsKey(key)){
-        			Vector<Integer> records = new Vector<Integer>();
-        			mailRecords.put(key, records);
-        		}
-        		
-        		//开始解析数据
-    			double p0h = Double.parseDouble(item[ZHIBOINDEX.PERIOD0HOME.ordinal()]);
-    			double p0o = Double.parseDouble(item[ZHIBOINDEX.PERIOD0OVER.ordinal()]);
-    			double p1h = Double.parseDouble(item[ZHIBOINDEX.PERIOD1HOME.ordinal()]);
-    			double p1o = Double.parseDouble(item[ZHIBOINDEX.PERIOD1OVER.ordinal()]);
-    			
-    			int p0hsend = (int) (p0h/ZhiboSendNumber);    			
-    			Vector<Integer> records = mailRecords.get(key);    			
-    			if(true != records.contains(p0hsend) && p0hsend != 0){
-    				records.add(p0hsend);
-    				System.out.println("LL send 全场让球 " + df.format(System.currentTimeMillis()));
-    				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "43069453@qq.com", "LL " + key, "全场让球:" + Integer.toString(p0hsend));
-    				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "490207143@qq.com", "LL " + key, "全场让球:" + Integer.toString(p0hsend));
-    				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", "LL " + key, "全场让球:" + Integer.toString(p0hsend));
-
-    			}
-    			
-    			int p0osend = (int) (p0o/ZhiboSendNumber);
-    			int p0osendsaved = 0;
-    			if(p0osend != 0){
-    				if(p0osend < 0){
-    					p0osendsaved = p0osend - 10;
-    				}else{
-    					p0osendsaved = p0osend + 10;
-    				}
-    				
-        			if(true != records.contains(p0osendsaved)){
-        				records.add(p0osendsaved);
-        				System.out.println("LL send 全场大小 " +  df.format(System.currentTimeMillis()));
-        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "43069453@qq.com", "LL " + key, "全场大小:" + Integer.toString(p0osend));
-        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "490207143@qq.com", "LL " + key, "全场大小:" + Integer.toString(p0osend));
-        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", "LL " + key, "全场大小:" + Integer.toString(p0osend));
-
-        			}
-    				
-    			}
     			
     			
-    			int p1hsend = (int) (p1h/ZhiboSendNumber);
-    			int p1hsendsaved = 0;
-    			if(p1hsend != 0){
-    				if(p1hsend < 0){
-    					p1hsendsaved = p1hsend - 20;
-    				}else{
-    					p1hsendsaved = p1hsend + 20;
-    				}
-    				
-        			if(true != records.contains(p1hsendsaved)){
-        				records.add(p1hsendsaved);
-        				System.out.println("LL send 半场让球 " + df.format(System.currentTimeMillis()));
-        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "43069453@qq.com", "LL " + key, "半场让球:" + Integer.toString(p1hsend));
-        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "490207143@qq.com", "LL " + key, "半场让球:" + Integer.toString(p1hsend));
-        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", "LL " + key, "半场让球:" + Integer.toString(p1hsend));
-        				
-        			}
-    				
-    			}
     			
-    			
-    			int p1osend = (int) (p1o/ZhiboSendNumber);
-    			int p1osendsaved = 0;
-    			if(p1osend != 0){
-    				if(p1osend < 0){
-    					p1osendsaved = p1osend - 30;
-    				}else{
-    					p1osendsaved = p1osend + 30;
-    				}
-    				
-        			if(true != records.contains(p1osendsaved)){
-        				records.add(p1osendsaved);
-        				System.out.println("LL send 半场大小 "+ df.format(System.currentTimeMillis()));
-        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "43069453@qq.com", "LL " + key, "半场大小:" + Integer.toString(p1osend));
-        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "490207143@qq.com", "LL " + key, "半场大小:" + Integer.toString(p1osend));
-        				MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", "LL " + key, "半场大小:" + Integer.toString(p1osend));
-
-        			}
-    				
+    			if(df.parse(timeStr).getTime() - System.currentTimeMillis() > 120*1000){
+    				continue;
     			}
     			
 
-        	}
+    			Vector<String[]> scoreDetails = StoneAge.score.getFinalScoresDetails();
+    			
+    			if(scoreDetails== null ||scoreDetails.size() == 0){
+    				return;
+    			}
+    			
+    			
+    			
+    			String[] olditem = eventDetailsVec.elementAt(i).clone();
+				
+				String zhibohometeam = olditem[TYPEINDEX.EVENTNAMNE.ordinal()].split(" vs ")[0];
+				String zhiboawayteam = olditem[TYPEINDEX.EVENTNAMNE.ordinal()].split(" vs ")[1];
+				
+				String[] item = {Integer.toString(i+1), olditem[TYPEINDEX.LEAGUENAME.ordinal()], olditem[TYPEINDEX.TIME.ordinal()], olditem[TYPEINDEX.EVENTNAMNE.ordinal()], "", "", "",
+						olditem[TYPEINDEX.PERIOD0HOME.ordinal()], "", "", "", olditem[TYPEINDEX.PERIOD0OVER.ordinal()], ""};
+				
+				String scorehometeam = MergeManager.findScoreTeambyzhiboteam(zhibohometeam);
+				if(scorehometeam != null){
+					
+					String scoreawayteam = MergeManager.findScoreTeambyzhiboteam(zhiboawayteam);
+
+					if(scoreawayteam != null){
+						
+						int indexinscoredetails = -1;
+						for(int j = 0; j < scoreDetails.size(); j++){
+							if(scoreDetails.elementAt(j)[SCORENEWINDEX.EVENTNAMNE.ordinal()].equals(scorehometeam + " vs " + scoreawayteam) ){
+								indexinscoredetails = j;
+								break;
+							}
+						}
+						
+						if(indexinscoredetails != -1){
+							
+							item[ZHIBOTABLEHEADINDEX.RQCHUPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.RQCHUPAN.ordinal()];
+							item[ZHIBOTABLEHEADINDEX.RQZHONGPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.RQZHONGPAN.ordinal()];
+							item[ZHIBOTABLEHEADINDEX.RQPANAS.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.RQPANAS.ordinal()];
+							item[ZHIBOTABLEHEADINDEX.DXQCHUPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.DXQCHUPAN.ordinal()];
+							item[ZHIBOTABLEHEADINDEX.DXQZHONGPAN.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.DXQZHONGPAN.ordinal()];
+							item[ZHIBOTABLEHEADINDEX.DXQPANAS.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.DXQPANAS.ordinal()];
+							item[ZHIBOTABLEHEADINDEX.SCORE.ordinal()] = scoreDetails.elementAt(indexinscoredetails)[SCORENEWINDEX.SCORE.ordinal()];
+							
+							
+							//大小球盘结果分析
+							if(!item[ZHIBOTABLEHEADINDEX.DXQZHONGPAN.ordinal()].equals("") && !item[ZHIBOTABLEHEADINDEX.DXQZHONGPAN.ordinal()].equals("-")
+									&& !item[ZHIBOTABLEHEADINDEX.DXQPANAS.ordinal()].equals("")){
+								
+								
+								
+								
+								int p0over = 0;
+								if(item[ZHIBOTABLEHEADINDEX.P0OVER.ordinal()].contains("=")){
+									p0over = Integer.parseInt(item[ZHIBOTABLEHEADINDEX.P0OVER.ordinal()].split("=")[1]);
+								}else{
+									p0over = Integer.parseInt(item[ZHIBOTABLEHEADINDEX.P0OVER.ordinal()]);
+								}
+								
+								if(Math.abs(p0over) < 400000){
+									continue;
+								}
+								
+
+								String bet = "";
+								
+								//只统计赌降的一边
+								if(item[ZHIBOTABLEHEADINDEX.DXQPANAS.ordinal()].contains("降") && 
+										p0over  < 0){
+									bet = "大";
+								}else if(item[ZHIBOTABLEHEADINDEX.DXQPANAS.ordinal()].contains("升") && 
+										p0over  > 0){
+									bet = "小";
+								}
+
+								String sendmark = item[ZHIBOTABLEHEADINDEX.EVENTNAME.ordinal()] + "大";
+								
+								
+								if(bet.equals("大") && !sendpankoualready.contains(sendmark)){
+								//if(!sendpankoualready.contains(sendmark)){
+									
+									String sendTitle = "LL " + "【" + "大" + "】";
+					    			String sendContent = "联赛:" + item[ZHIBOTABLEHEADINDEX.LEAGUE.ordinal()] + "<br>" +
+					    								 "球队:" + item[ZHIBOTABLEHEADINDEX.EVENTNAME.ordinal()] + "<br>" +
+					    								 "时间:" + item[ZHIBOTABLEHEADINDEX.TIME.ordinal()] + "<br>" +
+					    								 "初盘:" + item[ZHIBOTABLEHEADINDEX.DXQCHUPAN.ordinal()] + "<br>" +
+					    								 "终盘:" + item[ZHIBOTABLEHEADINDEX.DXQZHONGPAN.ordinal()] + "<br>" +
+					    								 "分析:" + item[ZHIBOTABLEHEADINDEX.DXQPANAS.ordinal()] + "<br>" +
+					    								 "金额:" + item[ZHIBOTABLEHEADINDEX.P0OVER.ordinal()];
+									
+									
+									Vector<String> mails = StoneAge.getPankouMailList();
+									
+									for(int k = 0, b = 0; k < mails.size()&& b < 50; b++){
+										String mail = mails.elementAt(k);
+									//	if(true == MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", mail, sendTitle, sendContent)){
+										if(true == MailManager.sendMail("240749322@qq.com", "240749322", "beaqekgmzscocbab", mail, sendTitle, sendContent)){
+											k++;
+										}else{
+											Thread.currentThread().sleep(2000);
+										}
+										
+									}
+									
+									sendpankoualready.add(sendmark);
+								}
+								
+							}
+							
+							
+							
+						}
+							
+							
+							
+							
+							//给出赌哪边的提示
+    			
+    			
+					}
+    			
+				}
+    			
+    		}
+    		
+
     		
     	}catch(Exception e){
     		e.printStackTrace();
-    	}*/
+    	}
     	
 
     }
