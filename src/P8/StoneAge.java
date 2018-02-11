@@ -217,6 +217,8 @@ public class StoneAge {
 		if(true){
 			p8.getTotalbet();
 		}*/
+		
+		
 
 		scorethread = new ScoreThread();
 		scorethread.start();
@@ -249,6 +251,8 @@ public class StoneAge {
 		HGhttp.initShowLeagueName();
 		
 		ZhiboManager.initShowLeagueName();
+		
+		//ScoreMergeManager.getchecklist();
 
 		sa = new StoneAge();
 		

@@ -22,6 +22,8 @@ import java.util.Vector;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.json.JSONObject;
+
 import team.gl.nio.cln.ZhiboClientHandler;
 import HG.HGINDEX;
 import HG.HGMergeManager;
@@ -547,7 +549,7 @@ public class MergeManager {
 										
 										String sendgoldstr  = "(" + Integer.toString(pp) + ")+" + "(" + Integer.toString(ll) +")=" + Integer.toString(p0home);
 										
-										if(Math.abs(p0home) < sendtotal){
+										if(Math.abs(p0home) < 1000000){
 											addtosend = false;
 										}
 										
@@ -1836,6 +1838,26 @@ public class MergeManager {
     	
     }
 	
+    
+	public static String getchecklist(){
+		try{
+			
+			
+			
+			JSONObject gameObj = new JSONObject(checkList);
+			
+			String res = gameObj.toString();
+			
+			
+
+			
+			return res;
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			return "[]";
+		}
+	}
 	
 	
 	

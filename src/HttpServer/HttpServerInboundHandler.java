@@ -15,7 +15,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import team.gl.nio.cln.ZhiboClientHandler;
+import P8.MergeManager;
 import P8.P8Http;
+import P8.ScoreMergeManager;
+import P8.StoneAge;
 import P8.TYPEINDEX;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -121,7 +124,101 @@ public class HttpServerInboundHandler extends ChannelInboundHandlerAdapter {
             }
             
             
+            if(uri.equals("/scoredata")){
+            	Vector<String[]> scoredata = StoneAge.score.getFinalScoresDetails();
+            	
+            	String res = "[";
+            	
+            	for(int i = 0 ; i < scoredata.size(); i++){
+            		
+            		if(!res.equals("[")){
+            			res = res + ",";
+            		}
+            		
+            		
+            		
+            		res = res + Arrays.toString(scoredata.elementAt(i));
+            		
+            	}
+            	
+            	res = res + "]";
+            	
+                FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1,
+                        OK, Unpooled.wrappedBuffer(res.getBytes("UTF-8")));
+                response.headers().set(CONTENT_TYPE, "text/plain");
+                response.headers().set(CONTENT_LENGTH,
+                        response.content().readableBytes());
+                if (HttpHeaders.isKeepAlive(request)) {
+                    response.headers().set(CONNECTION, Values.KEEP_ALIVE);
+                }
+                ctx.write(response);
+                ctx.flush();
+            }
             
+            if(uri.equals("/scorechecklist")){
+            	String res = ScoreMergeManager.getchecklist();
+            			
+                FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1,
+                        OK, Unpooled.wrappedBuffer(res.getBytes("UTF-8")));
+                response.headers().set(CONTENT_TYPE, "text/plain");
+                response.headers().set(CONTENT_LENGTH,
+                        response.content().readableBytes());
+                if (HttpHeaders.isKeepAlive(request)) {
+                    response.headers().set(CONNECTION, Values.KEEP_ALIVE);
+                }
+                ctx.write(response);
+                ctx.flush();
+            }
+            
+            if(uri.equals("/checklist")){
+            	String res = MergeManager.getchecklist();
+            			
+                FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1,
+                        OK, Unpooled.wrappedBuffer(res.getBytes("UTF-8")));
+                response.headers().set(CONTENT_TYPE, "text/plain");
+                response.headers().set(CONTENT_LENGTH,
+                        response.content().readableBytes());
+                if (HttpHeaders.isKeepAlive(request)) {
+                    response.headers().set(CONNECTION, Values.KEEP_ALIVE);
+                }
+                ctx.write(response);
+                ctx.flush();
+            }
+            
+            if(uri.contains("/scorepdata")){
+            	
+            	String date = uri.replace("/scorepdata/", "");
+            			
+	        	Vector<String[]> scoredata = StoneAge.score.getpreviousdetailsbyday(date);
+	        	
+	        	String res = "[";
+	        	
+	        	for(int i = 0 ; i < scoredata.size(); i++){
+	        		
+	        		if(!res.equals("[")){
+	        			res = res + ",";
+	        		}
+	        		
+	        		
+	        		
+	        		res = res + Arrays.toString(scoredata.elementAt(i));
+	        		
+	        	}
+	        	
+	        	res = res + "]";
+	        	
+	            FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1,
+	                    OK, Unpooled.wrappedBuffer(res.getBytes("UTF-8")));
+	            response.headers().set(CONTENT_TYPE, "text/plain");
+	            response.headers().set(CONTENT_LENGTH,
+	                    response.content().readableBytes());
+	            if (HttpHeaders.isKeepAlive(request)) {
+	                response.headers().set(CONNECTION, Values.KEEP_ALIVE);
+	            }
+	            ctx.write(response);
+	            ctx.flush();
+            	
+            }
             
             
             

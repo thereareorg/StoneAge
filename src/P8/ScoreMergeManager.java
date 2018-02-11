@@ -19,6 +19,8 @@ import java.util.Vector;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.json.JSONObject;
+
 
 
 public class ScoreMergeManager {
@@ -195,7 +197,24 @@ public class ScoreMergeManager {
 	
 	
 	
-	
+	public static String getchecklist(){
+		try{
+			
+			
+			
+			JSONObject gameObj = new JSONObject(checkList);
+			
+			String res = gameObj.toString();
+
+			
+			
+			return res;
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			return "[]";
+		}
+	}
 
 	
 
