@@ -179,7 +179,7 @@ public class PankouAnsWindow extends JFrame{
     
     private JLabel mingoldlb = new JLabel("最低金额");
     private JTextField mingoldtxt = new JTextField();
-    int mingold = 10000;
+    int mingold = 1000000;
     
     private JLabel maxgoldlb = new JLabel("最高金额");
     private JTextField maxgoldtxt = new JTextField();
@@ -213,8 +213,6 @@ public class PankouAnsWindow extends JFrame{
 
 		try{
 
-			
-			
 			updateShowItem();
 			
 		}catch(Exception e){

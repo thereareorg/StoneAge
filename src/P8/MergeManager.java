@@ -373,7 +373,7 @@ public class MergeManager {
 					mergetime = todayStr + " " + mergetime;
 				}
 				
-				if(dfMin.parse(mergetime).getTime() - System.currentTimeMillis() > 120 * 1000){
+				if(dfMin.parse(mergetime).getTime() - System.currentTimeMillis() > 120 * 1000 || dfMin.parse(mergetime).getTime() - System.currentTimeMillis() < -60*1000){
 					continue;
 				}
 				
@@ -721,7 +721,8 @@ public class MergeManager {
 
 				
 				//old save method
-				if(mergeEventDetailsVec.elementAt(i)[ZHIBOINDEX.SAVED.ordinal()].equals("1")){
+				//if(mergeEventDetailsVec.elementAt(i)[ZHIBOINDEX.SAVED.ordinal()].equals("1")){//有进球了存储
+				if(pass > 0){//开赛即存储
 					//mergeEventDetailsVec.elementAt(i)[ZHIBOINDEX.SAVED.ordinal()] = "1";				
 					
 					
@@ -748,12 +749,14 @@ public class MergeManager {
 					
 					
 					if(saveRes == true){
-						System.out.println("already have goal, save success:" + Arrays.toString(item));
+						//System.out.println("already have goal, save success:" + Arrays.toString(item));
+						
+						System.out.println(dfMin.format(System.currentTimeMillis()) + " merge save success:" + Arrays.toString(item));
 
 					}
 					
 					
-				}else if(pass > passMinutes){					
+				}/*else if(pass > passMinutes){					
 					String[] item = mergeEventDetailsVec.elementAt(i).clone();
 					item[ZHIBOINDEX.TIME.ordinal()] = timeStr;
 					boolean saveRes = pDataManager.saveTofile(item);	
@@ -761,7 +764,7 @@ public class MergeManager {
 						System.out.println("game over no goal merge inplay save success:" + Arrays.toString(item));
 					}
 					
-				}
+				}*/
 				//old save method
 
 				

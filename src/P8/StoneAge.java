@@ -154,6 +154,16 @@ public class StoneAge {
 		
 		//pankoumaillist.add("490207143@qq.com");
 		
+		
+		mailList.add("1131894627@qq.com");
+		
+		mailList.add("490207143@qq.com");
+		
+		mailList.add("2195876152@qq.com");
+		
+		pankoumaillist.add("2195876152@qq.com");
+		
+		
 		pankoumaillist.add("1131894627@qq.com");
 		
 		

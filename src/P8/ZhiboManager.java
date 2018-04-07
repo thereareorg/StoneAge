@@ -343,7 +343,7 @@ public class ZhiboManager {
     			
     			
     			
-    			if(df.parse(timeStr).getTime() - System.currentTimeMillis() > 120*1000){
+    			if(df.parse(timeStr).getTime() - System.currentTimeMillis() > 120*1000 || df.parse(timeStr).getTime() - System.currentTimeMillis() < -60*1000){
     				continue;
     			}
     			
