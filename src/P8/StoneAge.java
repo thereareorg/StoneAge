@@ -172,7 +172,7 @@ public class StoneAge {
 		
 		pankoumaillist.add("2195876152@qq.com");
 		
-		pankoumaillist.add("1361861555@qq.com");
+		//pankoumaillist.add("1361861555@qq.com");
 		
 		pankoumaillist.add("24378055@qq.com");
 		

@@ -822,13 +822,17 @@ public class PankouAnsWindow extends JFrame{
 				
 				double wingames = winallgames + winhalfgames*0.5;
 				
+				double losegames = loseallgames + losehalfgames*0.5;
+				
+				double winMinusLose = wingames - losegames;
+				
 				double winratio = wingames/totalgames;
 				
 				String ratiostr = nf.format(winratio);
 				
 				String[] item = {Integer.toString(i+1), classifyItemVec.elementAt(i).classify, Integer.toString(classifyItemVec.elementAt(i).totalgames), Integer.toString(classifyItemVec.elementAt(i).wingames)
 						, Integer.toString(classifyItemVec.elementAt(i).winhalfgames), Integer.toString(classifyItemVec.elementAt(i).losegames), Integer.toString(classifyItemVec.elementAt(i).losehalfgames)
-						, Integer.toString(classifyItemVec.elementAt(i).zoushuigames), Integer.toString(classifyItemVec.elementAt(i).noresgames), ratiostr};
+						, Integer.toString(classifyItemVec.elementAt(i).zoushuigames), Integer.toString(classifyItemVec.elementAt(i).noresgames), Double.toString(wingames), Double.toString(losegames), Double.toString(winMinusLose)};
 				
 				
 
@@ -837,7 +841,7 @@ public class PankouAnsWindow extends JFrame{
 			}
 			
 			if(showItemVec.size() > 0){
-				double wingames = allwin + allwinhalf*0.5;
+/*				double wingames = allwin + allwinhalf*0.5;
 				
 				double winratio = wingames/alltotal;
 				
@@ -847,7 +851,24 @@ public class PankouAnsWindow extends JFrame{
 						, Integer.toString(allwinhalf), Integer.toString(alllose), Integer.toString(alllosehalf)
 						, Integer.toString(allzoushui), "", ratiostr};
 				
+				showItemVec.add(item);*/
+				
+				double wingames = allwin + allwinhalf*0.5;
+				
+				//double winratio = wingames/alltotal;
+				
+				double losegames = alllose + alllosehalf*0.5;
+				
+				double winMinusLose = wingames - losegames;
+				
+				//String ratiostr = nf.format(winratio);
+				
+				String[] item = {Integer.toString(showItemVec.size()+1), "汇总", Integer.toString(alltotal), Integer.toString(allwin)
+						, Integer.toString(allwinhalf), Integer.toString(alllose), Integer.toString(alllosehalf)
+						, Integer.toString(allzoushui), "", Double.toString(wingames), Double.toString(losegames), Double.toString(winMinusLose)};
+				
 				showItemVec.add(item);
+				
 			}
 			
 			
@@ -1446,13 +1467,17 @@ public class PankouAnsWindow extends JFrame{
 				
 				double wingames = winallgames + winhalfgames*0.5;
 				
+				double losegames = loseallgames + losehalfgames*0.5;
+				
+				double winMinusLose = wingames - losegames;
+				
 				double winratio = wingames/totalgames;
 				
 				String ratiostr = nf.format(winratio);
 				
 				String[] item = {Integer.toString(i+1), classifyItemVec.elementAt(i).classify, Integer.toString(classifyItemVec.elementAt(i).totalgames), Integer.toString(classifyItemVec.elementAt(i).wingames)
 						, Integer.toString(classifyItemVec.elementAt(i).winhalfgames), Integer.toString(classifyItemVec.elementAt(i).losegames), Integer.toString(classifyItemVec.elementAt(i).losehalfgames)
-						, Integer.toString(classifyItemVec.elementAt(i).zoushuigames), Integer.toString(classifyItemVec.elementAt(i).noresgames), ratiostr};
+						, Integer.toString(classifyItemVec.elementAt(i).zoushuigames), Integer.toString(classifyItemVec.elementAt(i).noresgames), Double.toString(wingames), Double.toString(losegames), Double.toString(winMinusLose)};
 				
 				
 
@@ -1461,7 +1486,7 @@ public class PankouAnsWindow extends JFrame{
 			}
 			
 			if(showItemVec.size() > 0){
-				double wingames = allwin + allwinhalf*0.5;
+				/*double wingames = allwin + allwinhalf*0.5;
 				
 				double winratio = wingames/alltotal;
 				
@@ -1470,6 +1495,22 @@ public class PankouAnsWindow extends JFrame{
 				String[] item = {Integer.toString(showItemVec.size()+1), "汇总", Integer.toString(alltotal), Integer.toString(allwin)
 						, Integer.toString(allwinhalf), Integer.toString(alllose), Integer.toString(alllosehalf)
 						, Integer.toString(allzoushui), "", ratiostr};
+				
+				showItemVec.add(item);*/
+				
+				double wingames = allwin + allwinhalf*0.5;
+				
+				//double winratio = wingames/alltotal;
+				
+				double losegames = alllose + alllosehalf*0.5;
+				
+				double winMinusLose = wingames - losegames;
+				
+				//String ratiostr = nf.format(winratio);
+				
+				String[] item = {Integer.toString(showItemVec.size()+1), "汇总", Integer.toString(alltotal), Integer.toString(allwin)
+						, Integer.toString(allwinhalf), Integer.toString(alllose), Integer.toString(alllosehalf)
+						, Integer.toString(allzoushui), "", Double.toString(wingames), Double.toString(losegames), Double.toString(winMinusLose)};
 				
 				showItemVec.add(item);
 			}
@@ -2110,13 +2151,17 @@ public class PankouAnsWindow extends JFrame{
 				
 				double wingames = winallgames + winhalfgames*0.5;
 				
+				double losegames = loseallgames + losehalfgames*0.5;
+				
+				double winMinusLose = wingames - losegames;
+				
 				double winratio = wingames/totalgames;
 				
 				String ratiostr = nf.format(winratio);
 				
 				String[] item = {Integer.toString(i+1), classifyItemVec.elementAt(i).classify, Integer.toString(classifyItemVec.elementAt(i).totalgames), Integer.toString(classifyItemVec.elementAt(i).wingames)
 						, Integer.toString(classifyItemVec.elementAt(i).winhalfgames), Integer.toString(classifyItemVec.elementAt(i).losegames), Integer.toString(classifyItemVec.elementAt(i).losehalfgames)
-						, Integer.toString(classifyItemVec.elementAt(i).zoushuigames), Integer.toString(classifyItemVec.elementAt(i).noresgames), ratiostr};
+						, Integer.toString(classifyItemVec.elementAt(i).zoushuigames), Integer.toString(classifyItemVec.elementAt(i).noresgames), Double.toString(wingames), Double.toString(losegames), Double.toString(winMinusLose)};
 				
 				
 
@@ -2127,13 +2172,17 @@ public class PankouAnsWindow extends JFrame{
 			if(showItemVec.size() > 0){
 				double wingames = allwin + allwinhalf*0.5;
 				
-				double winratio = wingames/alltotal;
+				//double winratio = wingames/alltotal;
 				
-				String ratiostr = nf.format(winratio);
+				double losegames = alllose + alllosehalf*0.5;
+				
+				double winMinusLose = wingames - losegames;
+				
+				//String ratiostr = nf.format(winratio);
 				
 				String[] item = {Integer.toString(showItemVec.size()+1), "汇总", Integer.toString(alltotal), Integer.toString(allwin)
 						, Integer.toString(allwinhalf), Integer.toString(alllose), Integer.toString(alllosehalf)
-						, Integer.toString(allzoushui), "", ratiostr};
+						, Integer.toString(allzoushui), "", Double.toString(wingames), Double.toString(losegames), Double.toString(winMinusLose)};
 				
 				showItemVec.add(item);
 			}
@@ -2651,7 +2700,7 @@ public class PankouAnsWindow extends JFrame{
          * 这里和刚才一样，定义列名和每个数据的值 
          */  
         String[] columnNames =  
-        	 { "序号", "分类", "总场次","全赢", "赢半", "全输", "输半" , "走水", "无结果","胜率"};
+        	 { "序号", "分类", "总场次","全赢", "赢半", "全输", "输半" , "走水", "无结果","胜场","输场","胜差"};
         
 
         /** 
