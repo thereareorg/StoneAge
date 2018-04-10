@@ -97,11 +97,16 @@ public class TeamMatchWindow extends JFrame
 	
 	//private Map<String,String> originalDetailsData = new HashMap<String,String>();
 	
-	private  Vector<String[]> detailsData = null;
+	private  Vector<String[]> detailsData = new Vector<String[]>();
 	
 	//private Map<String,String> detailsData = null;
     
     
+    private JLabel labelsearch= new JLabel("搜索:");
+    private JTextField textsearch = new JTextField(15);
+    
+    private String serachtxt = "";
+	
     private JPopupMenu m_popupMenu;
     
     private JMenuItem chooseMenItem; 
@@ -270,7 +275,28 @@ public class TeamMatchWindow extends JFrame
 	
 	public void updateShowItem(){
 		
-		detailsData = originalDetailsData;
+		//detailsData = originalDetailsData;
+		
+		detailsData.clear();
+		
+		if(serachtxt.equals("")){
+			//detailsData = originalDetailsData;
+			
+			for(int i = 0; i < originalDetailsData.size(); i++){
+				detailsData.add(originalDetailsData.elementAt(i).clone());
+			}
+			
+		}else{
+			for(int i = 0; i < originalDetailsData.size(); i++){
+				
+				if(originalDetailsData.elementAt(i)[0].contains(serachtxt)||originalDetailsData.elementAt(i)[1].contains(serachtxt)){
+					detailsData.add(originalDetailsData.elementAt(i).clone());
+				}
+				
+				
+			}
+		}
+		
 		
 		tableMode.updateTable();
 		
@@ -293,9 +319,30 @@ public class TeamMatchWindow extends JFrame
 		
 		container.setLayout(new BorderLayout());
 		
-		JPanel panelNorth = new JPanel(new GridLayout(6, 4));
+		JPanel panelNorth = new JPanel(new GridLayout(1, 2));
 
         container.add(panelNorth, BorderLayout.NORTH);  
+        
+        panelNorth.add(labelsearch);
+        panelNorth.add(textsearch);
+        
+        
+        textsearch.addKeyListener(new KeyListener(){
+            public void keyPressed(KeyEvent e) {  
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {  
+                	serachtxt = textsearch.getText();  
+                    
+                    updateShowItem();
+                    
+                }  
+                // System.out.println("Text " + value);  
+            }  
+            public void keyReleased(KeyEvent e) {  
+            }  
+            public void keyTyped(KeyEvent e) {  
+            }  
+
+        });
         
 
         
