@@ -42,9 +42,14 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.conn.ssl.AllowAllHostnameVerifier;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.util.EntityUtils;
 
 
@@ -55,6 +60,9 @@ import Mail.MailManager;
 import java.util.Vector;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import javax.security.cert.CertificateException;
+import javax.security.cert.X509Certificate;
 
 
 
@@ -113,6 +121,10 @@ public class P8Http {
     
      {
        // requestConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.IGNORE_COOKIES).build();
+    	 
+    	 
+    	 System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2");
+    	 
         requestConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.IGNORE_COOKIES).build();
 
     	requestConfig = RequestConfig.copy(requestConfig).setRedirectsEnabled(false).build();//��ֹ�ض��� �� �Ա��ȡcookieb18
@@ -124,6 +136,24 @@ public class P8Http {
     	        .build();*/
     	
     	httpclient = HttpClients.custom().setDefaultRequestConfig(requestConfig).build();
+    	
+    	
+//    	setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE).
+//        setSSLContext(new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy()
+//        {
+//            public boolean isTrusted(X509Certificate[] arg0, String arg1) throws CertificateException
+//            {
+//                return true;
+//            }
+//
+//			@Override
+//			public boolean isTrusted(java.security.cert.X509Certificate[] arg0,
+//					String arg1) throws java.security.cert.CertificateException {
+//				// TODO Auto-generated method stub
+//				return false;
+//			}
+//        }).build()).build();
+    	
     	
    }
 	
@@ -1402,7 +1432,7 @@ public class P8Http {
             	httpget.addHeader("Cookie",strCookies);
             	//System.out.println("set cookies");
             }
-            httpget.addHeader("Accept-Encoding","gzip, deflate, sdch");
+            httpget.addHeader("Accept-Encoding","gzip, deflate, br");
             httpget.addHeader("Accept-Language","zh-CN,zh;q=0.8");
             httpget.addHeader("Connection","keep-alive");
             httpget.addHeader("Upgrade-Insecure-Requests","1");
@@ -1493,6 +1523,9 @@ public class P8Http {
     	CloseableHttpResponse response;
     	
     	try{
+    		
+    		
+    		
     		response = httpclient.execute(request);    		
     		time2 = System.currentTimeMillis();    		
     		Thread.sleep(300);

@@ -134,8 +134,8 @@ public class AccountsDetailsWindow extends JFrame
 		container.setLayout(new BorderLayout());
 		
 
-		jTabbedpane.addTab("PP账户", null, ppAccountPane.getaccountDetailsPan(), "accountSet");// 加入第一个页面  
-		jTabbedpane.addTab("HG账户", null, hgAccountPane.getaccountDetailsHGPan(), "hgaccount");// 加入第一个页面  
+		jTabbedpane.add(ppAccountPane.getaccountDetailsPan(), "PP账户");// 加入第一个页面  
+		jTabbedpane.add(hgAccountPane.getaccountDetailsHGPan(), "HG账户");// 加入第一个页面  
 
 		container.add(jTabbedpane);  
 

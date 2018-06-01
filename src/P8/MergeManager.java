@@ -53,7 +53,7 @@ public class MergeManager {
 	public static Vector<String[]> mergebeforegoaldetails = new Vector<String[]>();
 	
 	
-	public static int sendtotal = 500000;
+	public static int sendtotal = 1000000;
 	public static int sendside = 100000;
 	
 	

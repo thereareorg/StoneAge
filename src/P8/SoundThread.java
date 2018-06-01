@@ -10,10 +10,15 @@ import javax.sound.sampled.SourceDataLine;
 
 public class SoundThread extends Thread{
 	
+	public static boolean inPlay = false;
+	
 	@Override
 	public void run(){
 		try { 
-			AudioInputStream ais = AudioSystem.getAudioInputStream(new File("SoundTest.wav"));// 获得音频输入流 
+			
+			inPlay = true;
+			
+			AudioInputStream ais = AudioSystem.getAudioInputStream(new File("gamewin.wav"));// 获得音频输入流 
 			AudioFormat baseFormat = ais.getFormat();// 指定声音流中特定数据安排 
 			System.out.println("baseFormat="+baseFormat); 
 			DataLine.Info info = new DataLine.Info(SourceDataLine.class,baseFormat); 
@@ -31,10 +36,13 @@ public class SoundThread extends Thread{
 			if (intBytes >= 0) { 
 			int outBytes = line.write(audioData, 0, intBytes);// 通过此源数据行将音频数据写入混频器。 
 			} 
-			} 
+			}
+			
+			inPlay = false;
 			 
 			} catch (Exception e) { 
 			 e.printStackTrace();
+			 inPlay = false;
 			} 
 	}
 }

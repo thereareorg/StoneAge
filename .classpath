@@ -2,17 +2,21 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
-	<classpathentry kind="lib" path="D:/meWorkspace/StoneAge/lib/commons-codec-1.9.jar"/>
-	<classpathentry kind="lib" path="D:/meWorkspace/StoneAge/lib/commons-logging-1.2.jar"/>
-	<classpathentry kind="lib" path="D:/meWorkspace/StoneAge/lib/fluent-hc-4.5.2.jar"/>
-	<classpathentry kind="lib" path="D:/meWorkspace/StoneAge/lib/httpclient-4.5.2.jar"/>
-	<classpathentry kind="lib" path="D:/meWorkspace/StoneAge/lib/httpclient-cache-4.5.2.jar"/>
-	<classpathentry kind="lib" path="D:/meWorkspace/StoneAge/lib/httpclient-win-4.5.2.jar"/>
-	<classpathentry kind="lib" path="D:/meWorkspace/StoneAge/lib/httpcore-4.4.4.jar"/>
-	<classpathentry kind="lib" path="D:/meWorkspace/StoneAge/lib/httpmime-4.5.2.jar"/>
-	<classpathentry kind="lib" path="D:/meWorkspace/StoneAge/lib/jna-4.1.0.jar"/>
-	<classpathentry kind="lib" path="D:/meWorkspace/StoneAge/lib/jna-platform-4.1.0.jar"/>
-	<classpathentry kind="lib" path="D:/meWorkspace/StoneAge/lib/json-20160212.jar"/>
+	<classpathentry kind="lib" path="lib/commons-codec-1.9.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/fluent-hc-4.5.2.jar"/>
+	<classpathentry kind="lib" path="lib/httpclient-4.5.2.jar"/>
+	<classpathentry kind="lib" path="lib/httpclient-cache-4.5.2.jar"/>
+	<classpathentry kind="lib" path="lib/httpclient-win-4.5.2.jar"/>
+	<classpathentry kind="lib" path="lib/httpcore-4.4.4.jar"/>
+	<classpathentry kind="lib" path="lib/httpmime-4.5.2.jar"/>
+	<classpathentry kind="lib" path="lib/javabase64-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/javax.mail.jar"/>
+	<classpathentry kind="lib" path="lib/jna-4.1.0.jar"/>
+	<classpathentry kind="lib" path="lib/jna-platform-4.1.0.jar"/>
+	<classpathentry kind="lib" path="lib/json-20160212.jar"/>
 	<classpathentry kind="lib" path="lib/jython-standalone-2.7.0.jar"/>
+	<classpathentry kind="lib" path="lib/netty-all-4.1.8.Final-sources.jar"/>
+	<classpathentry kind="lib" path="lib/netty-all-4.1.8.Final.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

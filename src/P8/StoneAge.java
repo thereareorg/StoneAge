@@ -20,10 +20,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -275,6 +280,8 @@ public class StoneAge {
 		httpServerThread.start();
 		
 		sa.launchFrame();
+		
+		
 	}
 	
 	
@@ -311,6 +318,101 @@ public class StoneAge {
 			e.printStackTrace();
 		}
 	}
+	
+	
+	
+	
+	public boolean savebetparamstofile(){
+		try{
+			
+			File filefolder = new File("data/");
+			
+			if(!filefolder.exists()){
+				filefolder.mkdir();
+			}
+			
+			File file = new File("data/" +   "/zhiboIP.txt");
+
+			if(!file.exists()){	
+				file.createNewFile();
+			}
+			
+			BufferedWriter fwlocal = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, false), "UTF-8"));
+
+			
+			
+			
+			
+			String str = textFieldZhiboProxyAddress.getText();
+			fwlocal.append(str);
+			fwlocal.newLine();
+			fwlocal.flush();
+			
+			
+			
+			
+			fwlocal.close();
+			
+			return true;
+			
+			
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			
+		}
+		
+		return false;
+	}
+	
+	
+	
+	public void recoverbetparamsfromfile(){
+		try{
+			
+			File file = new File("data" + "/zhiboIP.txt");
+			
+			if(!file.exists()){
+				return;
+			}
+
+			BufferedReader freader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+			
+			
+			
+			
+			
+			String str = "";
+			
+			int linenum = 0;
+
+			while ((str = freader.readLine()) != null) {
+				
+				if(linenum == 0){
+					
+						textFieldZhiboProxyAddress.setText(str);
+						
+					
+				}
+			}
+			
+			freader.close();
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	public void launchFrame() {
 		
@@ -366,6 +468,8 @@ public class StoneAge {
         
         int Xposition = 0;
         int Yposition = 140;
+        
+       
         
         
 		btnLogin = new JButton("P8即时注单");
@@ -447,6 +551,10 @@ public class StoneAge {
 					ZhiboManager.showEventsDeatilsTable();
 					
 					System.out.println("连接成功");
+					
+					
+					savebetparamstofile();
+					
 					
 					showZhibo = true;
 
@@ -884,7 +992,9 @@ public class StoneAge {
 		textFieldZhiboProxyAddress = new JTextField();
 		textFieldZhiboProxyAddress.setSize(120, 25);
 		textFieldZhiboProxyAddress.setLocation(Xposition + 50 + 300, Yposition);
-		textFieldZhiboProxyAddress.setText("110.165.59.177");
+		//textFieldZhiboProxyAddress.setText("110.165.59.177");
+		
+		recoverbetparamsfromfile();
 
 		JLabel labelZhiboProxyAccount = new JLabel("端口:");
 		labelZhiboProxyAccount.setSize(50, 25);
