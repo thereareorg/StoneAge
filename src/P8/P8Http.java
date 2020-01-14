@@ -123,7 +123,7 @@ public class P8Http {
        // requestConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.IGNORE_COOKIES).build();
     	 
     	 
-    	 System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2");
+    	 //System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2");
     	 
         requestConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.IGNORE_COOKIES).build();
 
@@ -1707,8 +1707,8 @@ public class P8Http {
 		
 		
 		
-		if(!strCookies.contains("language=zh_CN")){
-			strCookies += "language=zh_CN;";
+		if(!strCookies.contains("lang=zh-CN")){
+			strCookies += "lang=zh-CN;";
 		}
 
 		return strCookies;
