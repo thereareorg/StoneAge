@@ -365,9 +365,7 @@ public class EventsDetailsWindow extends JFrame
             	try{
             		
 	            	if(focusedRowIndex != -1 && focusedRowIndex < detailsData.size()){
-	            		
 
-	            			
 	            			HGMergeManager.p8SelectedRow = detailsData.elementAt(focusedRowIndex);
 	            			System.out.println(Arrays.toString(ScoreMergeManager.p8SelectedRow));
 

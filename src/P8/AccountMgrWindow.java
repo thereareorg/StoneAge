@@ -29,7 +29,7 @@ public class AccountMgrWindow extends JFrame{
     private JLabel labelAddress = new JLabel("网址:");
     //private JTextField textFieldAddress = new JTextField(15);  
     
-    String str1[] = {"https://www.p88agent.com", "http://www.ps38ag.com"};
+    String str1[] = {"https://www.ps38ag.com"};
     
     private JComboBox jcb = new JComboBox(str1); 
 	
@@ -48,7 +48,7 @@ public class AccountMgrWindow extends JFrame{
 
 	
 	
-    private Button addAccountBtn = new Button("确定");
+    private Button addAccountBtn = new Button("账号:");
     private Button cancleBtn = new Button("取消");
     
     private AccountManager accMgr = null;
@@ -124,7 +124,7 @@ public class AccountMgrWindow extends JFrame{
 					}
 					
 					
-					loginRes = p8tmp.login();			
+					loginRes = p8tmp.login();
 				}      
 				
 				if(loginRes == 1 || loginRes == 0){

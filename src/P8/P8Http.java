@@ -63,7 +63,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javax.security.cert.CertificateException;
 import javax.security.cert.X509Certificate;
-
+import it.sauronsoftware.base64.Base64;
 
 
 
@@ -455,6 +455,8 @@ public class P8Http {
 	    	int posEnd = -1;
 	    	
 	    	//System.out.println(linePage);
+	    	
+
 	    	
 	    	if(linePage != null && linePage.contains("page.main.js?")){
 	    		//System.out.println(linePage);
@@ -1432,8 +1434,8 @@ public class P8Http {
             	httpget.addHeader("Cookie",strCookies);
             	//System.out.println("set cookies");
             }
-            httpget.addHeader("Accept-Encoding","gzip, deflate, br");
-            httpget.addHeader("Accept-Language","zh-CN,zh;q=0.8");
+            httpget.addHeader("Accept-Encoding","");
+            httpget.addHeader("Accept-Language","zh-CN,zh;q=0.9,en;q=0.8");
             httpget.addHeader("Connection","keep-alive");
             httpget.addHeader("Upgrade-Insecure-Requests","1");
             if(url.endsWith("groupName=")){
@@ -1554,6 +1556,68 @@ public class P8Http {
     }
     
     
+    public String getCode(String url,String json,String charset, String cookies, String refer) {
+        // ����httppost   
+       	
+       	try {
+       	
+           HttpPost httppost = new HttpPost(url); 
+           //httppost.addHeader("Cookie", cookies);
+           //httppost.addHeader("Accept-Encoding","Accept-Encoding: gzip, deflate, sdch");
+           //httppost.addHeader("x-requested-with","XMLHttpRequest");
+           
+
+           
+           httppost.addHeader("Accept-Language","zh-CN,zh;q=0.8");
+           httppost.addHeader("Accept","application/json, text/javascript, */*; q=0.01");
+           httppost.addHeader("Accept-Encoding","");
+           httppost.addHeader("Connection","keep-alive");
+           httppost.addHeader("Cache-Control","max-age=0");
+           httppost.addHeader("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36");    
+           
+          
+           
+	           StringEntity s = new StringEntity(json);
+	           //s.setContentEncoding("UTF-8");
+	           s.setContentType("application/json");//发送json数据需要设置contentType
+	           httppost.setEntity(s);
+              
+               
+               
+               
+               //System.out.println("executing request " + httppost.getURI()); 
+               
+               RequestConfig localRequestConfig = RequestConfig.copy(requestConfig).setSocketTimeout(defaultTimeout).setConnectTimeout(defaultTimeout).build();
+
+               httppost.setConfig(localRequestConfig);
+               
+               CloseableHttpResponse response = execute(httppost);
+               try {
+
+                   HttpEntity entity = response.getEntity(); 
+                   String res = EntityUtils.toString(entity);
+                   if(res != null && res.length() > 0 ){     
+                   	//System.out.println(res);
+                       return res;
+                   }
+               	
+               } finally {  
+               	httppost.releaseConnection();
+                   response.close(); 
+               }  
+           } catch (ClientProtocolException e) {  
+               e.printStackTrace(); 
+           } catch (UnsupportedEncodingException e1) {  
+               e1.printStackTrace(); 
+           } catch (IOException e) {  
+               e.printStackTrace(); 
+        
+           } catch(Exception e){
+        	   e.printStackTrace();
+           } 
+           return null;
+    }
+    
     public  String doPost(String url,String json,String charset, String cookies, String refer) {
 
 
@@ -1570,7 +1634,7 @@ public class P8Http {
            
            httppost.addHeader("Accept-Language","zh-CN,zh;q=0.8");
            httppost.addHeader("Accept","application/json, text/javascript, */*; q=0.01");
-           httppost.addHeader("Accept-Encoding","gzip, deflate");
+           httppost.addHeader("Accept-Encoding","");
            httppost.addHeader("Connection","keep-alive");
            httppost.addHeader("Cache-Control","max-age=0");
            httppost.addHeader("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36");    
@@ -1672,6 +1736,8 @@ public class P8Http {
 		
 		//System.out.println("----setCookieStore");
 		Header headers[] = httpResponse.getHeaders("Set-Cookie");
+		Header testHeaders[] = httpResponse.getHeaders("content-type");
+		System.out.println(testHeaders[0]);
 		if (headers == null || headers.length==0)
 		{
 			//System.out.println("----there are no cookies");
@@ -1707,8 +1773,8 @@ public class P8Http {
 		
 		
 		
-		if(!strCookies.contains("lang=zh-CN")){
-			strCookies += "lang=zh-CN;";
+		if(!strCookies.contains("language=zh_CN")){
+			strCookies += "language=zh_CN;";
 		}
 
 		return strCookies;
@@ -1831,11 +1897,38 @@ public class P8Http {
                 //System.out.println("------------------------------------");
                 File storeFile = new File("hyyzm.png");   //图片保存到当前位置
                 pngnumber= pngnumber + 1;
-                FileOutputStream output = new FileOutputStream(storeFile);  
+                //FileOutputStream output = new FileOutputStream(storeFile);  
                 //得到网络资源的字节数组,并写入文件  
-                byte [] a = EntityUtils.toByteArray(response.getEntity());
-                output.write(a);  
-                output.close();  
+                byte[] a = Base64.encode(EntityUtils.toByteArray(response.getEntity()));
+                String s=new String(a);
+                JSONObject obj = null;
+                obj = new JSONObject();
+                try {
+                    obj.put("imgString", s);
+                    obj.put("extAngle", false);
+                    obj.put("textLine", true);
+                    obj.put("verCode", true);
+                } catch (org.json.JSONException e) {
+
+                }
+                
+                //String [] res = null;
+                
+                String res = getCode("http://106.54.225.48:9000/ocr", obj.toString(), "","","");
+                String code = "1111";
+                if(res==null) {
+                	return code;
+                }
+                if(res.contains("res")) {
+                	JSONObject jb = new JSONObject(res);
+                	
+                	code = jb.getString("res").replace(" ", ""); 
+                	return code;
+                }
+                System.out.println(res);
+                
+                //output.write(a);  
+                //output.close();  
                 
 /*                InputStream ins = null;
         		 String[] cmd = new String[]{"C:\\Program Files (x86)\\Tesseract-OCR" + "\\tesseract", "hyyzm.png", "result", "-l", "eng"};
