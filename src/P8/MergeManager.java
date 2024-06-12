@@ -28,6 +28,7 @@ import team.gl.nio.cln.ZhiboClientHandler;
 import HG.HGINDEX;
 import HG.HGMergeManager;
 import HG.HGhttp;
+import ISN.GrabISNEventsThread;
 import Mail.MailManager;
 
 public class MergeManager {
@@ -48,7 +49,10 @@ public class MergeManager {
 	
 	public static Vector<String> sendpankoualready = new Vector<String>();
 	
+	public static JSONObject JSONsendAlready = new JSONObject();
 	
+	public static int StartSendNum = 200*10000;
+	public static int betweenSendNum = 100*10000;
 	
 	public static Vector<String[]> mergebeforegoaldetails = new Vector<String[]>();
 	
@@ -200,7 +204,7 @@ public class MergeManager {
 				mergeDetailsWnd.setStateText("数据更新于: " + dfMin.format(System.currentTimeMillis()));
 			//}
 			
-			if(GrabEventsThread.grabStat && ZhiboClientHandler.grabStat){
+			if(GrabEventsThread.grabStat && GrabISNEventsThread.grabStat){
 				mergeDetailsWnd.setStateColor(Color.GREEN);
 			}else{
 				mergeDetailsWnd.setStateColor(Color.RED);
@@ -226,6 +230,8 @@ public class MergeManager {
 		teamMatchWnd.setTitle("智博队名匹配");
 		
 		pDataManager.init();
+		
+		initJSONsendAlready();
 		
 		try{
 			
@@ -809,7 +815,73 @@ public class MergeManager {
 		}
     }
 	
+    
+    
+    
+    
+    public static void initJSONsendAlready() throws IOException {
+    	
+    	BufferedReader readerlocal = null;
+    	
+		try{
+			
+			File dir = new File("data");
+			if (dir.exists()) {
+			} else {
+				dir.mkdirs();
+			}
+			
+			File file = new File("data/" + "sendMails"
+					+ ".data");
+
+			if(!file.exists()){
+				fw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, true), "UTF-8"));
+				fw.close();
+			}else{
+				readerlocal = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8")); // 指定读取文件的编码格式，要和写入的格式一致，以免出现中文乱码,
+				
+				String str = null;
+
+				
+				while ((str = readerlocal.readLine()) != null) {
+					JSONsendAlready = new JSONObject(str);
+					}			
+			
+			}
+
+		}catch(Exception e){
+			e.printStackTrace();
+			readerlocal.close();
+		}
+    }
+    
+    
+    
 	
+    public static boolean saveSendMailTofile() {
+		try{
+
+		File file = new File("data/" + "sendMails"
+				+ ".data");
+		
+		BufferedWriter fwlocal = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, false), "UTF-8"));
+		
+		
+		fwlocal.write(JSONsendAlready.toString());
+		fwlocal.flush();
+		
+		fwlocal.close();
+
+		
+		return true;
+		
+	}catch(Exception e){
+		e.printStackTrace();
+	}
+	
+	return false;
+    }
+    
 	
 
 	public static boolean saveTofile(String p8Name, String zhiboName){
@@ -1239,6 +1311,109 @@ public class MergeManager {
 			}
 			
 			
+			
+			//send mails
+			for(int i = 0;i<mergeEventDetailsVec.size();i++) {
+				
+				String[] oneMatch = mergeEventDetailsVec.elementAt(i);
+				if(oneMatch[MERGEINDEX.PERIOD0HOME.ordinal()].contains("=")) {//process RQP
+					int p0home = Integer.parseInt(mergeEventDetailsVec.elementAt(i)[MERGEINDEX.PERIOD0HOME.ordinal()].split("=")[1]);
+					String sendKey = oneMatch[MERGEINDEX.EVENTID.ordinal()]+ oneMatch[MERGEINDEX.EVENTNAMNE.ordinal()] + "让球";
+					boolean bSent = JSONsendAlready.has(sendKey);
+					boolean needSend = false;
+					
+					if(Math.abs(p0home)>=StartSendNum && bSent==false) {  //process pankou
+						needSend = true;
+					}
+					
+					if(bSent==true) {
+						int lastSend = JSONsendAlready.getInt(sendKey);
+						if(Math.abs(p0home-lastSend)>=betweenSendNum) {
+							needSend = true;
+						}
+					}
+					
+					if(needSend==true) {
+						String sendTitle = "合并数据 " + "【" + "让球盘" + "】";
+		    			String sendContent = "联赛:" + oneMatch[MERGEINDEX.LEAGUENAME.ordinal()] + "<br>" +
+		    								 "球队:" + oneMatch[MERGEINDEX.EVENTNAMNE.ordinal()] + "<br>" +
+		    								 "时间:" + oneMatch[MERGEINDEX.TIME.ordinal()] + "<br>" +
+		    								 "合并金额:" + Integer.toString(p0home) + "<br>" +
+		    								 "PP:" + oneMatch[MERGEINDEX.P8HRES.ordinal()] + "<br>" +
+		    								 "LL:" + oneMatch[MERGEINDEX.ZHIBOHRES.ordinal()];
+						Vector<String> mails = StoneAge.getMailList();
+						
+						int k = 0, b=0;
+						for(; k < mails.size()&& b<50; b++){
+							String mail = mails.elementAt(k);
+							if(true == MailManager.sendMail("gcwfool@163.com", "gcwfool", "ZJANJDPCBGGSWSGD", mail, sendTitle, sendContent)){
+								k++;
+							}else{
+								Thread.currentThread().sleep(2000);
+							}								
+						}
+						
+						if(k>=1) {
+							JSONsendAlready.put(sendKey, p0home);
+						}
+					}
+					
+				}
+				
+				
+				
+				if(oneMatch[MERGEINDEX.PERIOD0OVER.ordinal()].contains("=")) {//process DXP
+					int p0over = Integer.parseInt(mergeEventDetailsVec.elementAt(i)[MERGEINDEX.PERIOD0OVER.ordinal()].split("=")[1]);
+					String sendKey = oneMatch[MERGEINDEX.EVENTID.ordinal()]+ oneMatch[MERGEINDEX.EVENTNAMNE.ordinal()]+"大小";
+					boolean bSent = JSONsendAlready.has(sendKey);
+					boolean needSend = false;
+					
+					if(Math.abs(p0over)>=StartSendNum && bSent==false) {  //process pankou
+						needSend = true;
+					}
+					
+					if(bSent==true) {
+						int lastSend = JSONsendAlready.getInt(sendKey);
+						if(Math.abs(p0over-lastSend)>=betweenSendNum) {
+							needSend = true;
+						}
+					}
+					
+					if(needSend==true) {
+						String sendTitle = "合并数据 " + "【" + "大小盘" + "】";
+		    			String sendContent = "联赛:" + oneMatch[MERGEINDEX.LEAGUENAME.ordinal()] + "<br>" +
+		    								 "球队:" + oneMatch[MERGEINDEX.EVENTNAMNE.ordinal()] + "<br>" +
+		    								 "时间:" + oneMatch[MERGEINDEX.TIME.ordinal()] + "<br>" +
+		    								 "合并金额:" + Integer.toString(p0over) + "<br>" +
+		    								 "PP:" + oneMatch[MERGEINDEX.P8ORES.ordinal()] + "<br>" +
+		    								 "LL:" + oneMatch[MERGEINDEX.ZHIBOORES.ordinal()];
+		    			
+						Vector<String> mails = StoneAge.getMailList();
+						
+						int k = 0, b=0;
+						for(; k < mails.size()&& b<50; b++){
+							String mail = mails.elementAt(k);
+							if(true == MailManager.sendMail("gcwfool@163.com", "gcwfool", "ZJANJDPCBGGSWSGD", mail, sendTitle, sendContent)){
+								k++;
+							}else{
+								Thread.currentThread().sleep(2000);
+							}								
+						}
+						
+						if(k>=1) {
+							JSONsendAlready.put(sendKey, p0over);
+						}
+					}
+					
+				}
+				
+				
+				
+				
+			}
+			
+			
+			saveSendMailTofile();
 			
 			
 			

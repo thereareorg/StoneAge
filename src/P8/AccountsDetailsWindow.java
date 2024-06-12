@@ -62,6 +62,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import AccountPane.HGAccountPane;
+import AccountPane.ISNAccountPane;
 import AccountPane.PPAccountPane;
 import HG.HGMergeManager;
 
@@ -90,6 +91,7 @@ public class AccountsDetailsWindow extends JFrame
 	private JTabbedPane jTabbedpane = new JTabbedPane();// 存放选项卡的组件  
 	PPAccountPane ppAccountPane = new PPAccountPane();	
 	HGAccountPane hgAccountPane = new HGAccountPane();
+	ISNAccountPane  isnAccountPane = new ISNAccountPane();
 
 	public AccountsDetailsWindow()  
     {  
@@ -121,6 +123,18 @@ public class AccountsDetailsWindow extends JFrame
 		
 	}
 	
+	
+	
+	public void setisnAccountMgr(AccountisnManager acc){
+		isnAccountPane.setisnAccountMgr(acc);
+	}
+
+
+	public void setisnAccountsDetails(Vector<String[]> accountsDetailsVec){
+		isnAccountPane.setisnAccountsDetails(accountsDetailsVec);
+		
+	}
+	
 
   
     /** 
@@ -135,7 +149,9 @@ public class AccountsDetailsWindow extends JFrame
 		
 
 		jTabbedpane.add(ppAccountPane.getaccountDetailsPan(), "PP账户");// 加入第一个页面  
-		jTabbedpane.add(hgAccountPane.getaccountDetailsHGPan(), "HG账户");// 加入第一个页面  
+		//jTabbedpane.add(hgAccountPane.getaccountDetailsHGPan(), "HG账户");// 加入第一个页面 
+		
+		jTabbedpane.add(isnAccountPane.getaccountDetailsHGPan(), "ISN账户");// 加入第一个页面 
 
 		container.add(jTabbedpane);  
 

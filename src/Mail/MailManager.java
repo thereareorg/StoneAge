@@ -24,11 +24,11 @@ public class MailManager {
     		
     		Properties props = new Properties(); //可以加载一个配置文件  
     		// 使用smtp：简单邮件传输协议  
-    		String smtmpHost = "smtp.qq.com";
+    		String smtmpHost = "smtp.163.com";
     		MailSSLSocketFactory sf = new MailSSLSocketFactory();
     		sf.setTrustAllHosts(true);
     		
-    		props.put("mail.smtp.host", "smtp.qq.com");//存储发送邮件服务器的信息  
+    		props.put("mail.smtp.host", "smtp.163.com");//存储发送邮件服务器的信息  
     		props.put("mail.smtp.auth", "true");//同时通过验证  
     		
 

@@ -198,7 +198,7 @@ public class EventsDetailsWindow extends JFrame
     private JLabel labelp0oInplayDirNum = new JLabel("走地大小球方向金额:");
     private JTextField textFieldp0oInplayDirNum = new JTextField(15); 
     
-    private JCheckBox onlyShow5Big = new JCheckBox("只看五大联赛,欧冠");
+    private JCheckBox onlyShow5Big = new JCheckBox("只看五大,世界杯");
     private JCheckBox onlyShowInplay = new JCheckBox("只看滚动盘");
     private JCheckBox onlyShowNotInplay = new JCheckBox("只看单式盘");
     
@@ -415,7 +415,7 @@ public class EventsDetailsWindow extends JFrame
         });  
         m_popupMenu.add(chooseMenItem);  
         m_popupMenu.add(mergeMenItem);  
-        m_popupMenu.add(scoreMergeMenItem);  
+        //m_popupMenu.add(scoreMergeMenItem);  
         //m_popupMenu.add(hgMergeMenItem);  
     }  
 	
@@ -610,7 +610,7 @@ public class EventsDetailsWindow extends JFrame
 		
 		Vector<String[]> DetailsDatatmp2 = new Vector<String[]>();
 		
-		if(DetailsDatatmp1.size() == 0){
+		if(DetailsDatatmp1.size() == 0 && bonlyShow5Big==false){
 
 			DetailsDatatmp1 = (Vector<String[]>)DetailsDatatmp.clone();
 			
@@ -1340,6 +1340,23 @@ public class EventsDetailsWindow extends JFrame
         table.getColumnModel().getColumn(P8TABLEHEADINDEX.RQZHONGPAN.ordinal()).setPreferredWidth(110);
 	    
 	    
+        //hide column
+	    Vector<Integer> hideColumn = new  Vector<Integer>();
+	    hideColumn.add(4);
+	    hideColumn.add(5);
+	    hideColumn.add(6);
+	    hideColumn.add(8);
+	    hideColumn.add(9);
+	    hideColumn.add(10);
+	    hideColumn.add(12);
+	    for(int i = 0; i < hideColumn.size(); i++) {
+	        table.getTableHeader().getColumnModel().getColumn(hideColumn.elementAt(i)).setMaxWidth(0);
+	        table.getTableHeader().getColumnModel().getColumn(hideColumn.elementAt(i)).setMinWidth(0);
+	        table.getTableHeader().getColumnModel().getColumn(hideColumn.elementAt(i)).setPreferredWidth(0);
+	        table.getTableHeader().getColumnModel().getColumn(hideColumn.elementAt(i)).setResizable(false);
+	    }
+	    //hide column end
+        
 	    //table.setColumnModel(columnModel);
 	    
 	    //tableMode.

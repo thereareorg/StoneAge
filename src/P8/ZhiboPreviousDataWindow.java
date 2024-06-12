@@ -955,6 +955,29 @@ public class ZhiboPreviousDataWindow extends PreviousDataWindow{
 	        table.getColumnModel().getColumn(ZHIBOPRETABLEHEADINDEX.RQZHONGPAN.ordinal()).setPreferredWidth(110);
 		    
 		    
+	        
+	        //hide column
+		    Vector<Integer> hideColumn = new  Vector<Integer>();
+		    hideColumn.add(4);
+		    hideColumn.add(5);
+		    hideColumn.add(6);
+		    hideColumn.add(8);
+		    hideColumn.add(9);
+		    hideColumn.add(10);
+		    hideColumn.add(12);
+		    hideColumn.add(13);
+		    hideColumn.add(14);
+		    
+		    for(int i = 0; i < hideColumn.size(); i++) {
+		        table.getTableHeader().getColumnModel().getColumn(hideColumn.elementAt(i)).setMaxWidth(0);
+		        table.getTableHeader().getColumnModel().getColumn(hideColumn.elementAt(i)).setMinWidth(0);
+		        table.getTableHeader().getColumnModel().getColumn(hideColumn.elementAt(i)).setPreferredWidth(0);
+		        table.getTableHeader().getColumnModel().getColumn(hideColumn.elementAt(i)).setResizable(false);
+		    }
+		    //hide column end
+	        
+	        
+	        
 		    //table.setColumnModel(columnModel);
 		    
 		    //tableMode.

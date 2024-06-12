@@ -510,8 +510,6 @@ public class HGEventsDetailsWindow extends JFrame
         jcb.setSelectedIndex(1);
         
         jcb.addItemListener(new ItemListener() {
-
-
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				// TODO Auto-generated method stub

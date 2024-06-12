@@ -10,6 +10,7 @@ import java.util.Vector;
 
 import HG.GrabHGEventsThread;
 import HG.HGhttp;
+import ISN.GrabISNEventsThread;
 import MergeNew.MergeNewManager;
 import P8.GrabEventsThread;
 import P8.MergeManager;
@@ -26,15 +27,22 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         //System.out.println("server channelRead..");
         Bag us = (Bag) msg;
         if(us.getReq().equals("request")) {
+        	//isn begin
+        	String isnStr = GrabISNEventsThread.getEventsStr();
+        	String isnSuccessTime = GrabISNEventsThread.getSuccessTime();
+        	
+        	
 	        Vector<String[]> datas = P8Http.getFinalEventsDetails();
 	        Vector<String[]> mergeDatas = MergeManager.getFinalEventsDetails();
 	        Vector<String[]> newMergeDatas = MergeNewManager.getFinalEventsDetails();
+	        
+	        //去掉历史数据
 	        Vector<String[]> mergepSubDatas = MergeManager.getpSubMergeevents();
-	        Vector<String[]> newMergepSubDatas = MergeNewManager.getpSubMergeevents();
+//	        Vector<String[]> newMergepSubDatas = MergeNewManager.getpSubMergeevents();
 	        Vector<String[]> P8pSubDatas = P8Http.getpSubevents();
 	        Vector<String[]> ZhibopSubDatas = ZhiboManager.getpSubevents();
-	        
-	        Vector<String[]> hgpSubDatas = HGhttp.getpSubevents();
+//	        
+//	        Vector<String[]> hgpSubDatas = HGhttp.getpSubevents();
 	        
 	        String successTime = P8Http.getSuccessTime();
 	        
@@ -48,21 +56,31 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 	    	datas.add(strs2);
 	    	datas.add(strs1);*/
 	    	Bag bag = new Bag("response");
-	    	bag.setDatas(datas);
+	    	bag.setDatas(datas);	    	
 	    	bag.setMergeDatas(mergeDatas);
+	    	
+	    	
 	    	bag.setMergepSubDatas(mergepSubDatas);
 	    	bag.setP8pSubDatas(P8pSubDatas);
 	    	bag.setZhibopSubDatas(ZhibopSubDatas);
+//	    	bag.sethgpSubDatas(hgpSubDatas);
+//	    	bag.setNewMergepSubDatas(newMergepSubDatas);
+	    	
+	    	
 	    	bag.setSuccessTime(successTime);
 	    	bag.setP8GrabStat(GrabEventsThread.grabStat);
-	    	bag.setMergeGrabStat(GrabEventsThread.grabStat&&ZhiboClientHandler.grabStat);
-	    	bag.sethgpSubDatas(hgpSubDatas);
+	    	bag.setMergeGrabStat(GrabEventsThread.grabStat&&GrabISNEventsThread.grabStat);
+
 	    	bag.sethgDatas(hgdatas);
 	    	bag.sethgSuccessTime(hgsuccessTime);
 	    	bag.sethgGrabStat(GrabHGEventsThread.grabStat);
 	    	
+	    	bag.setISNDatas(isnStr);
+	    	bag.setISNSuccessTime(isnSuccessTime);
+	    	bag.setISNGrabStat(GrabISNEventsThread.grabStat);
+	    	
 	    	bag.setNewMergeDatas(newMergeDatas);
-	    	bag.setNewMergepSubDatas(newMergepSubDatas);
+	    	
 	    	
 	    	ctx.channel().writeAndFlush(bag);
         }

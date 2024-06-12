@@ -47,6 +47,7 @@ import HGclient.GrabHGclientThread;
 import HGclient.HGclienthttp;
 import HttpServer.HttpServer;
 import HttpServer.HttpServerThread;
+import ISN.GrabISNEventsThread;
 import MergeNew.MergeNewManager;
 import P8client.P8clienthttp;
 import team.gl.nio.cln.ZhiboClient;
@@ -94,6 +95,8 @@ public class StoneAge {
 	
 	public static GrabHGEventsThread grabhgThead;
 	
+	public static GrabISNEventsThread zhiboThread;
+	
 	public static StoneAge sa;
 		
 	public static JButton btnZhiboConnect;
@@ -114,7 +117,7 @@ public class StoneAge {
 	
 	public static boolean zhiboConnected = false;
 	
-	static ZhiboThread zhiboThread = null;
+	//public static ZhiboThread zhiboThread = null;
 	
 	private JButton scoreBtn = new JButton("比分网");
 	
@@ -146,6 +149,8 @@ public class StoneAge {
 	
 	public static AccounthgManager acchgMgr = null;
 	
+	public static AccountisnManager accisnMgr = null;
+	
 	static SeverThread serverThread = null;
 	
 	static HttpServerThread httpServerThread = null;
@@ -160,33 +165,13 @@ public class StoneAge {
 		//pankoumaillist.add("490207143@qq.com");
 		
 		
-		mailList.add("1131894627@qq.com");
+		mailList.add("240749322@qq.com");
+		mailList.add("qry0111@163.com");
+		mailList.add("ac080888@163.com");
+		mailList.add("jhihi00@163.com");
 		
-		mailList.add("490207143@qq.com");
-		
-		mailList.add("2195876152@qq.com");
-		
+
 		pankoumaillist.add("2195876152@qq.com");
-		
-		
-		pankoumaillist.add("1131894627@qq.com");
-		
-		
-		
-		pankoumaillist.add("2503706418@qq.com");
-		
-		pankoumaillist.add("2195876152@qq.com");
-		
-		//pankoumaillist.add("1361861555@qq.com");
-		
-		pankoumaillist.add("24378055@qq.com");
-		
-		pankoumaillist.add("490207143@qq.com");
-		pankoumaillist.add("tongjigujinlong@126.com");
-		
-		
-		
-		
 		//pankoumaillist.add("tongjigujinlong@126.com");
 		
 		
@@ -235,8 +220,8 @@ public class StoneAge {
 		
 		
 
-		scorethread = new ScoreThread();
-		scorethread.start();
+//		scorethread = new ScoreThread();
+//		scorethread.start();
 		
 		
 		initMailList();
@@ -245,13 +230,19 @@ public class StoneAge {
 		
 		acchgMgr = new AccounthgManager(accountWnd);
 		
+		accisnMgr = new AccountisnManager(accountWnd);
+		
 		accountWnd.setAccountMgr(accMgr);
 		
 		accountWnd.sethgAccountMgr(acchgMgr);
 		
+		accountWnd.setisnAccountMgr(accisnMgr);
+		
 		accMgr.init();
 		
 		acchgMgr.init();
+		
+		accisnMgr.init();
 		
 		MergeManager.init();
 		
@@ -367,6 +358,9 @@ public class StoneAge {
 	
 	
 	
+	//public void read
+	
+	
 	public void recoverbetparamsfromfile(){
 		try{
 			
@@ -475,8 +469,6 @@ public class StoneAge {
 		btnLogin = new JButton("P8即时注单");
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				
 					if(bLogin == true){
 						P8Http.showEventsDeatilsTable();
 						return;
@@ -524,36 +516,21 @@ public class StoneAge {
 			public void actionPerformed(ActionEvent e) {
 				
 				try{
-					
+
 					if(zhiboConnected){
 						showZhibo = true;
 						ZhiboManager.showEventsDeatilsTable();
 						return;
 					}
-					String address = textFieldZhiboProxyAddress.getText();
-					String port = textFieldZhiboProxyAccount.getText();
-					
-					ZhiboClient.HOST = address;
-					ZhiboClient.PORT = Integer.parseInt(port);
-					
-					if(ZhiboClient.connect() == false){
-						JOptionPane.showMessageDialog(null,"连接智博失败！");
-						return;
-					}
-					
-					zhiboConnected = true;
-					
 
-					
-					zhiboThread = new ZhiboThread();
+					zhiboConnected = true;
+					btnZhiboConnect.setEnabled(false);
+					zhiboThread = new GrabISNEventsThread(sa);
 					zhiboThread.start();
 					
-					ZhiboManager.showEventsDeatilsTable();
-					
-					System.out.println("连接成功");
-					
-					
-					savebetparamstofile();
+//					ZhiboManager.showEventsDeatilsTable();
+//
+//					savebetparamstofile();
 					
 					
 					showZhibo = true;
@@ -740,7 +717,7 @@ public class StoneAge {
 		btnpankouans.setLocation(Xposition + 150, Yposition + 40);
 		
 		
-		contain.add(btnpankouans);
+		//contain.add(btnpankouans);
 		
 		
 		
@@ -843,7 +820,7 @@ public class StoneAge {
         scoreBtn.setLocation(Xposition, Yposition + 80);
         scoreBtn.setSize(90, 25);
         
-        contain.add(scoreBtn);
+        //contain.add(scoreBtn);
         
         
         
@@ -859,7 +836,7 @@ public class StoneAge {
 		
 		
 		btnAccount.setSize(120, 25);
-		btnAccount.setLocation(Xposition, Yposition + 120);
+		btnAccount.setLocation(Xposition, Yposition + 110);
 
 		
 		contain.add(btnAccount);
@@ -1008,10 +985,10 @@ public class StoneAge {
 		textFieldZhiboProxyAccount.setText("25836");
 
 		
-		contain.add(labelZhiboProxyAddress);
-		contain.add(textFieldZhiboProxyAddress);
-		contain.add(labelZhiboProxyAccount);
-		contain.add(textFieldZhiboProxyAccount);
+//		contain.add(labelZhiboProxyAddress);
+//		contain.add(textFieldZhiboProxyAddress);
+//		contain.add(labelZhiboProxyAccount);
+//		contain.add(textFieldZhiboProxyAccount);
 		contain.add(btnZhiboConnect);
 		
 		contain.add(btnMergeWnd);

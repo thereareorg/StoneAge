@@ -36,7 +36,7 @@ public class HGMergeWindow extends JFrame{
     private Button mergeButton = new Button("合并");
     private Button cancleButton = new Button("取消");
     
-
+ 
     
     String oldAdd = "";
     String oldAcc = "";
@@ -56,7 +56,7 @@ public class HGMergeWindow extends JFrame{
     }  
 	
 
-	
+
 
 	public void setP8Txt(String[] event){
 		

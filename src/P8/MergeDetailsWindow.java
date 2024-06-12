@@ -48,12 +48,14 @@ import MergeNew.NEWMERGEINDEX;
 import P8.EventsDetailsWindow.MyTableModel;
 
 
+
+
 enum MERGETABLEHEADINDEX{
 	INDEX,
 	LEAGUE,
 	TIME,
 	EVENTNAME,
-	RQCHUPAN,
+	RQCHUPAN,//4
 	RQZHONGPAN,
 	RQPANAS,
 	P8HOMERES,
@@ -161,13 +163,13 @@ public class MergeDetailsWindow extends JFrame{
 	    
 	    private int selectedOrMerge = 0;
 		
-	    Double p0hhiglightBigNum = 500000.0;
+	    Double p0hhiglightBigNum = 0.0;
 	    
-	    Double p0hhideNum = 100000.0;
+	    Double p0hhideNum = 0.0;
 	    
-	    Double p0ohiglightBigNum = 500000.0;
+	    Double p0ohiglightBigNum = 0.0;
 	    
-	    Double p0ohideNum = 100000.0;
+	    Double p0ohideNum = 0.0;
 
 	    
 	    
@@ -983,7 +985,7 @@ public class MergeDetailsWindow extends JFrame{
 				}
 	        });
 	        
-	        textFieldHighlightNum.setText("500000");
+	        textFieldHighlightNum.setText("0");
 	        
 	        
 	        textFieldHighlightNum.addKeyListener(new KeyListener(){
@@ -1008,7 +1010,7 @@ public class MergeDetailsWindow extends JFrame{
 
 	        });
 	        
-	        textFieldHideNum.setText("100000");
+	        textFieldHideNum.setText("0");
 	        
 	        
 	        textFieldHideNum.addKeyListener(new KeyListener(){
@@ -1035,7 +1037,7 @@ public class MergeDetailsWindow extends JFrame{
 
 	        });
 	        
-	        textFieldp0oHighlightNum.setText("500000");
+	        textFieldp0oHighlightNum.setText("0");
 	        
 	        textFieldp0oHighlightNum.addKeyListener(new KeyListener(){
 	            public void keyPressed(KeyEvent e) {  
@@ -1059,7 +1061,7 @@ public class MergeDetailsWindow extends JFrame{
 
 	        });
 	        
-	        textFieldp0oHideNum.setText("100000");
+	        textFieldp0oHideNum.setText("0");
 	        
 	        textFieldp0oHideNum.addKeyListener(new KeyListener(){
 	            public void keyPressed(KeyEvent e) {  
@@ -1325,6 +1327,26 @@ public class MergeDetailsWindow extends JFrame{
 		    table.setRowHeight(30);
 		    
 		    table.setFont(new java.awt.Font("黑体", Font.PLAIN, 15));
+		    
+		    
+	        //hide column
+		    Vector<Integer> hideColumn = new  Vector<Integer>();
+		    hideColumn.add(4);
+		    hideColumn.add(5);
+		    hideColumn.add(6);
+		    hideColumn.add(8);
+		    hideColumn.add(11);
+		    hideColumn.add(12);
+		    hideColumn.add(13);
+		    hideColumn.add(15);
+		    
+		    for(int i = 0; i < hideColumn.size(); i++) {
+		        table.getTableHeader().getColumnModel().getColumn(hideColumn.elementAt(i)).setMaxWidth(0);
+		        table.getTableHeader().getColumnModel().getColumn(hideColumn.elementAt(i)).setMinWidth(0);
+		        table.getTableHeader().getColumnModel().getColumn(hideColumn.elementAt(i)).setPreferredWidth(0);
+		        table.getTableHeader().getColumnModel().getColumn(hideColumn.elementAt(i)).setResizable(false);
+		    }
+		    //hide column end
 		    
 		    
 		    
@@ -1615,26 +1637,26 @@ public class MergeDetailsWindow extends JFrame{
 				
 			
 			
-				Vector<Integer> keepsizecols = new Vector<Integer>();
-			keepsizecols.add(MERGETABLEHEADINDEX.P8HOMEINPLAYRES.ordinal());
-			keepsizecols.add(MERGETABLEHEADINDEX.P8HOMERES.ordinal());
-			keepsizecols.add(MERGETABLEHEADINDEX.P8OVERINPLAYRES.ordinal());
-			keepsizecols.add(MERGETABLEHEADINDEX.P8OVERRES.ordinal());
-			keepsizecols.add(MERGETABLEHEADINDEX.ZHIBOHOMERES.ordinal());
-			keepsizecols.add(MERGETABLEHEADINDEX.ZHIBOOVERRES.ordinal());
-			
-			
-			
-			for(int i = 0;i < keepsizecols.size(); i++ ){
-			    
-			    TableColumn   column=columnModel.getColumn(keepsizecols.elementAt(i));   
-			    column.setMinWidth(0);   
-			    column.setMaxWidth(500);
-			    column.setWidth(80);
-			    column.setPreferredWidth(80);
-	
-			    
-			}
+//				Vector<Integer> keepsizecols = new Vector<Integer>();
+//			keepsizecols.add(MERGETABLEHEADINDEX.P8HOMEINPLAYRES.ordinal());
+//			keepsizecols.add(MERGETABLEHEADINDEX.P8HOMERES.ordinal());
+//			keepsizecols.add(MERGETABLEHEADINDEX.P8OVERINPLAYRES.ordinal());
+//			keepsizecols.add(MERGETABLEHEADINDEX.P8OVERRES.ordinal());
+//			keepsizecols.add(MERGETABLEHEADINDEX.ZHIBOHOMERES.ordinal());
+//			keepsizecols.add(MERGETABLEHEADINDEX.ZHIBOOVERRES.ordinal());
+//			
+//			
+//			
+//			for(int i = 0;i < keepsizecols.size(); i++ ){
+//			    
+//			    TableColumn   column=columnModel.getColumn(keepsizecols.elementAt(i));   
+//			    column.setMinWidth(0);   
+//			    column.setMaxWidth(500);
+//			    column.setWidth(80);
+//			    column.setPreferredWidth(80);
+//	
+//			    
+//			}
 				
 				
 				for(int i = 0;i < hidecol.size(); i++ ){

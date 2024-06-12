@@ -133,7 +133,7 @@ public class ZhiboEventsDetailsWindow  extends JFrame{
 	    private JLabel labelp0oHideNum = new JLabel("大小球隐藏金额:");
 	    private JTextField textFieldp0oHideNum = new JTextField(15); 
 	    
-	    private JCheckBox onlyShow5Big = new JCheckBox("只看五大联赛");
+	    private JCheckBox onlyShow5Big = new JCheckBox("只看五大,世界杯");
 	    private JCheckBox onlyShowInplay = new JCheckBox("只看滚动盘");
 	    private JCheckBox onlyShowNotInplay = new JCheckBox("只看单式盘");
 	    
@@ -322,7 +322,7 @@ public class ZhiboEventsDetailsWindow  extends JFrame{
 		
 		
 		public void setStateColor(Color cr){
-			textFieldGrabStat.setBackground(cr);;
+			textFieldGrabStat.setBackground(cr);
 		}
 		
 
@@ -880,6 +880,22 @@ public class ZhiboEventsDetailsWindow  extends JFrame{
 	        table.getColumnModel().getColumn(ZHIBOTABLEHEADINDEX.RQZHONGPAN.ordinal()).setPreferredWidth(110);
 
 		    
+	        //hide column
+		    Vector<Integer> hideColumn = new  Vector<Integer>();
+		    hideColumn.add(4);
+		    hideColumn.add(5);
+		    hideColumn.add(6);
+		    hideColumn.add(8);
+		    hideColumn.add(9);
+		    hideColumn.add(10);
+		    hideColumn.add(12);
+		    for(int i = 0; i < hideColumn.size(); i++) {
+		        table.getTableHeader().getColumnModel().getColumn(hideColumn.elementAt(i)).setMaxWidth(0);
+		        table.getTableHeader().getColumnModel().getColumn(hideColumn.elementAt(i)).setMinWidth(0);
+		        table.getTableHeader().getColumnModel().getColumn(hideColumn.elementAt(i)).setPreferredWidth(0);
+		        table.getTableHeader().getColumnModel().getColumn(hideColumn.elementAt(i)).setResizable(false);
+		    }
+		    //hide column end
 		    
 		    //table.setColumnModel(columnModel);
 		    

@@ -7,6 +7,7 @@ public class Bag implements Serializable{
 
 	String req;
     private Vector<String[]> datas;
+    private String isnStr;
     private Vector<String[]> mergeDatas;
     private Vector<String[]> mergepSubDatas;
     private Vector<String[]> newMergeDatas;
@@ -14,12 +15,14 @@ public class Bag implements Serializable{
     private Vector<String[]> p8pSubDatas;
     private Vector<String[]> zhibopSubDatas;
     private String successTime = "";
+    private String isnSuccessTime = "";
     
     private Vector<String[]> hgdatas;
     private Vector<String[]> hgpSubDatas;
     private String hgsuccessTime = "";
     
     private boolean P8GrabStat = false;
+    private boolean ISNGrabStat = false;
     private boolean MergeGrabStat = false;
     
     private boolean hgGrabStat = false;
@@ -31,6 +34,14 @@ public class Bag implements Serializable{
 
     public Vector<String[]> getDatas() {
         return datas;
+    }
+    
+    public String getISNDatas() {
+    	return isnStr;
+    }
+    
+    public void setISNDatas(String str) {
+    	isnStr = str;
     }
     
     public Vector<String[]> getMergeDatas() {
@@ -66,8 +77,16 @@ public class Bag implements Serializable{
     	return successTime;
     }
     
+    public String getISNSuccessTime(){
+    	return isnSuccessTime;
+    }
+    
     public boolean getP8GrabStat(){
     	return P8GrabStat;
+    }
+    
+    public boolean getISNGrabStat(){
+    	return ISNGrabStat;
     }
     
     public boolean getMergeGrabStat(){
@@ -100,6 +119,10 @@ public class Bag implements Serializable{
     
     public void setSuccessTime(String time){
     	successTime = time;
+    }
+    
+    public void setISNSuccessTime(String time){
+    	isnSuccessTime = time;
     }
 
     public void setDatas(Vector<String[]> datas) {
@@ -136,6 +159,10 @@ public class Bag implements Serializable{
     
     public void setP8GrabStat(boolean val){
     	P8GrabStat = val;
+    }
+    
+    public void setISNGrabStat(boolean val){
+    	ISNGrabStat = val;
     }
     
     public void sethgGrabStat(boolean val){

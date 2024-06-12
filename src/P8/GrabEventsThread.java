@@ -19,6 +19,9 @@ public class GrabEventsThread  extends Thread{
 	
 	public static boolean grabStat = true;
 	
+
+	
+	
 	GrabEventsThread(StoneAge sat){
 		sa = sat;
 	}
@@ -40,9 +43,9 @@ public class GrabEventsThread  extends Thread{
 				String[] account = accountDetails.elementAt(i);
 				P8Http p8 = new P8Http();
 				p8.setLoginParams(account[0], account[1], account[2], account[3]);
-				System.out.println("登录 " + account[1]);
+				System.out.println("login " + account[1]);
 				sa.setConsoleout();
-				System.out.println("登录 " + account[1]);
+				System.out.println("login " + account[1]);
 				sa.setFileout();
 				p8.login();
 				accounts.add(p8);
@@ -98,7 +101,7 @@ public class GrabEventsThread  extends Thread{
 						}
 							
 							if(getRes == true){
-								System.out.println("会员  " + p8.getAccount() + " 抓取成功");
+								System.out.println("p8 account  " + p8.getAccount() + " grab success");
 								P8Http.removeFailedAccount(p8.getAccount());
 							}else{
 								//System.out.println("会员  " + p8.getAccount() + " 抓取失败");
@@ -110,7 +113,7 @@ public class GrabEventsThread  extends Thread{
 							sa.setConsoleout();
 							
 							if(getRes == true){
-								System.out.println("会员  " + p8.getAccount() + " 抓取成功");
+								System.out.println("p8 account  " + p8.getAccount() + " grab success");
 							}else{
 								//System.out.println("会员  " + p8.getAccount() + " 抓取失败");
 							}
@@ -121,7 +124,7 @@ public class GrabEventsThread  extends Thread{
 					}else{
 						
 						sa.setConsoleout();
-						System.out.println("重新登录 " + p8.getAccount());
+						System.out.println("relogin " + p8.getAccount());
 						sa.setFileout();
 						
 						P8Http.addFailedCatchAccount( p8.getAccount());
@@ -185,12 +188,12 @@ public class GrabEventsThread  extends Thread{
 				}else{
 					sa.setConsoleout();
 					for(int j = 0;  j < P8Http.failedCatchAccount.size(); j++){
-						System.out.println("会员  " + P8Http.failedCatchAccount.elementAt(j) + " 抓取失败");
+						System.out.println("p8 account  " + P8Http.failedCatchAccount.elementAt(j) + " grab failed");
 					}
 					sa.setFileout();
 					
 					for(int j = 0;  j < P8Http.failedCatchAccount.size(); j++){
-						System.out.println("会员  " + P8Http.failedCatchAccount.elementAt(j) + " 抓取失败");
+						System.out.println("p8 account " + P8Http.failedCatchAccount.elementAt(j) + " grab failed");
 					}
 					
 					grabStat = false;

@@ -62,14 +62,9 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
            if(!lastRes.contains(res)){
                lastRes = res;
                
-               time = System.currentTimeMillis();
-               
-               ZhiboManager.clearEventsVec();
-               
+               time = System.currentTimeMillis();               
+               ZhiboManager.clearEventsVec();               
                ZhiboManager.constructEventsVec((String)msg);
-               
-               
-               
                ZhiboManager.sortEventDetails();
                
                ZhiboManager.updateEventsDetailsData();
@@ -217,10 +212,7 @@ public class ZhiboClientHandler extends ChannelInboundHandlerAdapter {
              ZhiboManager.sendpankouMails();
         
              SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");// 设置日期格式
-     		
-
-         	
-     		String currentTime = df.format(time);
+      		 String currentTime = df.format(time);
      		
      		ZhiboManager.setStateText("数据更新于:" + currentTime);
              

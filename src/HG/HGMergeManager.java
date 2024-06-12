@@ -46,18 +46,13 @@ public class HGMergeManager {
 	public static TeamMatchWindow teamMatchWnd = new TeamMatchWindow("hg");
 	
 	
-	
+	 
 	public static String[] hgSelectedRow = null;
 	public static String[] p8SelectedRow = null;
 	
 	
 	
-	
-	
-	
-	public static int mergep0hSendNumber = 1800000;
-	public static int mergep0oSendNumber = 700000;
-	public static int mergep0oHideSendNumber = 100000;
+
 	
 	static Map<String, Vector<Integer>> mailRecords = new HashMap<String, Vector<Integer>>();  
 	

@@ -267,6 +267,10 @@ public class P8Http {
 		showLeagueName.add("英格兰 - 超级联赛");
 		showLeagueName.add("欧足联 - 欧罗巴联赛");
 		
+		
+		
+		showLeagueName.add("FIFA - 世界杯");
+		
 		pDataManager.init();
 	}
 	
@@ -494,23 +498,24 @@ public class P8Http {
     		String res = "INVALID_CAPTCHA";
     		
     		
-    		String keyUri = ADDRESS + "/partner/captcha/key";
-    		
-    		while(res != null && res.contains("INVALID_CAPTCHA")){
-        		String key = getPicNum(keyUri);
-        		
-        		//System.out.println(key);
-        		
-        		if(!isNum(key)){
-        			key = getPicNum(keyUri);
-        		}
+//    		String keyUri = ADDRESS + "/partner/captcha/key";
+//    		
+//    		//while(res != null && res.contains("INVALID_CAPTCHA")){
+//    		
+//        		String key = getPicNum(keyUri);
+//        		
+//        		//System.out.println(key);
+//        		
+//        		if(!isNum(key)){
+//        			key = getPicNum(keyUri);
+//        		}
 
 
             	
                 JSONObject params = new JSONObject(true);
                 params.put("username", ACCOUNT);
                 params.put("password", PWD);
-                params.put("captcha", key);
+                //params.put("captcha", key);
                 
                 
                 
@@ -531,11 +536,11 @@ public class P8Http {
                 }
                 	
                 
-                Thread.currentThread().sleep(1000);
+              //  Thread.currentThread().sleep(1000);
                 
                 
                 //System.out.println(res);
-    		}
+    		//}while
     		
 
             
@@ -810,8 +815,8 @@ public class P8Http {
     			
     			
     			
-    			String eventName = event.getString("eventName");    			
-    			String period = event.getString("period");    			
+    			String eventName = event.getString("eventName");    
+    			String period = event.getString("period");    
     			String description = event.getString("description");
     			long eventId = event.getLong("eventId");
     			
@@ -893,7 +898,14 @@ public class P8Http {
         			}*/
         			
         			
+        			String timeTmp = df.format(time);
+        			
+        			System.out.println(timeTmp);
+        			
         			row[TYPEINDEX.TIME.ordinal()] = Long.toString(time);
+        			
+        			
+        			
         			
         			
         			if(inPlay== true){
@@ -2304,17 +2316,17 @@ public class P8Http {
 						Vector<String> mails = StoneAge.getMailList();
 
 						
-						for(int k = 0, b = 0; k < mails.size()&& b < 50; b++){
-							String mail = mails.elementAt(k);
-						//	if(true == MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", mail, sendTitle, sendContent)){
-							if(true == MailManager.sendMail("240749322@qq.com", "240749322", "beaqekgmzscocbab", mail, sendTitle, sendContent)){
-
-								k++;
-							}else{
-								Thread.currentThread().sleep(2000);
-							}
-							
-						}
+//						for(int k = 0, b = 0; k < mails.size()&& b < 50; b++){
+//							String mail = mails.elementAt(k);
+//						//	if(true == MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", mail, sendTitle, sendContent)){
+//							if(true == MailManager.sendMail("240749322@qq.com", "240749322", "beaqekgmzscocbab", mail, sendTitle, sendContent)){
+//
+//								k++;
+//							}else{
+//								Thread.currentThread().sleep(2000);
+//							}
+//							
+//						}
 						
 						
 						inplaySendAlraedy.add(sendTitle);
@@ -2387,15 +2399,15 @@ public class P8Http {
 								
 
 								
-								for(int k = 0, b = 0; k < mails.size()&& b < 50; b++){
-									String mail = mails.elementAt(k);
-									if(true == MailManager.sendMail("240749322@qq.com", "240749322", "beaqekgmzscocbab", mail, sendTitle, sendContent)){
-										k++;
-									}else{
-										Thread.currentThread().sleep(2000);
-									}
-									
-								}
+//								for(int k = 0, b = 0; k < mails.size()&& b < 50; b++){
+//									String mail = mails.elementAt(k);
+//									if(true == MailManager.sendMail("240749322@qq.com", "240749322", "beaqekgmzscocbab", mail, sendTitle, sendContent)){
+//										k++;
+//									}else{
+//										Thread.currentThread().sleep(2000);
+//									}
+//									
+//								}
 								
 								
 /*								MailManager.sendMail("tongjigujinlong@126.com", "tongjigujinlong", "gcw701!", "240749322@qq.com", sendTitle, sendContent);

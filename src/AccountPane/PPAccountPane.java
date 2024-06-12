@@ -122,7 +122,7 @@ public class PPAccountPane {
         hgteamMatchBtn.setLocation(250, 30);
         hgteamMatchBtn.setSize(120, 25);
         
-        accountDetailsPan.add(hgteamMatchBtn);
+       // accountDetailsPan.add(hgteamMatchBtn);
         
         
         
@@ -136,7 +136,7 @@ public class PPAccountPane {
         scoreteamMatchBtn.setLocation(250, 60);
         scoreteamMatchBtn.setSize(120, 25);
         
-        accountDetailsPan.add(scoreteamMatchBtn);
+        //accountDetailsPan.add(scoreteamMatchBtn);
         
         
         

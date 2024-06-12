@@ -13,6 +13,9 @@ import java.util.Vector;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import Mail.MailManager;
 
 public class ZhiboManager {
@@ -73,6 +76,11 @@ public class ZhiboManager {
 		showLeagueName.add("法国甲级联赛");
 		showLeagueName.add("欧洲冠军联赛");
 		showLeagueName.add("欧足联欧洲联赛");
+		
+		
+		
+		showLeagueName.add("FIFA 世界杯");
+		
 		//showLeagueName.add("英格兰 - 超级联赛");
 		//showLeagueName.add("欧足联 - 欧罗巴联赛");
 		
@@ -136,7 +144,52 @@ public class ZhiboManager {
     }
 	
     
+    
+    
+    
+    
     public static void constructEventsVec(String eventsStr){
+    	
+    	//lockeEventsDetails.writeLock().lock();
+    	
+    	try{
+
+    		JSONArray JSONEvents = new JSONArray(eventsStr);	
+    		for(int i = 0; i < JSONEvents.length(); i++) {
+    			String[] event = {"","","","","","","",""};
+    			event[0] = "0";
+    			JSONObject oneMatch = JSONEvents.getJSONObject(i);
+    			event[ZHIBOINDEX.EVENTNAMNE.ordinal()] = oneMatch.getString("eventName");
+    			event[ZHIBOINDEX.TIME.ordinal()] = oneMatch.getString("eventTime");
+    			event[ZHIBOINDEX.LEAGUENAME.ordinal()] = oneMatch.getString("leagueName");
+    			event[ZHIBOINDEX.PERIOD0HOME.ordinal()] = oneMatch.optString("home");
+    			event[ZHIBOINDEX.PERIOD0OVER.ordinal()] = oneMatch.optString("over");
+    			event[ZHIBOINDEX.PERIOD1HOME.ordinal()] = "0";
+    			event[ZHIBOINDEX.PERIOD1OVER.ordinal()] = "0";
+    			eventDetailsVec.add(event);
+    		}
+
+    		
+    	}catch(Exception e){
+    		e.printStackTrace();
+    		//lockeEventsDetails.writeLock().unlock();
+    	}
+    	
+    	//lockeEventsDetails.writeLock().unlock();
+    	
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    public static void constructEventsVecOld(String eventsStr){
     	
     	//lockeEventsDetails.writeLock().lock();
     	
