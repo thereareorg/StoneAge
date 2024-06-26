@@ -1,6 +1,6 @@
 package team.gl.nio.svr;
-import team.gl.nio.cmn.BagDecoder;
-import team.gl.nio.cmn.BagEncoder;
+import team.gl.nio.cmn.P8BagDecoder;
+import team.gl.nio.cmn.P8BagEncoder;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -46,13 +46,13 @@ public class NettyServer {
                 System.out.println("connect" + ch);
                 pipeline.addLast("frameDecoder", new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, 0, 4));  
                 pipeline.addLast("frameEncoder", new LengthFieldPrepender(4));  
-                pipeline.addLast("decoder", new BagDecoder());  
-                pipeline.addLast("encoder", new BagEncoder());  
+                pipeline.addLast("decoder", new P8BagDecoder());  
+                pipeline.addLast("encoder", new P8BagEncoder());  
                 pipeline.addLast(new NettyServerHandler());  
             }  
         });  
 
-        ChannelFuture f = b.bind("0.0.0.0",9873).sync();  
+        ChannelFuture f = b.bind("0.0.0.0",9813).sync();  
 
 
         System.out.println("netty server start success...");

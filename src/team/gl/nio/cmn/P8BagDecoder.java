@@ -8,11 +8,11 @@ import io.netty.buffer.ByteBuf;
 import java.util.List;
 
 
-public class BagDecoder extends ByteToMessageDecoder {
+public class P8BagDecoder extends ByteToMessageDecoder {
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-        ByteBufToBytes read = new ByteBufToBytes();
-        Object obj = ByteObjConverter.byteToObject(read.read(in));
+        P8ByteBufToBytes read = new P8ByteBufToBytes();
+        Object obj = P8ByteObjConverter.byteToObject(read.read(in));
         out.add(obj);
     }
 }

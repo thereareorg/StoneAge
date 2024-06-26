@@ -10,9 +10,9 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
-import team.gl.nio.cmn.Bag;
-import team.gl.nio.cmn.BagDecoder;
-import team.gl.nio.cmn.BagEncoder;
+import team.gl.nio.cmn.P8Bag;
+import team.gl.nio.cmn.P8BagDecoder;
+import team.gl.nio.cmn.P8BagEncoder;
 
 public class NettyClient {    
     public static String HOST = "127.0.0.1";
@@ -36,8 +36,8 @@ public class NettyClient {
                 ChannelPipeline pipeline = ch.pipeline();  
                 pipeline.addLast("frameDecoder", new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, 0, 4));  
                 pipeline.addLast("frameEncoder", new LengthFieldPrepender(4));  
-                pipeline.addLast("decoder", new BagDecoder());  
-                pipeline.addLast("encoder", new BagEncoder());  
+                pipeline.addLast("decoder", new P8BagDecoder());  
+                pipeline.addLast("encoder", new P8BagEncoder());  
                 pipeline.addLast("handler", new ClientHandler());  
             }  
         });  
@@ -56,7 +56,7 @@ public class NettyClient {
         return channel;  
     }  
 
-    public static void sendRequest(Bag req) throws Exception {  
+    public static void sendRequest(P8Bag req) throws Exception {  
         System.out.println(channel);
         if(channel!=null){  
             channel.writeAndFlush(req).sync();

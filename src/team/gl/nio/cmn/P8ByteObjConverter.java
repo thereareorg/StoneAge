@@ -6,7 +6,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.IOException;
 
-public class ByteObjConverter {
+public class P8ByteObjConverter {
 
     public static Object byteToObject(byte[] bytes) {
         Object obj = null;

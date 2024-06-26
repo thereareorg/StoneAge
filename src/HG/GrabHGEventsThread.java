@@ -28,7 +28,7 @@ public class GrabHGEventsThread  extends Thread{
 	public void setSleepTime(int sec){
 		sleepTime = sec*1000;
 	}
-	
+ 
 	
 	@Override
     public void run() {

@@ -3,7 +3,7 @@ import java.io.Serializable;
 
 import java.util.Vector;
 
-public class Bag implements Serializable{
+public class P8Bag implements Serializable{
 
 	String req;
     private Vector<String[]> datas;
@@ -14,6 +14,7 @@ public class Bag implements Serializable{
     private Vector<String[]> newMergepSubDatas;
     private Vector<String[]> p8pSubDatas;
     private Vector<String[]> zhibopSubDatas;
+    private Vector<String[]> matchTeams;
     private String successTime = "";
     private String isnSuccessTime = "";
     
@@ -28,7 +29,7 @@ public class Bag implements Serializable{
     private boolean hgGrabStat = false;
 
 
-    public Bag(String req){
+    public P8Bag(String req){
         this.req = req;
     }
 
@@ -209,4 +210,12 @@ public class Bag implements Serializable{
     	
         return strData + mergeStrData + mergepSubStrData + successTime;
     }
+
+	public Vector<String[]> getMatchTeams() {
+		return matchTeams;
+	}
+
+	public void setMatchTeams(Vector<String[]> matchTeams) {
+		this.matchTeams = matchTeams;
+	}
 }

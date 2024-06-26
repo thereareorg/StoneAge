@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -126,7 +127,7 @@ public class StoneAge {
 	
 	public static ScoreThread scorethread = null;
 	
-	
+	public static Vector<String[]> alreadyMergeTeams = new Vector<String[]>();
 	
 	
 	//public static boolean showMergeWnd = false;
@@ -358,7 +359,44 @@ public class StoneAge {
 	
 	
 	
-	//public void read
+	public void recoverMatchTeam() {
+		File file = new File("data/" + "teamMatch.data");
+		
+		if(!file.exists()) {
+			System.out.println("[teamMatch] 文件不存在");
+			return;
+		}
+		
+		BufferedReader freader = null;
+		try {
+			freader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+			
+			String str = "";
+			while ((str = freader.readLine()) != null) {
+				String[] contents = str.split(",");
+				if(contents.length == 2){
+					String [] mergeteam = new String[2];
+					mergeteam[0] = contents[0];
+					mergeteam[1] = contents[1];
+
+					alreadyMergeTeams.add(mergeteam);
+				}
+			}
+			
+			freader.close();
+			
+			//updateShowItem();
+			
+			
+			
+		} catch(FileNotFoundException e) {
+			e.printStackTrace();
+			return;
+		} catch(IOException e) {
+			e.printStackTrace();
+			return;
+		}
+	}
 	
 	
 	public void recoverbetparamsfromfile(){
@@ -972,6 +1010,8 @@ public class StoneAge {
 		//textFieldZhiboProxyAddress.setText("110.165.59.177");
 		
 		recoverbetparamsfromfile();
+		
+		recoverMatchTeam();
 
 		JLabel labelZhiboProxyAccount = new JLabel("端口:");
 		labelZhiboProxyAccount.setSize(50, 25);

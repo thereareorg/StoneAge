@@ -217,12 +217,12 @@ public class GrabISNEventsThread  extends Thread{
 		               MergeManager.copyTofinalEventsDetails();
 		               
 		               
-		               MergeNewManager.constructMergeRes();
-		               MergeNewManager.saveEvents();
-		             //可以做一些改变显示的事情
-		               MergeNewManager.updateEventsDetails();
-		               
-		               MergeNewManager.copyTofinalEventsDetails();
+//		               MergeNewManager.constructMergeRes();
+//		               MergeNewManager.saveEvents();
+//		             //可以做一些改变显示的事情
+//		               MergeNewManager.updateEventsDetails();
+//		               
+//		               MergeNewManager.copyTofinalEventsDetails();
 		               
 		               lock.writeLock().lock();
 		               successTime = df.format(System.currentTimeMillis());

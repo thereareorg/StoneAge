@@ -15,9 +15,10 @@ import MergeNew.MergeNewManager;
 import P8.GrabEventsThread;
 import P8.MergeManager;
 import P8.P8Http;
+import P8.StoneAge;
 import P8.ZhiboManager;
 import team.gl.nio.cln.ZhiboClientHandler;
-import team.gl.nio.cmn.Bag;
+import team.gl.nio.cmn.P8Bag;
 
 public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 
@@ -25,7 +26,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg)
             throws Exception {
         //System.out.println("server channelRead..");
-        Bag us = (Bag) msg;
+        P8Bag us = (P8Bag) msg;
         if(us.getReq().equals("request")) {
         	//isn begin
         	String isnStr = GrabISNEventsThread.getEventsStr();
@@ -55,7 +56,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 	    	
 	    	datas.add(strs2);
 	    	datas.add(strs1);*/
-	    	Bag bag = new Bag("response");
+	    	P8Bag bag = new P8Bag("response");
 	    	bag.setDatas(datas);	    	
 	    	bag.setMergeDatas(mergeDatas);
 	    	
@@ -81,6 +82,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 	    	
 	    	bag.setNewMergeDatas(newMergeDatas);
 	    	
+	    	bag.setMatchTeams(StoneAge.alreadyMergeTeams);
 	    	
 	    	ctx.channel().writeAndFlush(bag);
         }

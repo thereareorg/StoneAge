@@ -2,7 +2,7 @@ package P8;
 
 import team.gl.nio.cln.NettyClient;
 import team.gl.nio.cln.ZhiboClientHandler;
-import team.gl.nio.cmn.Bag;
+import team.gl.nio.cmn.P8Bag;
 
 public class ZhiboThread extends Thread{
 	
