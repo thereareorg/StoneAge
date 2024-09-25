@@ -18,7 +18,7 @@ public class GrabHGEventsThread  extends Thread{
 	public long sleepTime = 1*90*1000;
 	
 	public long time = System.currentTimeMillis();
-	
+ 
 	public static boolean grabStat = true;
 	
 	public GrabHGEventsThread(StoneAge sat){

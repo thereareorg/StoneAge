@@ -1051,6 +1051,13 @@ public class MergeManager {
 					
 					boolean isZhibohasGoals = false;
 
+					if(p8teams[0].endsWith("\r\n")) {
+						p8teams[0] = p8teams[0].replace("\r\n", "");
+					}
+					
+					if(p8teams[1].endsWith("\r\n")) {
+						p8teams[1] = p8teams[1].replace("\r\n", "");
+					}
 					
 					String zhiboHome = findZhiboTeam(p8teams[0]);
 					
@@ -1418,22 +1425,18 @@ public class MergeManager {
 			
 			
 			
-			for(int i = 0; i < p8events.size(); i++){
+			for(int i  = 0; i < p8events.size(); i++){
+				
 				item = p8events.elementAt(i).clone();
 				
 				p8eventsname = item[TYPEINDEX.EVENTNAMNE.ordinal()];
 				
-				//处理滚动盘	开始
-				
 				if(p8eventsname.contains("滚动盘")){
 					
-				
+					String rollp8eventsname = p8eventsname;
 					p8eventsname = p8eventsname.replace("【滚动盘】", "");
 					
-					boolean isZhibohasGoals = false;
-					
 					p8teams = p8eventsname.split("-vs-");
-					
 					
 					//寻找比分网配对
 					
@@ -1453,10 +1456,24 @@ public class MergeManager {
 					}
 					//寻找比分网配对 结束
 					
+					boolean isZhibohasGoals = false;
+					
+					
 					if(null != scoreItem && !scoreItem[SCOREINDEX.SCORE.ordinal()].equals("0:0")){
 						isZhibohasGoals = true;
 					}*/
 					
+					
+					
+					boolean isZhibohasGoals = false;
+
+					if(p8teams[0].endsWith("\r\n")) {
+						p8teams[0] = p8teams[0].replace("\r\n", "");
+					}
+					
+					if(p8teams[1].endsWith("\r\n")) {
+						p8teams[1] = p8teams[1].replace("\r\n", "");
+					}
 					
 					String zhiboHome = findZhiboTeam(p8teams[0]);
 					
@@ -1466,35 +1483,7 @@ public class MergeManager {
 						if(zhiboAway != null){
 							String zhiboeventname = zhiboHome + " vs " + zhiboAway;
 							
-							
-							//zhiboeventname = "【滚动盘】"+ zhiboeventname;
-							
-							//找到单式盘
-							int danshiIndex = -1;
-							for(int j = 0; j < mergeEventDetailsVec.size(); j++){
-								if(mergeEventDetailsVec.elementAt(j)[MERGEINDEX.EVENTNAMNE.ordinal()].equals(zhiboeventname)){
-									danshiIndex = j;
-								}
-							}
-							
-							item[ZHIBOINDEX.EVENTNAMNE.ordinal()] = zhiboeventname;
-							
-							
-							String[] saveItem = pDataManager.findLatestEvents(zhiboeventname);
-							
-							
-							
-							
-							if(saveItem != null){
-								
-								
-								
-								continue;
-							}
-
-							
-							
-							
+							zhiboeventname = "【滚动盘】"+zhiboeventname;
 							
 							for(int j = 0; j< inPlayzhiboevents.size(); j++){
 								String[] inplayItem = inPlayzhiboevents.elementAt(j).clone();
@@ -1505,265 +1494,245 @@ public class MergeManager {
 							}
 							
 							
-							//String[] zhiboSaveItem = ZhiboManager.getZhiboSaveItem(zhiboeventname);
 							
-							String[] p8DanshiItem = null;
 							
-							for(int j = 0; j < p8events.size(); j++){
-								String[] p8tmpItem = p8events.elementAt(j).clone();
-								if(p8eventsname.contains(p8tmpItem[TYPEINDEX.EVENTNAMNE.ordinal()])){
-									p8DanshiItem = p8tmpItem;
-									break;
+							
+							item[ZHIBOINDEX.EVENTNAMNE.ordinal()] = zhiboeventname;
+							
+							
+							
+							String[] saveItem = null;//pDataManager.findLatestEvents(zhiboeventname);
+							
+							
+							
+							
+							if(saveItem != null){
+								
+								SimpleDateFormat dfDay = new SimpleDateFormat("yyyy-MM-dd");// 设置日期格式
+								String dayStr = dfDay.format(System.currentTimeMillis());
+								
+								if(saveItem[MERGEINDEX.TIME.ordinal()].contains(dayStr)){
+									saveItem[MERGEINDEX.TIME.ordinal()] = saveItem[MERGEINDEX.TIME.ordinal()].replace(dayStr + " ", "");
 								}
-							}
-							
-							if(p8DanshiItem == null){
-								p8DanshiItem = P8Http.getP8SaveItem(p8eventsname);
-							}
-							
-							
-							
-							//如果智博已经有进球
-							//if(isZhibohasGoals == true){
-							if(p8DanshiItem != null){
-								for(int j = 0; j < zhiboevents.size(); j++){
-									String[] zhiboItemNow = zhiboevents.elementAt(j).clone();
-									
-									if(zhiboItemNow[ZHIBOINDEX.EVENTNAMNE.ordinal()].contains(zhiboeventname)){
-
-										
-										Double zhibo0homenow = Double.parseDouble(zhiboItemNow[ZHIBOINDEX.PERIOD0HOME.ordinal()]);
-										Double zhibo0overnow = Double.parseDouble(zhiboItemNow[ZHIBOINDEX.PERIOD0OVER.ordinal()]);
-										Double zhibo1homenow = Double.parseDouble(zhiboItemNow[ZHIBOINDEX.PERIOD1HOME.ordinal()]);
-										Double zhibo1overnow = Double.parseDouble(zhiboItemNow[ZHIBOINDEX.PERIOD1OVER.ordinal()]);
-										
-										Double p8nogoalsbet1 = 0.0;
-										Double p8nogoalsbet2 = 0.0;
-										Double p8nogoalsbet3 = 0.0;										
-										Double p8nogoalsbet4 = 0.0;
-										
-										//String[] zhiboSaveItem = ZhiboManager.getZhiboSaveItem(zhiboeventname);
-										
-										//if(null != zhiboSaveItem){
-										
-										
-										Double p8danshibet1 = 0.0;
-										Double p8danshibet2 = 0.0;
-										
-										
-										String p8danshibet1Str = p8DanshiItem[ZHIBOINDEX.PERIOD0HOME.ordinal()];
-										String p8danshibet2Str = p8DanshiItem[ZHIBOINDEX.PERIOD0OVER.ordinal()];
-										
-										if(p8danshibet1Str.contains("=")){
-											String[] tmp = p8danshibet1Str.split("=");
-											p8danshibet1 = Double.parseDouble(tmp[1]);
-										}
-										
-										if(p8danshibet2Str.contains("=")){
-											String[] tmp = p8danshibet2Str.split("=");
-											p8danshibet2 = Double.parseDouble(tmp[1]);
-										}
-										
-
-										Double p8danshibet3 = Double.parseDouble(p8DanshiItem[ZHIBOINDEX.PERIOD1HOME.ordinal()]);
-										Double p8danshibet4 = Double.parseDouble(p8DanshiItem[ZHIBOINDEX.PERIOD1OVER.ordinal()]);
-
-										
-										
-										Double p80homeInplayVal = 0.0;
-										Double p80overInplayVal = 0.0;
-										
-										
-										String p80homeInplayValStr = item[TYPEINDEX.PERIOD0HOME.ordinal()];
-										String p80overInplayValStr = item[TYPEINDEX.PERIOD0OVER.ordinal()];
-										
-										if(p80homeInplayValStr.contains("=")){
-											String[] tmp = p80homeInplayValStr.split("=");
-											p80homeInplayVal = Double.parseDouble(tmp[1]);
-										}
-										
-										if(p80overInplayValStr.contains("=")){
-											String[] tmp = p80overInplayValStr.split("=");
-											p80overInplayVal = Double.parseDouble(tmp[1]);
-										}
-										
-
-/*										Double p81homeInplayVal = Double.parseDouble(item[TYPEINDEX.PERIOD1HOME.ordinal()]);
-										Double p81overInplayVal = Double.parseDouble(item[TYPEINDEX.PERIOD1OVER.ordinal()]);
-										
-										//P8没进球之前的和值
-										p8nogoalsbet1 = p8danshibet1 + p80homeInplayVal;
-										p8nogoalsbet2 = p8danshibet2 + p80overInplayVal;
-										p8nogoalsbet3 = p8danshibet3 + p81homeInplayVal;
-										p8nogoalsbet4 = p8danshibet4 + p81overInplayVal;*/
-										
-										
-										boolean addTomerge = false;
-										
-										
-										if((p8danshibet1 >0.0 && zhibo0homenow > 0.0&& p80homeInplayVal >0.0) || 
-												(p8danshibet1 <0.0 && zhibo0homenow <0.0 && p80homeInplayVal < 0.0)){
-											
-											
-											item[TYPEINDEX.PERIOD0HOME.ordinal()] = String.format("(%.0f)", p8danshibet1) + "+" + String.format("(%.0f)", p80homeInplayVal)
-													+ "+" + String.format("(%.0f)", zhibo0homenow) + "=" 
-													+ String.format("%.0f", p8danshibet1 + zhibo0homenow + p80homeInplayVal);
-											
-											addTomerge = true;
-										}else{
-											//item[TYPEINDEX.PERIOD0HOME.ordinal()] = "0";
-											item[TYPEINDEX.PERIOD0HOME.ordinal()] = String.format("(%.0f)", p8danshibet1) + "+" + String.format("(%.0f)", p80homeInplayVal)
-													+ "+" + String.format("(%.0f)", zhibo0homenow) + "=" 
-													+ String.format("%.0f", p8danshibet1 + zhibo0homenow + p80homeInplayVal);
-											
-											addTomerge = true;
-										}
-										
-										
-										if((p8danshibet2 >0.0 && zhibo0overnow > 0.0&& p80overInplayVal >0.0) || 
-												(p8danshibet2 <0.0 && zhibo0overnow <0.0 && p80overInplayVal < 0.0)){
-											
-											
-											item[TYPEINDEX.PERIOD0OVER.ordinal()] = String.format("(%.0f)", p8danshibet2) + "+" + String.format("(%.0f)", p80overInplayVal) + "+" + 
-													String.format("(%.0f)", zhibo0overnow) + "=" 
-													+ String.format("%.0f", p8danshibet2 + zhibo0overnow + p80overInplayVal);
-											
-											addTomerge = true;
-										}else{
-											//item[TYPEINDEX.PERIOD0OVER.ordinal()] = "0";
-											item[TYPEINDEX.PERIOD0OVER.ordinal()] = String.format("(%.0f)", p8danshibet2) + "+" + String.format("(%.0f)", p80overInplayVal) + "+" + 
-													String.format("(%.0f)", zhibo0overnow) + "=" 
-													+ String.format("%.0f", p8danshibet2 + zhibo0overnow + p80overInplayVal);
-											
-											addTomerge = true;
-										}
-										
-										
-
-										if(true){
-											
-											
-											System.out.println("merge inplay add" + Arrays.toString(item));
-											
-											if(isZhibohasGoals == true){
-												item[ZHIBOINDEX.SAVED.ordinal()] = "1";
-												System.out.println("merge has goals" + Arrays.toString(item));
-											}
-											
-											//merge格式有变化，需要重新组织
-											String[] mergeItem = new String[MERGEINDEX.SIZE.ordinal()];
-											mergeItem[MERGEINDEX.EVENTID.ordinal()] = 		item[ZHIBOINDEX.SAVED.ordinal()];
-											mergeItem[MERGEINDEX.LEAGUENAME.ordinal()] = 	item[TYPEINDEX.LEAGUENAME.ordinal()];
-											mergeItem[MERGEINDEX.TIME.ordinal()] = 			item[TYPEINDEX.TIME.ordinal()];
-											mergeItem[MERGEINDEX.EVENTNAMNE.ordinal()] = 	item[TYPEINDEX.EVENTNAMNE.ordinal()];
-											mergeItem[MERGEINDEX.SCORE.ordinal()] = 		"-";
-											
-
-											
-											mergeItem[MERGEINDEX.P8HRES.ordinal()] = 		p8danshibet1Str;
-											mergeItem[MERGEINDEX.INP8HRES.ordinal()] = 		p80homeInplayValStr;
-											mergeItem[MERGEINDEX.ZHIBOHRES.ordinal()] = 	String.format("%.0f", zhibo0homenow);
-											mergeItem[MERGEINDEX.PERIOD0HOME.ordinal()] = 		item[TYPEINDEX.PERIOD0HOME.ordinal()];
-										
-										
-
-
-											mergeItem[MERGEINDEX.P8ORES.ordinal()] = 		p8danshibet2Str;
-											mergeItem[MERGEINDEX.INP8ORES.ordinal()] = 		p80overInplayValStr;
-											mergeItem[MERGEINDEX.ZHIBOORES.ordinal()] = 		String.format("%.0f", zhibo0overnow);
-											mergeItem[MERGEINDEX.PERIOD0OVER.ordinal()] = 		item[TYPEINDEX.PERIOD0OVER.ordinal()];
-											
-											
-											String[] scoreItem = null;
-											if(scoreItem != null){
-												mergeItem[MERGEINDEX.LEAGUENAME.ordinal()] = scoreItem[SCOREINDEX.LEAGUENAME.ordinal()];
-												mergeItem[MERGEINDEX.SCORE.ordinal()] = scoreItem[SCOREINDEX.SCORE.ordinal()];
-												mergeItem[MERGEINDEX.RQPK.ordinal()] = scoreItem[SCOREINDEX.RQPANKOU.ordinal()];
-												mergeItem[MERGEINDEX.DXQPK.ordinal()] = scoreItem[SCOREINDEX.DXQPANKOU.ordinal()];
-												mergeItem[MERGEINDEX.PERIOD1HOME.ordinal()] = scoreItem[SCOREINDEX.TIME.ordinal()];
-											}else{
-												mergeItem[MERGEINDEX.SCORE.ordinal()] = "-";
-												mergeItem[MERGEINDEX.RQPK.ordinal()] = "";
-												mergeItem[MERGEINDEX.DXQPK.ordinal()] = "";
-											}
-											
-											
-											
-											
-											if(danshiIndex == -1){
-												mergeEventDetailsVec.add(mergeItem);
-											}else{
-												
-												
-												
-												
-												
-												
-												mergeEventDetailsVec.elementAt(danshiIndex)[MERGEINDEX.EVENTID.ordinal()] = mergeItem[MERGEINDEX.EVENTID.ordinal()];
-												
-												mergeEventDetailsVec.elementAt(danshiIndex)[MERGEINDEX.P8HRES.ordinal()] = mergeItem[MERGEINDEX.P8HRES.ordinal()];
-												
-												
-												mergeEventDetailsVec.elementAt(danshiIndex)[MERGEINDEX.INP8HRES.ordinal()] = mergeItem[MERGEINDEX.INP8HRES.ordinal()];
-												mergeEventDetailsVec.elementAt(danshiIndex)[MERGEINDEX.ZHIBOHRES.ordinal()] = mergeItem[MERGEINDEX.ZHIBOHRES.ordinal()];
-												mergeEventDetailsVec.elementAt(danshiIndex)[MERGEINDEX.PERIOD0HOME.ordinal()] = mergeItem[MERGEINDEX.PERIOD0HOME.ordinal()];
-											
-											
-
-
-												mergeEventDetailsVec.elementAt(danshiIndex)[MERGEINDEX.P8ORES.ordinal()] = mergeItem[MERGEINDEX.P8ORES.ordinal()];
-												mergeEventDetailsVec.elementAt(danshiIndex)[MERGEINDEX.INP8ORES.ordinal()] = mergeItem[MERGEINDEX.INP8ORES.ordinal()];
-												mergeEventDetailsVec.elementAt(danshiIndex)[MERGEINDEX.ZHIBOORES.ordinal()] = mergeItem[MERGEINDEX.ZHIBOORES.ordinal()];
-												mergeEventDetailsVec.elementAt(danshiIndex)[MERGEINDEX.PERIOD0OVER.ordinal()] = mergeItem[MERGEINDEX.PERIOD0OVER.ordinal()];
-												
-												
-												
-												for(int k = 0; k < mergebeforegoaldetails.size(); k++){
-													if(mergeEventDetailsVec.elementAt(danshiIndex)[MERGEINDEX.EVENTNAMNE.ordinal()].equals(mergebeforegoaldetails.elementAt(k)[MERGEINDEX.EVENTNAMNE.ordinal()])){
-														
-														
-														mergeEventDetailsVec.elementAt(danshiIndex)[MERGEINDEX.ZHIBOHRES.ordinal()] = mergebeforegoaldetails.elementAt(k)[MERGEINDEX.ZHIBOHRES.ordinal()];
-														mergeEventDetailsVec.elementAt(danshiIndex)[MERGEINDEX.ZHIBOORES.ordinal()] = mergebeforegoaldetails.elementAt(k)[MERGEINDEX.ZHIBOORES.ordinal()];
-														
-														mergeEventDetailsVec.elementAt(danshiIndex)[MERGEINDEX.INP8HRES.ordinal()] = mergebeforegoaldetails.elementAt(k)[MERGEINDEX.INP8HRES.ordinal()];
-														mergeEventDetailsVec.elementAt(danshiIndex)[MERGEINDEX.INP8ORES.ordinal()] = mergebeforegoaldetails.elementAt(k)[MERGEINDEX.INP8ORES.ordinal()];
-														
-														break;
-													}
-												}
-												
-												
-												
-											}
-
-
-											
-											
-										}
-
-										
+								
+								for(int j = 0; j < mergeEventDetailsVec.size(); j++){
+									if(mergeEventDetailsVec.elementAt(j)[MERGEINDEX.EVENTNAMNE.ordinal()].equals(saveItem[MERGEINDEX.EVENTNAMNE.ordinal()])){
+										mergeEventDetailsVec.remove(j);
 										break;
-										
+									}
+								}
+								
+								
+/*								if(scoreItem != null){
+									saveItem[MERGEINDEX.LEAGUENAME.ordinal()] = scoreItem[SCOREINDEX.LEAGUENAME.ordinal()];
+									saveItem[MERGEINDEX.SCORE.ordinal()] = scoreItem[SCOREINDEX.SCORE.ordinal()];
+									saveItem[MERGEINDEX.RQPK.ordinal()] = scoreItem[SCOREINDEX.RQPANKOU.ordinal()];
+									saveItem[MERGEINDEX.DXQPK.ordinal()] = scoreItem[SCOREINDEX.DXQPANKOU.ordinal()];
+									saveItem[MERGEINDEX.PERIOD1HOME.ordinal()] = scoreItem[SCOREINDEX.TIME.ordinal()];
+								}*/
+								
+								
+								
+								//处理比赛结束时显示错误的比赛时间 开始
+								String inplaytimestr = saveItem[MERGEINDEX.PERIOD1HOME.ordinal()];
+								
+/*								if(inplaytimestr != null && (inplaytimestr.contains("'") || inplaytimestr.contains("中"))){
+									if(scoreItem == null){
+										continue;
+									}
+								}*/
+								//处理比赛结束时显示错误的比赛时间 结束
+								
+								
+								
+								mergeEventDetailsVec.add(saveItem);
+								
+								continue;
+							}
+							
+							
+							
+							
+							
+							for(int j = 0; j< zhiboevents.size(); j++){
+								zhiboitem = zhiboevents.elementAt(j);
+								
+								if(zhiboitem[ZHIBOINDEX.EVENTNAMNE.ordinal()].contains(zhiboeventname)
+										&&!zhiboitem[ZHIBOINDEX.TIME.ordinal()].contains("(")){
+									
+									boolean addTomerge = false;
+									
+									Double p80home = 0.0;
+									Double p80over = 0.0;
+									
+									
+									String p80homeStr = item[TYPEINDEX.PERIOD0HOME.ordinal()];
+									String p80overStr = item[TYPEINDEX.PERIOD0OVER.ordinal()];
+									
+									if(p80homeStr.contains("=")){
+										String[] tmp = p80homeStr.split("=");
+										p80home = Double.parseDouble(tmp[1]);
 									}
 									
+									if(p80overStr.contains("=")){
+										String[] tmp = p80overStr.split("=");
+										p80over = Double.parseDouble(tmp[1]);
+									}
+									
+									
+	/*								Double p80home = Double.parseDouble(item[TYPEINDEX.PERIOD0HOME.ordinal()]);
+									Double p80over = Double.parseDouble(item[TYPEINDEX.PERIOD0OVER.ordinal()]);
+									Double p81home = Double.parseDouble(item[TYPEINDEX.PERIOD1HOME.ordinal()]);
+									Double p81over = Double.parseDouble(item[TYPEINDEX.PERIOD1OVER.ordinal()]);*/
+									
+									Double zhibo0home = Double.parseDouble(zhiboitem[ZHIBOINDEX.PERIOD0HOME.ordinal()]);
+									Double zhibo0over = Double.parseDouble(zhiboitem[ZHIBOINDEX.PERIOD0OVER.ordinal()]);
+									Double zhibo1home = Double.parseDouble(zhiboitem[ZHIBOINDEX.PERIOD1HOME.ordinal()]);
+									Double zhibo1over = Double.parseDouble(zhiboitem[ZHIBOINDEX.PERIOD1OVER.ordinal()]);
+									
+									
+									if((p80home >0.0 && zhibo0home >0.0) || (p80home <0.0 && zhibo0home <0.0)){
+										//item[TYPEINDEX.PERIOD0HOME.ordinal()] = String.format("%.0f", p80home + zhibo0home);
+										
+										item[TYPEINDEX.PERIOD0HOME.ordinal()] = String.format("(%.0f)", p80home) + "+" +
+												String.format("(%.0f)", zhibo0home) + "=" + String.format("%.0f", p80home + zhibo0home);
+										
+										addTomerge = true;
+									}else{
+										//item[TYPEINDEX.PERIOD0HOME.ordinal()] = "0";
+										
+										item[TYPEINDEX.PERIOD0HOME.ordinal()] = String.format("(%.0f)", p80home) + "+" +
+												String.format("(%.0f)", zhibo0home) + "=" + String.format("%.0f", p80home + zhibo0home);
+										
+										addTomerge = true;
+									}
+									
+									if((p80over >0.0 && zhibo0over >0.0) || (p80over <0.0 && zhibo0over <0.0)){
+										//item[TYPEINDEX.PERIOD0OVER.ordinal()] = String.format("%.0f", p80over + zhibo0over);
+										
+										item[TYPEINDEX.PERIOD0OVER.ordinal()] = String.format("(%.0f)", p80over) + "+" +
+												String.format("(%.0f)", zhibo0over) + "=" + String.format("%.0f", p80over + zhibo0over);
+										
+										addTomerge = true;
+									}
+									else{
+										//item[TYPEINDEX.PERIOD0OVER.ordinal()] = "0";
+										item[TYPEINDEX.PERIOD0OVER.ordinal()] = String.format("(%.0f)", p80over) + "+" +
+												String.format("(%.0f)", zhibo0over) + "=" + String.format("%.0f", p80over + zhibo0over);
+										
+										addTomerge = true;
+									}
+									
+	/*								if((p81over >0.0 && zhibo1over >0.0) || (p81over <0.0 && zhibo1over <0.0)){
+										//item[TYPEINDEX.PERIOD1OVER.ordinal()] = String.format("%.0f", p81over + zhibo1over);
+										
+										item[TYPEINDEX.PERIOD1OVER.ordinal()] = String.format("(%.0f)", p81over) + "+" +
+												String.format("(%.0f)", zhibo1over) + "=" + String.format("%.0f", p81over + zhibo1over);
+										
+										addTomerge = true;
+									}
+									else{
+										item[TYPEINDEX.PERIOD1OVER.ordinal()] = "0";
+									}
+									
+									if((p81home >0.0 && zhibo1home >0.0) || (p81home <0.0 && zhibo1home <0.0)){
+										//item[TYPEINDEX.PERIOD1HOME.ordinal()] = String.format("%.0f", p81home + zhibo1home);
+										item[TYPEINDEX.PERIOD1HOME.ordinal()] = String.format("(%.0f)", p81home) + "+" +
+												String.format("(%.0f)", zhibo1home) + "=" + String.format("%.0f", p81home + zhibo1home);
+										addTomerge = true;
+									}else{
+										item[TYPEINDEX.PERIOD1HOME.ordinal()] = "0";
+									}*/
+									
+									//if(addTomerge == true){
+									if(true){
+										
+										
+										if(isZhibohasGoals == true){
+											item[ZHIBOINDEX.SAVED.ordinal()] = "1";
+											System.out.println("merge has goals" + Arrays.toString(item));
+										}
+										
+										//merge格式有变化，需要重新组织
+										String[] mergeItem = new String[MERGEINDEX.SIZE.ordinal()];
+										mergeItem[MERGEINDEX.EVENTID.ordinal()] = 		item[TYPEINDEX.EVENTID.ordinal()];
+										mergeItem[MERGEINDEX.LEAGUENAME.ordinal()] = 	item[TYPEINDEX.LEAGUENAME.ordinal()];
+										mergeItem[MERGEINDEX.TIME.ordinal()] = 			item[TYPEINDEX.TIME.ordinal()];
+										mergeItem[MERGEINDEX.EVENTNAMNE.ordinal()] = 	item[TYPEINDEX.EVENTNAMNE.ordinal()];
+										mergeItem[MERGEINDEX.SCORE.ordinal()] = 		"-";
+										
+										
+										
+										mergeItem[MERGEINDEX.P8HRES.ordinal()] = 		p80homeStr;
+										mergeItem[MERGEINDEX.INP8HRES.ordinal()] = 		"0";
+										mergeItem[MERGEINDEX.ZHIBOHRES.ordinal()] = 	String.format("%.0f", zhibo0home);
+										mergeItem[MERGEINDEX.PERIOD0HOME.ordinal()] = 		item[TYPEINDEX.PERIOD0HOME.ordinal()];
+										
+										
+
+										
+										mergeItem[MERGEINDEX.P8ORES.ordinal()] = 		p80overStr;
+										mergeItem[MERGEINDEX.INP8ORES.ordinal()] = 		"0";
+										mergeItem[MERGEINDEX.ZHIBOORES.ordinal()] = 		String.format("%.0f", zhibo0over);
+										mergeItem[MERGEINDEX.PERIOD0OVER.ordinal()] = 		item[TYPEINDEX.PERIOD0OVER.ordinal()];
+										
+										
+										String[] scoreItem = null;
+										if(scoreItem != null){
+											mergeItem[MERGEINDEX.LEAGUENAME.ordinal()] = scoreItem[SCOREINDEX.LEAGUENAME.ordinal()];
+											mergeItem[MERGEINDEX.SCORE.ordinal()] = scoreItem[SCOREINDEX.SCORE.ordinal()];
+											mergeItem[MERGEINDEX.RQPK.ordinal()] = scoreItem[SCOREINDEX.RQPANKOU.ordinal()];
+											mergeItem[MERGEINDEX.DXQPK.ordinal()] = scoreItem[SCOREINDEX.DXQPANKOU.ordinal()];
+											mergeItem[MERGEINDEX.PERIOD1HOME.ordinal()] = scoreItem[SCOREINDEX.TIME.ordinal()];
+										}else{
+											mergeItem[MERGEINDEX.SCORE.ordinal()] = "-";
+											mergeItem[MERGEINDEX.RQPK.ordinal()] = "";
+											mergeItem[MERGEINDEX.DXQPK.ordinal()] = "";
+										}
+										
+										
+										
+//										for(int k = 0; k < mergebeforegoaldetails.size(); k++){
+//											if(mergeItem[MERGEINDEX.EVENTNAMNE.ordinal()].equals(mergebeforegoaldetails.elementAt(k)[MERGEINDEX.EVENTNAMNE.ordinal()])){
+//												
+//												
+//												mergeItem[MERGEINDEX.ZHIBOHRES.ordinal()] = mergebeforegoaldetails.elementAt(k)[MERGEINDEX.ZHIBOHRES.ordinal()];
+//												mergeItem[MERGEINDEX.ZHIBOORES.ordinal()] = mergebeforegoaldetails.elementAt(k)[MERGEINDEX.ZHIBOORES.ordinal()];
+//												break;
+//												
+//												
+//											}
+//										}
+										
+										
+										
+										
+										
+										
+										
+										
+
+
+										//merge格式处理结束
+										
+										//mergeEventDetailsVec.add(item);
+										mergeEventDetailsVec.add(mergeItem);
+										
+										//mergeEventDetailsVec.add(item);
+									}
+									
+									break;
+									
 								}
+								
 							}
 							
-						
 						}
-					
-					
-						
 					}
-					
-					continue;
 				}
 				
-				//处理滚动盘	结束
 				
 
-
-				
 			}
 			
 			

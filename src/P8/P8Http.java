@@ -788,6 +788,10 @@ public class P8Http {
     			event = eventsDetailsJarry.getJSONObject(i);    			
     			String leagueName = event.getString("leagueName");
     			
+    			if(leagueName.contains("青年联赛")) {
+    				continue;
+    			}
+    			
     			String marketName = event.getString("marketName");
     			
     			if(marketName.contains("1X2")){

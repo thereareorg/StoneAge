@@ -33,7 +33,7 @@ public class HGPreviousDataManager {
 	
 	
 	Vector<String[]> pLatestEventsDetails = new Vector<String[]>();
-	
+ 
 
 	HGPreviousDataManager(HGPreviousDataWindow wnd) {
 		pdataWnd = wnd;

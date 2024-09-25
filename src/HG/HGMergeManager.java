@@ -40,7 +40,7 @@ public class HGMergeManager {
 	public static MergeDetailsWindow mergeDetailsWnd = new MergeDetailsWindow();
 	
 	
-	
+ 
 	public static int mergeHideNumber = 5000;
 	
 	public static TeamMatchWindow teamMatchWnd = new TeamMatchWindow("hg");
