@@ -1676,6 +1676,8 @@ public class MergeManager {
 										mergeItem[MERGEINDEX.ZHIBOORES.ordinal()] = 		String.format("%.0f", zhibo0over);
 										mergeItem[MERGEINDEX.PERIOD0OVER.ordinal()] = 		item[TYPEINDEX.PERIOD0OVER.ordinal()];
 										
+										mergeItem[MERGEINDEX.SCOREDATA.ordinal()] = 		zhiboitem[ZHIBOINDEX.SCOREDATA.ordinal()];
+										
 										
 										String[] scoreItem = null;
 										if(scoreItem != null){

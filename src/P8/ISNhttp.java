@@ -395,6 +395,7 @@ public class ISNhttp {
             			String eventName = oneRow.getString("eventName");
             			String eventTime = oneRow.getString("eventTime");
             			
+
             			//process event time
             			Calendar calCurrent = Calendar.getInstance();
             			calCurrent.add(Calendar.HOUR_OF_DAY, -12);
@@ -434,6 +435,41 @@ public class ISNhttp {
                             			int home = rollData.optInt("fthdp",0);
                     					int over = rollData.optInt("ftou",0);
                             			
+                    					JSONObject newScoreData = new JSONObject();
+                    					newScoreData.put("score", rollData.get("score"));
+                    					newScoreData.put("fthdp", home);
+                    					newScoreData.put("ftou", over);
+                    					JSONArray scoreDataArry = JSONISNEvents.getJSONObject(k).getJSONArray("scoreData");
+                    					
+                    					boolean scoreExist = false;
+                    					for (int ii = 0; ii < scoreDataArry.length(); ii++) {
+                    					    JSONObject scoreData = scoreDataArry.getJSONObject(ii);
+
+                    					    // 如果score匹配 "(0 - 0)"
+                    					    if (scoreData.getString("score").equals(newScoreData.getString("score"))) {
+                    					        // 原来的ftou和fthdp
+                    					        int oldFtou = scoreData.optInt("ftou", 0);
+                    					        int oldFthdp = scoreData.optInt("fthdp", 0);
+
+                    					        // 新的ftou和fthdp
+                    					        int newFtou = newScoreData.optInt("ftou", 0);
+                    					        int newFthdp = newScoreData.optInt("fthdp", 0);
+
+                    					        // 更新ftou和fthdp
+                    					        scoreData.put("ftou", oldFtou + newFtou);
+                    					        scoreData.put("fthdp", oldFthdp + newFthdp);
+
+                    					        // 已经更新过，跳出循环
+                    					        scoreExist = true;
+                    					        break;
+                    					    }
+                    					}
+
+                    					if(scoreExist==false) {
+                    						scoreDataArry.put(newScoreData);
+                    					}
+                    					
+                    					JSONISNEvents.getJSONObject(k).put("scoreData", scoreDataArry);
                     					JSONISNEvents.getJSONObject(k).put("home", event.optInt("home",0) +home);
                     					JSONISNEvents.getJSONObject(k).put("over", event.optInt("over",0) +over);
                     					
@@ -444,6 +480,9 @@ public class ISNhttp {
                 				if(rollMatchExisted==false) {
                 					
                 					JSONObject currentMatch = new JSONObject();
+                					JSONArray scoreDataArry = new JSONArray();
+                					JSONObject scoreData = new JSONObject();
+                					scoreData.put("score", rollData.get("score"));
                 					currentMatch.put("eventName", "【滚动盘】" + eventName);
                 					currentMatch.put("eventTime", eventTime);
                 					currentMatch.put("leagueName", leagueName);
@@ -451,6 +490,10 @@ public class ISNhttp {
                 					int over = rollData.optInt("ftou", 0);
                 					currentMatch.put("home", home);
                 					currentMatch.put("over", over);
+                					scoreData.put("fthdp", home);
+                					scoreData.put("ftou", over);
+                					scoreDataArry.put(scoreData);
+                					currentMatch.put("scoreData", scoreDataArry);
                 					JSONISNEvents.put(currentMatch);
                 					
                 				}

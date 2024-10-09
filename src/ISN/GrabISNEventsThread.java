@@ -182,8 +182,12 @@ public class GrabISNEventsThread  extends Thread{
 					
 					StoneAge.zhiboConnected = true;
 					
-		               ZhiboManager.clearEventsVec();               
+		               ZhiboManager.clearEventsVec();  
+		               
+		               System.out.println(ISNhttp.JSONISNEvents.toString());
 		               ZhiboManager.constructEventsVec(ISNhttp.JSONISNEvents.toString());
+		               
+		               
 		               ZhiboManager.sortEventDetails();
 		               
 		               ZhiboManager.updateEventsDetailsData();

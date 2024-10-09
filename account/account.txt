@@ -1,1 +1,14 @@
-https://www.ps38ag.com,ATLSUB60,Aaaa3713363,147258,0
+https://www.ps38ag.com,ATLSUB60,Aaaa3713363,147258,1
+https://www.ps38ag.com,TLYSUB60,Aaaa3713363,147258,1
+https://www.ps38ag.com,B66SUB02,Aaaa3713363,147258,1
+https://www.ps38ag.com,GTSSUB60,Aaaa3713363,147258,1
+https://www.ps38ag.com,TLBSUBE0,Aaaa3713363,112233,1
+https://www.ps38ag.com,GA3SUB06,Aaaa3713363,147258,1
+https://www.ps38ag.com,202sub28,asdf4321,332211,1
+https://www.ps38ag.com,m11sub00,asdf4321,332211,1
+https://www.ps38ag.com,BTASUB0N,asdf4321,332211,1
+https://www.ps38ag.com,E01SUB05,asdf4321,332211,1
+https://www.ps38ag.com,059sub33,asdf4321,332211,1
+https://www.ps38ag.com,H68SUB33,asdf4321,332211,1
+https://www.ps38ag.com,BTA00SUB08,qqww8899,147258,1
+https://www.ps38ag.com,h65sublg,asdf4321,332211,1

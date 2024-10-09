@@ -156,7 +156,7 @@ public class ZhiboManager {
 
     		JSONArray JSONEvents = new JSONArray(eventsStr);	
     		for(int i = 0; i < JSONEvents.length(); i++) {
-    			String[] event = {"","","","","","","",""};
+    			String[] event = {"","","","","","","","",""};
     			event[0] = "0";
     			JSONObject oneMatch = JSONEvents.getJSONObject(i);
     			event[ZHIBOINDEX.EVENTNAMNE.ordinal()] = oneMatch.getString("eventName");
@@ -166,6 +166,7 @@ public class ZhiboManager {
     			event[ZHIBOINDEX.PERIOD0OVER.ordinal()] = oneMatch.optString("over");
     			event[ZHIBOINDEX.PERIOD1HOME.ordinal()] = "0";
     			event[ZHIBOINDEX.PERIOD1OVER.ordinal()] = "0";
+    			event[ZHIBOINDEX.SCOREDATA.ordinal()] = oneMatch.optString("scoreData");
     			eventDetailsVec.add(event);
     		}
 
