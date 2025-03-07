@@ -462,14 +462,14 @@ public class StoneAge {
 			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");// 设置日期格式
 			
 			psFile = new PrintStream("log/" + df.format(new Date())
-						+ ".txt");
+						+ ".txt","UTF-8");
 			
-			
-			psConsole = System.out;
+			PrintStream ps = new PrintStream(System.out, true, "UTF-8");
+			psConsole = ps;
 
 			System.setOut(psFile);
 			System.setErr(psFile);
-		} catch (FileNotFoundException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
@@ -646,7 +646,7 @@ public class StoneAge {
 		btnhgLogin.setLocation(Xposition, Yposition - 40);
 		
 		
-		//contain.add(btnhgLogin);
+		contain.add(btnhgLogin);
 		
 		
 		

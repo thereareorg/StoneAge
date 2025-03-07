@@ -33,7 +33,7 @@ public class GrabHGEventsThread  extends Thread{
 	@Override
     public void run() {
 		
-		String address = "https://ag.hg0088.com/";
+		String address = "https://ag.hga050.com/";
 		
 		Vector<HGhttp> accounts = new Vector<HGhttp>();
 		
@@ -44,10 +44,10 @@ public class GrabHGEventsThread  extends Thread{
 				String[] account = accountDetails.elementAt(i);
 				HGhttp hg = new HGhttp();
 				hg.setLoginParams(address, account[0], account[1], account[2]);
-				System.out.println("登录HG " + account[0]);
+				System.out.println("login HG " + account[0]);
 				sa.setConsoleout();
-				System.out.println("登录 HG" + account[0]);
-				sa.setFileout();
+				System.out.println("login HG" + account[0]);
+				//sa.setFileout();
 				hg.login();
 				accounts.add(hg);
 			}
@@ -70,7 +70,7 @@ public class GrabHGEventsThread  extends Thread{
             	
         		String currentTime = df.format(currentTimeL);
         		
-        		System.out.println("皇冠开始抓取时间:" + currentTime + "  ----------------------------------------------------------------");
+        		System.out.println("HG start grab time:" + currentTime + "  ----------------------------------------------------------------");
 				
 				
 				
@@ -89,13 +89,14 @@ public class GrabHGEventsThread  extends Thread{
 					
 					if(hg.islogin()){
 						boolean getRes = false;
+						boolean getInplayRes = false;
 						
 						getRes = hg.getTotalBet();
 						
-						
+						getInplayRes = hg.getTotalInplayBet();
 							
-							if(getRes == true){
-								System.out.println("会员  " + hg.getAccount() + " 抓取成功");
+							if(getRes&&getInplayRes == true){
+								System.out.println("hg account  " + hg.getAccount() + " grab success");
 								HGhttp.removeFailedAccount(hg.getAccount());
 							}else{
 								//System.out.println("会员  " + p8.getAccount() + " 抓取失败");
@@ -106,10 +107,10 @@ public class GrabHGEventsThread  extends Thread{
 							
 							sa.setConsoleout();
 							
-							if(getRes == true){
-								System.out.println("会员  " + hg.getAccount() + " 抓取成功");
+							if(getRes&&getInplayRes == true){
+								System.out.println("hg account  " + hg.getAccount() + " grab success");
 							}else{
-								//System.out.println("会员  " + p8.getAccount() + " 抓取失败");
+								System.out.println("hg account  " + hg.getAccount() + " grab failed");
 							}
 							
 							sa.setFileout();
@@ -118,27 +119,27 @@ public class GrabHGEventsThread  extends Thread{
 					}else{
 						
 						sa.setConsoleout();
-						System.out.println("皇冠重新登录 " + hg.getAccount());
+						System.out.println("hg relogin " + hg.getAccount());
 						sa.setFileout();
 						
 						HGhttp.addFailedCatchAccount( hg.getAccount());
 						
 						for(int k = 0; k < 2 && hg.islogin() == false; k++){
 							hg.login();
-							Thread.currentThread().sleep(1000);
+							Thread.sleep(1000);
 						}
 						i--;
 					}
 					
 				}
 				
-				
+			 
 				
         		currentTimeL = System.currentTimeMillis();
             	
         		currentTime = df.format(currentTimeL);
         		
-        		System.out.println("皇冠抓取结束时间:" + currentTime + "  ----------------------------------------------------------------");
+        		System.out.println("hg grab end time:" + currentTime + "  ----------------------------------------------------------------");
 				
 				
 				
@@ -189,12 +190,12 @@ public class GrabHGEventsThread  extends Thread{
 				}else{
 					sa.setConsoleout();
 					for(int j = 0;  j < HGhttp.failedCatchAccount.size(); j++){
-						System.out.println("会员  " + HGhttp.failedCatchAccount.elementAt(j) + " 抓取失败");
+						System.out.println("hg account  " + HGhttp.failedCatchAccount.elementAt(j) + " grab failed");
 					}
 					sa.setFileout();
 					
 					for(int j = 0;  j < HGhttp.failedCatchAccount.size(); j++){
-						System.out.println("会员  " + HGhttp.failedCatchAccount.elementAt(j) + " 抓取失败");
+						System.out.println("hg account  " + HGhttp.failedCatchAccount.elementAt(j) + " grab failed");
 					}
 					
 					grabStat = false;

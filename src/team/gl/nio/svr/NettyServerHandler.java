@@ -35,7 +35,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         	
 	        Vector<String[]> datas = P8Http.getFinalEventsDetails();
 	        Vector<String[]> mergeDatas = MergeManager.getFinalEventsDetails();
-	        Vector<String[]> newMergeDatas = MergeNewManager.getFinalEventsDetails();
+	        Vector<String[]> newMergeDatas = HGhttp.getFinalEventsDetails();//MergeNewManager.getFinalEventsDetails();
 	        
 	        //去掉历史数据
 	        Vector<String[]> mergepSubDatas = MergeManager.getpSubMergeevents();

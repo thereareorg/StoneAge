@@ -149,7 +149,7 @@ public class AccountsDetailsWindow extends JFrame
 		
 
 		jTabbedpane.add(ppAccountPane.getaccountDetailsPan(), "PP账户");// 加入第一个页面  
-		//jTabbedpane.add(hgAccountPane.getaccountDetailsHGPan(), "HG账户");// 加入第一个页面 
+		jTabbedpane.add(hgAccountPane.getaccountDetailsHGPan(), "HG账户");// 加入第一个页面 
 		
 		jTabbedpane.add(isnAccountPane.getaccountDetailsHGPan(), "ISN账户");// 加入第一个页面 
 
