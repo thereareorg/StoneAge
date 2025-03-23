@@ -195,6 +195,11 @@ public class HGhttp {
 			}
 		}
 		
+		if(str.contains( 
+				"欧洲国家联赛")) {
+			return true;
+		}
+		
 		return in;
 	}
 	
@@ -376,7 +381,7 @@ public class HGhttp {
         		if(res.contains("Login ID")){
         			
 //        			p: login_chk
-//        			ver: version-03-06
+//        			ver: version-03-20
 //        			login_layer: co
 //        			username: kk6320
 //        			pwd: QQww889900
@@ -387,7 +392,7 @@ public class HGhttp {
     		        List<NameValuePair> params = new ArrayList<NameValuePair>();		  
     		        params.add(new BasicNameValuePair("p", "login_chk"));
     		        params.add(new BasicNameValuePair("username", ACCOUNT));
-    		        params.add(new BasicNameValuePair("ver", "version-03-06"));
+    		        params.add(new BasicNameValuePair("ver", "version-03-20"));
     		        params.add(new BasicNameValuePair("pwd", PWD));
     		        params.add(new BasicNameValuePair("pwd_safe", SECURITYCODE));
     		        params.add(new BasicNameValuePair("login_layer", "co"));
@@ -398,7 +403,7 @@ public class HGhttp {
     		        
     		        System.out.println("has login id");
     		        
-    		        res = doPost(ADDRESS + "transform.php?ver=version-03-06", params, "", ADDRESS);
+    		        res = doPost(ADDRESS + "transform.php?ver=version-03-20", params, "", ADDRESS);
     		        
     		        System.out.println(res);
     		        
@@ -465,28 +470,31 @@ public class HGhttp {
             params.add(new BasicNameValuePair("login_layer", "co"));
             params.add(new BasicNameValuePair("uid", user_id));
             params.add(new BasicNameValuePair("langx", "zh-cn"));
-            params.add(new BasicNameValuePair("ver", "version-03-06"));
+            params.add(new BasicNameValuePair("ver", "version-03-20"));
             params.add(new BasicNameValuePair("p", "get_league_wager"));
             params.add(new BasicNameValuePair("session", "FT"));
             
             params.add(new BasicNameValuePair("gtype", "FT"));
             params.add(new BasicNameValuePair("date", ""));
             params.add(new BasicNameValuePair("market", "FT"));
-            params.add(new BasicNameValuePair("gold", "FT"));
+            params.add(new BasicNameValuePair("gold", "0"));
             params.add(new BasicNameValuePair("percentage", "full"));
             params.add(new BasicNameValuePair("down_id", "all"));
             params.add(new BasicNameValuePair("league_id", "all"));
             params.add(new BasicNameValuePair("filter", "Y"));
             params.add(new BasicNameValuePair("symbol", "more"));
             
-            res = doPost(ADDRESS + "transform.php?ver=version-03-06", params, "",ADDRESS);
-            
-            System.out.println(res);
+            res = doPost(ADDRESS + "transform.php?ver=version-03-20", params, "",ADDRESS);
+         
             
             if(null != res && res.contains("gtype")){
             	return parseBet(res);
             }
     		
+            if(null!=res&& res.contains("no_data")) {
+            	return true;
+            }
+            
     	}catch(Exception e){
     		e.printStackTrace();
     		return false;
@@ -507,29 +515,29 @@ public class HGhttp {
             params.add(new BasicNameValuePair("login_layer", "co"));
             params.add(new BasicNameValuePair("uid", user_id));
             params.add(new BasicNameValuePair("langx", "zh-cn"));
-            params.add(new BasicNameValuePair("ver", "version-03-06"));
+            params.add(new BasicNameValuePair("ver", "version-03-20"));
             params.add(new BasicNameValuePair("p", "get_league_wager"));
             params.add(new BasicNameValuePair("session", "RB"));
             
             params.add(new BasicNameValuePair("gtype", "FT"));
             params.add(new BasicNameValuePair("date", ""));
-            params.add(new BasicNameValuePair("market", "FT"));
-            params.add(new BasicNameValuePair("gold", "FT"));
+            params.add(new BasicNameValuePair("market", ""));
+            params.add(new BasicNameValuePair("gold", "0"));
             params.add(new BasicNameValuePair("percentage", "full"));
             params.add(new BasicNameValuePair("down_id", "all"));
             params.add(new BasicNameValuePair("league_id", "all"));
             params.add(new BasicNameValuePair("filter", "Y"));
             params.add(new BasicNameValuePair("symbol", "more"));
             
-            res = doPost(ADDRESS + "transform.php?ver=version-03-06", params, "",ADDRESS);
+            res = doPost(ADDRESS + "transform.php?ver=version-03-20", params, "",ADDRESS);
             
-            System.out.println(res);
+       
             
             if(null != res && res.contains("gtype")){
             	return parseInplayBet(res);
             }
             
-            if(res.contains("no_data")) {
+            if(null!=res&& res.contains("no_data")) {
             	return true;
             }
     		
@@ -628,7 +636,7 @@ public class HGhttp {
                     params1.add(new BasicNameValuePair("login_layer", "co"));
                     params1.add(new BasicNameValuePair("uid", user_id));
                     params1.add(new BasicNameValuePair("langx", "zh-cn"));
-                    params1.add(new BasicNameValuePair("ver", "version-03-06"));
+                    params1.add(new BasicNameValuePair("ver", "version-03-20"));
                     params1.add(new BasicNameValuePair("p", "get_allbet_wager"));
                     params1.add(new BasicNameValuePair("session", "FT"));
                     params1.add(new BasicNameValuePair("gtype", "FT"));                    
@@ -641,7 +649,7 @@ public class HGhttp {
                     params1.add(new BasicNameValuePair("league_id", "all"));
                     params1.add(new BasicNameValuePair("gidm", gidm));
                     
-                    String oneEventres = doPost(ADDRESS + "transform.php?ver=version-03-06", params1, "",ADDRESS);
+                    String oneEventres = doPost(ADDRESS + "transform.php?ver=version-03-20", params1, "",ADDRESS);
 
                     Thread.sleep(1000);
                     
@@ -1195,7 +1203,7 @@ public class HGhttp {
                     params1.add(new BasicNameValuePair("login_layer", "co"));
                     params1.add(new BasicNameValuePair("uid", user_id));
                     params1.add(new BasicNameValuePair("langx", "zh-cn"));
-                    params1.add(new BasicNameValuePair("ver", "version-03-06"));
+                    params1.add(new BasicNameValuePair("ver", "version-03-20"));
                     params1.add(new BasicNameValuePair("p", "get_allbet_wager"));
                     params1.add(new BasicNameValuePair("session", "RB"));
                     params1.add(new BasicNameValuePair("gtype", "FT"));                    
@@ -1208,7 +1216,7 @@ public class HGhttp {
                     params1.add(new BasicNameValuePair("league_id", "all"));
                     params1.add(new BasicNameValuePair("gidm", gidm));
                     
-                    String oneEventres = doPost(ADDRESS + "transform.php?ver=version-03-06", params1, "",ADDRESS);
+                    String oneEventres = doPost(ADDRESS + "transform.php?ver=version-03-20", params1, "",ADDRESS);
 
                     Thread.sleep(1000);
                     
