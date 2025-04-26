@@ -381,7 +381,7 @@ public class HGhttp {
         		if(res.contains("Login ID")){
         			
 //        			p: login_chk
-//        			ver: version-03-20
+//        			ver: version-04-24
 //        			login_layer: co
 //        			username: kk6320
 //        			pwd: QQww889900
@@ -392,7 +392,7 @@ public class HGhttp {
     		        List<NameValuePair> params = new ArrayList<NameValuePair>();		  
     		        params.add(new BasicNameValuePair("p", "login_chk"));
     		        params.add(new BasicNameValuePair("username", ACCOUNT));
-    		        params.add(new BasicNameValuePair("ver", "version-03-20"));
+    		        params.add(new BasicNameValuePair("ver", "version-04-24"));
     		        params.add(new BasicNameValuePair("pwd", PWD));
     		        params.add(new BasicNameValuePair("pwd_safe", SECURITYCODE));
     		        params.add(new BasicNameValuePair("login_layer", "co"));
@@ -403,7 +403,7 @@ public class HGhttp {
     		        
     		        System.out.println("has login id");
     		        
-    		        res = doPost(ADDRESS + "transform.php?ver=version-03-20", params, "", ADDRESS);
+    		        res = doPost(ADDRESS + "transform.php?ver=version-04-24", params, "", ADDRESS);
     		        
     		        System.out.println(res);
     		        
@@ -470,7 +470,7 @@ public class HGhttp {
             params.add(new BasicNameValuePair("login_layer", "co"));
             params.add(new BasicNameValuePair("uid", user_id));
             params.add(new BasicNameValuePair("langx", "zh-cn"));
-            params.add(new BasicNameValuePair("ver", "version-03-20"));
+            params.add(new BasicNameValuePair("ver", "version-04-24"));
             params.add(new BasicNameValuePair("p", "get_league_wager"));
             params.add(new BasicNameValuePair("session", "FT"));
             
@@ -484,7 +484,7 @@ public class HGhttp {
             params.add(new BasicNameValuePair("filter", "Y"));
             params.add(new BasicNameValuePair("symbol", "more"));
             
-            res = doPost(ADDRESS + "transform.php?ver=version-03-20", params, "",ADDRESS);
+            res = doPost(ADDRESS + "transform.php?ver=version-04-24", params, "",ADDRESS);
          
             
             if(null != res && res.contains("gtype")){
@@ -515,7 +515,7 @@ public class HGhttp {
             params.add(new BasicNameValuePair("login_layer", "co"));
             params.add(new BasicNameValuePair("uid", user_id));
             params.add(new BasicNameValuePair("langx", "zh-cn"));
-            params.add(new BasicNameValuePair("ver", "version-03-20"));
+            params.add(new BasicNameValuePair("ver", "version-04-24"));
             params.add(new BasicNameValuePair("p", "get_league_wager"));
             params.add(new BasicNameValuePair("session", "RB"));
             
@@ -529,7 +529,7 @@ public class HGhttp {
             params.add(new BasicNameValuePair("filter", "Y"));
             params.add(new BasicNameValuePair("symbol", "more"));
             
-            res = doPost(ADDRESS + "transform.php?ver=version-03-20", params, "",ADDRESS);
+            res = doPost(ADDRESS + "transform.php?ver=version-04-24", params, "",ADDRESS);
             
        
             
@@ -636,7 +636,7 @@ public class HGhttp {
                     params1.add(new BasicNameValuePair("login_layer", "co"));
                     params1.add(new BasicNameValuePair("uid", user_id));
                     params1.add(new BasicNameValuePair("langx", "zh-cn"));
-                    params1.add(new BasicNameValuePair("ver", "version-03-20"));
+                    params1.add(new BasicNameValuePair("ver", "version-04-24"));
                     params1.add(new BasicNameValuePair("p", "get_allbet_wager"));
                     params1.add(new BasicNameValuePair("session", "FT"));
                     params1.add(new BasicNameValuePair("gtype", "FT"));                    
@@ -649,7 +649,7 @@ public class HGhttp {
                     params1.add(new BasicNameValuePair("league_id", "all"));
                     params1.add(new BasicNameValuePair("gidm", gidm));
                     
-                    String oneEventres = doPost(ADDRESS + "transform.php?ver=version-03-20", params1, "",ADDRESS);
+                    String oneEventres = doPost(ADDRESS + "transform.php?ver=version-04-24", params1, "",ADDRESS);
 
                     Thread.sleep(1000);
                     
@@ -784,19 +784,19 @@ public class HGhttp {
                         							
                         							if(hgoldStr.contains("|")){
                         								tmp = hgoldStr.split("\\|");
-                        								hgold = Integer.parseInt(tmp[0]);
-                        								hcount = Integer.parseInt(tmp[1]);
+                        								hgold = (int) Double.parseDouble(tmp[0]);
+                        								hcount = (int) Double.parseDouble(tmp[1]);
                         							}
                         							
                         							if(cgoldStr.contains("|")){
                         								tmp = cgoldStr.split("\\|");
-                        								cgold = Integer.parseInt(tmp[0]);
-                        								ccount = Integer.parseInt(tmp[1]);
+                        								cgold = (int) Double.parseDouble(tmp[0]);
+                        								ccount = (int) Double.parseDouble(tmp[1]);
                         							}
                         							
-                        							goldStr = Integer.toString(Integer.parseInt(goldStr) + cgold);
-                        							countStr = Integer.toString(Integer.parseInt(countStr) + ccount);
-                        							int dvalue = hgold - Integer.parseInt(goldStr);
+                        							goldStr = Integer.toString((int) Double.parseDouble(goldStr) + cgold);
+                        							countStr = Integer.toString((int) Double.parseDouble(countStr) + ccount);
+                        							int dvalue = hgold - (int) Double.parseDouble(goldStr);
                         							eventDetailsVec.elementAt(index)[HGINDEX.PERIOD0OVER.ordinal()] = oldhgoldStr + "-" + "(" + goldStr + "|" + countStr + ")" + "=" + Integer.toString(dvalue);
                         						}else{
                         							eventDetailsVec.elementAt(index)[HGINDEX.PERIOD0OVER.ordinal()] = "(0|0)" + "-" + "(" + goldStr + "|" + countStr + ")" + "=" + "-" + goldStr;
@@ -825,19 +825,19 @@ public class HGhttp {
                         							
                         							if(hgoldStr.contains("|")){
                         								tmp = hgoldStr.split("\\|");
-                        								hgold = Integer.parseInt(tmp[0]);
-                        								hcount = Integer.parseInt(tmp[1]);
+                        								hgold = (int) Double.parseDouble(tmp[0]);
+                        								hcount = (int) Double.parseDouble(tmp[1]);
                         							}
                         							
                         							if(cgoldStr.contains("|")){
                         								tmp = cgoldStr.split("\\|");
-                        								cgold = Integer.parseInt(tmp[0]);
+                        								cgold = (int) Double.parseDouble(tmp[0]);
                         							}
                         							
-                        							goldStr = Integer.toString(Integer.parseInt(goldStr) + hgold);
-                        							countStr = Integer.toString(Integer.parseInt(countStr) + hcount);
+                        							goldStr = Integer.toString((int) Double.parseDouble(goldStr) + hgold);
+                        							countStr = Integer.toString((int) Double.parseDouble(countStr) + hcount);
                         							
-                        							int dvalue = Integer.parseInt(goldStr) - cgold;
+                        							int dvalue = (int) Double.parseDouble(goldStr) - cgold;
                         							
                         							
                         							eventDetailsVec.elementAt(index)[HGINDEX.PERIOD0OVER.ordinal()] = "(" + goldStr + "|" + countStr + ")" + "-" + oldcgoldStr + "=" + Integer.toString(dvalue);
@@ -881,19 +881,19 @@ public class HGhttp {
                         							
                         							if(hgoldStr.contains("|")){
                         								tmp = hgoldStr.split("\\|");
-                        								hgold = Integer.parseInt(tmp[0]);
-                        								hcount = Integer.parseInt(tmp[1]);
+                        								hgold = (int) Double.parseDouble(tmp[0]);
+                        								hcount = (int) Double.parseDouble(tmp[1]);
                         							}
                         							
                         							if(cgoldStr.contains("|")){
                         								tmp = cgoldStr.split("\\|");
-                        								cgold = Integer.parseInt(tmp[0]);
-                        								ccount = Integer.parseInt(tmp[1]);
+                        								cgold = (int) Double.parseDouble(tmp[0]);
+                        								ccount = (int) Double.parseDouble(tmp[1]);
                         							}
                         							
-                        							goldStr = Integer.toString(Integer.parseInt(goldStr) + cgold);
-                        							countStr = Integer.toString(Integer.parseInt(countStr) + ccount);
-                        							int dvalue = hgold - Integer.parseInt(goldStr);
+                        							goldStr = Integer.toString((int) Double.parseDouble(goldStr) + cgold);
+                        							countStr = Integer.toString((int) Double.parseDouble(countStr) + ccount);
+                        							int dvalue = hgold - (int) Double.parseDouble(goldStr);
                         							eventDetailsVec.elementAt(index)[HGINDEX.PERIOD0OVER.ordinal()] = oldhgoldStr + "-" + "(" + goldStr + "|" + countStr + ")" + "=" + Integer.toString(dvalue);
                         						}else{
                         							eventDetailsVec.elementAt(index)[HGINDEX.PERIOD0OVER.ordinal()] = "(0|0)" + "-" + "(" + goldStr + "|" + countStr + ")" + "=" + "-" + goldStr;
@@ -922,19 +922,19 @@ public class HGhttp {
                         							
                         							if(hgoldStr.contains("|")){
                         								tmp = hgoldStr.split("\\|");
-                        								hgold = Integer.parseInt(tmp[0]);
-                        								hcount = Integer.parseInt(tmp[1]);
+                        								hgold = (int) Double.parseDouble(tmp[0]);
+                        								hcount = (int) Double.parseDouble(tmp[1]);
                         							}
                         							
                         							if(cgoldStr.contains("|")){
                         								tmp = cgoldStr.split("\\|");
-                        								cgold = Integer.parseInt(tmp[0]);
+                        								cgold = (int) Double.parseDouble(tmp[0]);
                         							}
                         							
-                        							goldStr = Integer.toString(Integer.parseInt(goldStr) + hgold);
-                        							countStr = Integer.toString(Integer.parseInt(countStr) + hcount);
+                        							goldStr = Integer.toString((int) Double.parseDouble(goldStr) + hgold);
+                        							countStr = Integer.toString((int) Double.parseDouble(countStr) + hcount);
                         							
-                        							int dvalue = Integer.parseInt(goldStr) - cgold;
+                        							int dvalue = (int) Double.parseDouble(goldStr) - cgold;
                         							
                         							
                         							eventDetailsVec.elementAt(index)[HGINDEX.PERIOD0OVER.ordinal()] = "(" + goldStr + "|" + countStr + ")" + "-" + oldcgoldStr + "=" + Integer.toString(dvalue);
@@ -995,18 +995,18 @@ public class HGhttp {
                         							
                         							if(hgoldStr.contains("|")){
                         								tmp = hgoldStr.split("\\|");
-                        								hgold = Integer.parseInt(tmp[0]);
-                        								hcount = Integer.parseInt(tmp[1]);
+                        								hgold = (int) Double.parseDouble(tmp[0]);
+                        								hcount = (int) Double.parseDouble(tmp[1]);
                         							}
                         							
                         							if(cgoldStr.contains("|")){
                         								tmp = cgoldStr.split("\\|");
-                        								cgold = Integer.parseInt(tmp[0]);
+                        								cgold = (int) Double.parseDouble(tmp[0]);
                         							}
                         							
-                        							goldStr = Integer.toString(Integer.parseInt(goldStr) + hgold);
-                        							countStr = Integer.toString(Integer.parseInt(countStr) + hcount);
-                        							int dvalue = Integer.parseInt(goldStr) - cgold;
+                        							goldStr = Integer.toString((int) Double.parseDouble(goldStr) + hgold);
+                        							countStr = Integer.toString((int) Double.parseDouble(countStr) + hcount);
+                        							int dvalue = (int) Double.parseDouble(goldStr) - cgold;
                         							eventDetailsVec.elementAt(index)[HGINDEX.PERIOD0HOME.ordinal()] = "(" + goldStr + "|" + countStr + ")" + "-" + oldcgoldStr + "=" + Integer.toString(dvalue);
                         						}else{
                         							eventDetailsVec.elementAt(index)[HGINDEX.PERIOD0HOME.ordinal()] = "(" + goldStr + "|" + countStr + ")"  + "-" + "(0|0)" + "=" + goldStr;
@@ -1035,20 +1035,20 @@ public class HGhttp {
                         							
                         							if(hgoldStr.contains("|")){
                         								tmp = hgoldStr.split("\\|");
-                        								hgold = Integer.parseInt(tmp[0]);
-                        								hcount = Integer.parseInt(tmp[1]);
+                        								hgold = (int) Double.parseDouble(tmp[0]);
+                        								hcount = (int) Double.parseDouble(tmp[1]);
                         							}
                         							
                         							if(cgoldStr.contains("|")){
                         								tmp = cgoldStr.split("\\|");
-                        								cgold = Integer.parseInt(tmp[0]);
-                        								ccount = Integer.parseInt(tmp[1]);
+                        								cgold = (int) Double.parseDouble(tmp[0]);
+                        								ccount = (int) Double.parseDouble(tmp[1]);
                         							}
                         							
-                        							goldStr = Integer.toString(Integer.parseInt(goldStr) + cgold);
-                        							countStr = Integer.toString(Integer.parseInt(countStr) + ccount);
+                        							goldStr = Integer.toString((int) Double.parseDouble(goldStr) + cgold);
+                        							countStr = Integer.toString((int) Double.parseDouble(countStr) + ccount);
                         							
-                        							int dvalue = hgold - Integer.parseInt(goldStr);
+                        							int dvalue = hgold - (int) Double.parseDouble(goldStr);
                         							
                         							
                         							eventDetailsVec.elementAt(index)[HGINDEX.PERIOD0HOME.ordinal()] = oldhgoldStr + "-" + "(" + goldStr + "|" + countStr + ")" + "=" + Integer.toString(dvalue);
@@ -1087,18 +1087,18 @@ public class HGhttp {
                         							
                         							if(hgoldStr.contains("|")){
                         								tmp = hgoldStr.split("\\|");
-                        								hgold = Integer.parseInt(tmp[0]);
-                        								hcount = Integer.parseInt(tmp[1]);
+                        								hgold = (int) Double.parseDouble(tmp[0]);
+                        								hcount = (int) Double.parseDouble(tmp[1]);
                         							}
                         							
                         							if(cgoldStr.contains("|")){
                         								tmp = cgoldStr.split("\\|");
-                        								cgold = Integer.parseInt(tmp[0]);
+                        								cgold = (int) Double.parseDouble(tmp[0]);
                         							}
                         							
-                        							goldStr = Integer.toString(Integer.parseInt(goldStr) + hgold);
-                        							countStr = Integer.toString(Integer.parseInt(countStr) + hcount);
-                        							int dvalue = Integer.parseInt(goldStr) - cgold;
+                        							goldStr = Integer.toString((int) Double.parseDouble(goldStr) + hgold);
+                        							countStr = Integer.toString((int) Double.parseDouble(countStr) + hcount);
+                        							int dvalue = (int) Double.parseDouble(goldStr) - cgold;
                         							eventDetailsVec.elementAt(index)[HGINDEX.PERIOD0HOME.ordinal()] = "(" + goldStr + "|" + countStr + ")" + "-" + oldcgoldStr + "=" + Integer.toString(dvalue);
                         						}else{
                         							eventDetailsVec.elementAt(index)[HGINDEX.PERIOD0HOME.ordinal()] = "(" + goldStr + "|" + countStr + ")"  + "-" + "(0|0)" + "=" + goldStr;
@@ -1127,20 +1127,20 @@ public class HGhttp {
                         							
                         							if(hgoldStr.contains("|")){
                         								tmp = hgoldStr.split("\\|");
-                        								hgold = Integer.parseInt(tmp[0]);
-                        								hcount = Integer.parseInt(tmp[1]);
+                        								hgold = (int) Double.parseDouble(tmp[0]);
+                        								hcount = (int) Double.parseDouble(tmp[1]);
                         							}
                         							
                         							if(cgoldStr.contains("|")){
                         								tmp = cgoldStr.split("\\|");
-                        								cgold = Integer.parseInt(tmp[0]);
-                        								ccount = Integer.parseInt(tmp[1]);
+                        								cgold = (int) Double.parseDouble(tmp[0]);
+                        								ccount = (int) Double.parseDouble(tmp[1]);
                         							}
                         							
-                        							goldStr = Integer.toString(Integer.parseInt(goldStr) + cgold);
-                        							countStr = Integer.toString(Integer.parseInt(countStr) + ccount);
+                        							goldStr = Integer.toString((int) Double.parseDouble(goldStr) + cgold);
+                        							countStr = Integer.toString((int) Double.parseDouble(countStr) + ccount);
                         							
-                        							int dvalue = hgold - Integer.parseInt(goldStr);
+                        							int dvalue = hgold - (int) Double.parseDouble(goldStr);
                         							
                         							
                         							eventDetailsVec.elementAt(index)[HGINDEX.PERIOD0HOME.ordinal()] = oldhgoldStr + "-" + "(" + goldStr + "|" + countStr + ")" + "=" + Integer.toString(dvalue);
@@ -1203,7 +1203,7 @@ public class HGhttp {
                     params1.add(new BasicNameValuePair("login_layer", "co"));
                     params1.add(new BasicNameValuePair("uid", user_id));
                     params1.add(new BasicNameValuePair("langx", "zh-cn"));
-                    params1.add(new BasicNameValuePair("ver", "version-03-20"));
+                    params1.add(new BasicNameValuePair("ver", "version-04-24"));
                     params1.add(new BasicNameValuePair("p", "get_allbet_wager"));
                     params1.add(new BasicNameValuePair("session", "RB"));
                     params1.add(new BasicNameValuePair("gtype", "FT"));                    
@@ -1216,7 +1216,7 @@ public class HGhttp {
                     params1.add(new BasicNameValuePair("league_id", "all"));
                     params1.add(new BasicNameValuePair("gidm", gidm));
                     
-                    String oneEventres = doPost(ADDRESS + "transform.php?ver=version-03-20", params1, "",ADDRESS);
+                    String oneEventres = doPost(ADDRESS + "transform.php?ver=version-04-24", params1, "",ADDRESS);
 
                     Thread.sleep(1000);
                     
@@ -1349,19 +1349,19 @@ public class HGhttp {
                         							
                         							if(hgoldStr.contains("|")){
                         								tmp = hgoldStr.split("\\|");
-                        								hgold = Integer.parseInt(tmp[0]);
-                        								hcount = Integer.parseInt(tmp[1]);
+                        								hgold = (int) Double.parseDouble(tmp[0]);
+                        								hcount = (int) Double.parseDouble(tmp[1]);
                         							}
                         							
                         							if(cgoldStr.contains("|")){
                         								tmp = cgoldStr.split("\\|");
-                        								cgold = Integer.parseInt(tmp[0]);
-                        								ccount = Integer.parseInt(tmp[1]);
+                        								cgold = (int) Double.parseDouble(tmp[0]);
+                        								ccount = (int) Double.parseDouble(tmp[1]);
                         							}
                         							
-                        							goldStr = Integer.toString(Integer.parseInt(goldStr) + cgold);
-                        							countStr = Integer.toString(Integer.parseInt(countStr) + ccount);
-                        							int dvalue = hgold - Integer.parseInt(goldStr);
+                        							goldStr = Integer.toString((int) Double.parseDouble(goldStr) + cgold);
+                        							countStr = Integer.toString((int) Double.parseDouble(countStr) + ccount);
+                        							int dvalue = hgold - (int) Double.parseDouble(goldStr);
                         							eventDetailsVec.elementAt(index)[HGINDEX.PERIOD0OVER.ordinal()] = oldhgoldStr + "-" + "(" + goldStr + "|" + countStr + ")" + "=" + Integer.toString(dvalue);
                         						}else{
                         							eventDetailsVec.elementAt(index)[HGINDEX.PERIOD0OVER.ordinal()] = "(0|0)" + "-" + "(" + goldStr + "|" + countStr + ")" + "=" + "-" + goldStr;
@@ -1390,19 +1390,19 @@ public class HGhttp {
                         							
                         							if(hgoldStr.contains("|")){
                         								tmp = hgoldStr.split("\\|");
-                        								hgold = Integer.parseInt(tmp[0]);
-                        								hcount = Integer.parseInt(tmp[1]);
+                        								hgold = (int) Double.parseDouble(tmp[0]);
+                        								hcount = (int) Double.parseDouble(tmp[1]);
                         							}
                         							
                         							if(cgoldStr.contains("|")){
                         								tmp = cgoldStr.split("\\|");
-                        								cgold = Integer.parseInt(tmp[0]);
+                        								cgold = (int) Double.parseDouble(tmp[0]);
                         							}
                         							
-                        							goldStr = Integer.toString(Integer.parseInt(goldStr) + hgold);
-                        							countStr = Integer.toString(Integer.parseInt(countStr) + hcount);
+                        							goldStr = Integer.toString((int) Double.parseDouble(goldStr) + hgold);
+                        							countStr = Integer.toString((int) Double.parseDouble(countStr) + hcount);
                         							
-                        							int dvalue = Integer.parseInt(goldStr) - cgold;
+                        							int dvalue = (int) Double.parseDouble(goldStr) - cgold;
                         							
                         							
                         							eventDetailsVec.elementAt(index)[HGINDEX.PERIOD0OVER.ordinal()] = "(" + goldStr + "|" + countStr + ")" + "-" + oldcgoldStr + "=" + Integer.toString(dvalue);
@@ -1446,19 +1446,19 @@ public class HGhttp {
                         							
                         							if(hgoldStr.contains("|")){
                         								tmp = hgoldStr.split("\\|");
-                        								hgold = Integer.parseInt(tmp[0]);
-                        								hcount = Integer.parseInt(tmp[1]);
+                        								hgold = (int) Double.parseDouble(tmp[0]);
+                        								hcount = (int) Double.parseDouble(tmp[1]);
                         							}
                         							
                         							if(cgoldStr.contains("|")){
                         								tmp = cgoldStr.split("\\|");
-                        								cgold = Integer.parseInt(tmp[0]);
-                        								ccount = Integer.parseInt(tmp[1]);
+                        								cgold = (int) Double.parseDouble(tmp[0]);
+                        								ccount = (int) Double.parseDouble(tmp[1]);
                         							}
                         							
-                        							goldStr = Integer.toString(Integer.parseInt(goldStr) + cgold);
-                        							countStr = Integer.toString(Integer.parseInt(countStr) + ccount);
-                        							int dvalue = hgold - Integer.parseInt(goldStr);
+                        							goldStr = Integer.toString((int) Double.parseDouble(goldStr) + cgold);
+                        							countStr = Integer.toString((int) Double.parseDouble(countStr) + ccount);
+                        							int dvalue = hgold - (int) Double.parseDouble(goldStr);
                         							eventDetailsVec.elementAt(index)[HGINDEX.PERIOD0OVER.ordinal()] = oldhgoldStr + "-" + "(" + goldStr + "|" + countStr + ")" + "=" + Integer.toString(dvalue);
                         						}else{
                         							eventDetailsVec.elementAt(index)[HGINDEX.PERIOD0OVER.ordinal()] = "(0|0)" + "-" + "(" + goldStr + "|" + countStr + ")" + "=" + "-" + goldStr;
@@ -1487,19 +1487,19 @@ public class HGhttp {
                         							
                         							if(hgoldStr.contains("|")){
                         								tmp = hgoldStr.split("\\|");
-                        								hgold = Integer.parseInt(tmp[0]);
-                        								hcount = Integer.parseInt(tmp[1]);
+                        								hgold = (int) Double.parseDouble(tmp[0]);
+                        								hcount = (int) Double.parseDouble(tmp[1]);
                         							}
                         							
                         							if(cgoldStr.contains("|")){
                         								tmp = cgoldStr.split("\\|");
-                        								cgold = Integer.parseInt(tmp[0]);
+                        								cgold = (int) Double.parseDouble(tmp[0]);
                         							}
                         							
-                        							goldStr = Integer.toString(Integer.parseInt(goldStr) + hgold);
-                        							countStr = Integer.toString(Integer.parseInt(countStr) + hcount);
+                        							goldStr = Integer.toString((int) Double.parseDouble(goldStr) + hgold);
+                        							countStr = Integer.toString((int) Double.parseDouble(countStr) + hcount);
                         							
-                        							int dvalue = Integer.parseInt(goldStr) - cgold;
+                        							int dvalue = (int) Double.parseDouble(goldStr) - cgold;
                         							
                         							
                         							eventDetailsVec.elementAt(index)[HGINDEX.PERIOD0OVER.ordinal()] = "(" + goldStr + "|" + countStr + ")" + "-" + oldcgoldStr + "=" + Integer.toString(dvalue);
@@ -1560,18 +1560,18 @@ public class HGhttp {
                         							
                         							if(hgoldStr.contains("|")){
                         								tmp = hgoldStr.split("\\|");
-                        								hgold = Integer.parseInt(tmp[0]);
-                        								hcount = Integer.parseInt(tmp[1]);
+                        								hgold = (int) Double.parseDouble(tmp[0]);
+                        								hcount = (int) Double.parseDouble(tmp[1]);
                         							}
                         							
                         							if(cgoldStr.contains("|")){
                         								tmp = cgoldStr.split("\\|");
-                        								cgold = Integer.parseInt(tmp[0]);
+                        								cgold = (int) Double.parseDouble(tmp[0]);
                         							}
                         							
-                        							goldStr = Integer.toString(Integer.parseInt(goldStr) + hgold);
-                        							countStr = Integer.toString(Integer.parseInt(countStr) + hcount);
-                        							int dvalue = Integer.parseInt(goldStr) - cgold;
+                        							goldStr = Integer.toString((int) Double.parseDouble(goldStr) + hgold);
+                        							countStr = Integer.toString((int) Double.parseDouble(countStr) + hcount);
+                        							int dvalue = (int) Double.parseDouble(goldStr) - cgold;
                         							eventDetailsVec.elementAt(index)[HGINDEX.PERIOD0HOME.ordinal()] = "(" + goldStr + "|" + countStr + ")" + "-" + oldcgoldStr + "=" + Integer.toString(dvalue);
                         						}else{
                         							eventDetailsVec.elementAt(index)[HGINDEX.PERIOD0HOME.ordinal()] = "(" + goldStr + "|" + countStr + ")"  + "-" + "(0|0)" + "=" + goldStr;
@@ -1600,20 +1600,20 @@ public class HGhttp {
                         							
                         							if(hgoldStr.contains("|")){
                         								tmp = hgoldStr.split("\\|");
-                        								hgold = Integer.parseInt(tmp[0]);
-                        								hcount = Integer.parseInt(tmp[1]);
+                        								hgold = (int) Double.parseDouble(tmp[0]);
+                        								hcount = (int) Double.parseDouble(tmp[1]);
                         							}
                         							
                         							if(cgoldStr.contains("|")){
                         								tmp = cgoldStr.split("\\|");
-                        								cgold = Integer.parseInt(tmp[0]);
-                        								ccount = Integer.parseInt(tmp[1]);
+                        								cgold = (int) Double.parseDouble(tmp[0]);
+                        								ccount = (int) Double.parseDouble(tmp[1]);
                         							}
                         							
-                        							goldStr = Integer.toString(Integer.parseInt(goldStr) + cgold);
-                        							countStr = Integer.toString(Integer.parseInt(countStr) + ccount);
+                        							goldStr = Integer.toString((int) Double.parseDouble(goldStr) + cgold);
+                        							countStr = Integer.toString((int) Double.parseDouble(countStr) + ccount);
                         							
-                        							int dvalue = hgold - Integer.parseInt(goldStr);
+                        							int dvalue = hgold - (int) Double.parseDouble(goldStr);
                         							
                         							
                         							eventDetailsVec.elementAt(index)[HGINDEX.PERIOD0HOME.ordinal()] = oldhgoldStr + "-" + "(" + goldStr + "|" + countStr + ")" + "=" + Integer.toString(dvalue);
@@ -1652,18 +1652,18 @@ public class HGhttp {
                         							
                         							if(hgoldStr.contains("|")){
                         								tmp = hgoldStr.split("\\|");
-                        								hgold = Integer.parseInt(tmp[0]);
-                        								hcount = Integer.parseInt(tmp[1]);
+                        								hgold = (int) Double.parseDouble(tmp[0]);
+                        								hcount = (int) Double.parseDouble(tmp[1]);
                         							}
                         							
                         							if(cgoldStr.contains("|")){
                         								tmp = cgoldStr.split("\\|");
-                        								cgold = Integer.parseInt(tmp[0]);
+                        								cgold = (int) Double.parseDouble(tmp[0]);
                         							}
                         							
-                        							goldStr = Integer.toString(Integer.parseInt(goldStr) + hgold);
-                        							countStr = Integer.toString(Integer.parseInt(countStr) + hcount);
-                        							int dvalue = Integer.parseInt(goldStr) - cgold;
+                        							goldStr = Integer.toString((int) Double.parseDouble(goldStr) + hgold);
+                        							countStr = Integer.toString((int) Double.parseDouble(countStr) + hcount);
+                        							int dvalue = (int) Double.parseDouble(goldStr) - cgold;
                         							eventDetailsVec.elementAt(index)[HGINDEX.PERIOD0HOME.ordinal()] = "(" + goldStr + "|" + countStr + ")" + "-" + oldcgoldStr + "=" + Integer.toString(dvalue);
                         						}else{
                         							eventDetailsVec.elementAt(index)[HGINDEX.PERIOD0HOME.ordinal()] = "(" + goldStr + "|" + countStr + ")"  + "-" + "(0|0)" + "=" + goldStr;
@@ -1692,20 +1692,20 @@ public class HGhttp {
                         							
                         							if(hgoldStr.contains("|")){
                         								tmp = hgoldStr.split("\\|");
-                        								hgold = Integer.parseInt(tmp[0]);
-                        								hcount = Integer.parseInt(tmp[1]);
+                        								hgold = (int) Double.parseDouble(tmp[0]);
+                        								hcount = (int) Double.parseDouble(tmp[1]);
                         							}
                         							
                         							if(cgoldStr.contains("|")){
                         								tmp = cgoldStr.split("\\|");
-                        								cgold = Integer.parseInt(tmp[0]);
-                        								ccount = Integer.parseInt(tmp[1]);
+                        								cgold = (int) Double.parseDouble(tmp[0]);
+                        								ccount = (int) Double.parseDouble(tmp[1]);
                         							}
                         							
-                        							goldStr = Integer.toString(Integer.parseInt(goldStr) + cgold);
-                        							countStr = Integer.toString(Integer.parseInt(countStr) + ccount);
+                        							goldStr = Integer.toString((int) Double.parseDouble(goldStr) + cgold);
+                        							countStr = Integer.toString((int) Double.parseDouble(countStr) + ccount);
                         							
-                        							int dvalue = hgold - Integer.parseInt(goldStr);
+                        							int dvalue = hgold - (int) Double.parseDouble(goldStr);
                         							
                         							
                         							eventDetailsVec.elementAt(index)[HGINDEX.PERIOD0HOME.ordinal()] = oldhgoldStr + "-" + "(" + goldStr + "|" + countStr + ")" + "=" + Integer.toString(dvalue);
